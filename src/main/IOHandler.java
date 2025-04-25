@@ -1,5 +1,4 @@
 package main;
-import java.awt.Color;
 import java.awt.Polygon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -38,15 +37,15 @@ public class IOHandler extends MouseAdapter{
 	}
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		//logMousePos(e);
+		logMousePos(e);
 		checkCurrentHexagon(e);
 
-		gh.drawHexagon2(gh.g2d, e.getX(), e.getY(), Color.RED);
 	}
 	public void logMousePos(MouseEvent e) {
 		System.out.println("X: " + e.getX() + ", Y: " + e.getY());	
 	}
 	public void checkCurrentHexagon(MouseEvent e) {
+
 		if (currentHexagon != null) {
 			if(currentHexagon.contains(e.getPoint()) )
 			{
@@ -61,7 +60,7 @@ public class IOHandler extends MouseAdapter{
 			if(hex.contains(e.getPoint()))
 			{
 				currentHexagon = hex;
-				gh.drawHexagon2(gh.g2d, e.getX(), e.getY(), Color.RED);
+				gh.drawSelectedTile(currentHexagon);
 			}
 		}
 	}

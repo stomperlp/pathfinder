@@ -18,7 +18,7 @@ public class GraphicsHandler extends JFrame{
     private int cols;     // Number of columns
     private int thickness = 2; // Line thickness
     protected ArrayList<Polygon> hexlist = new ArrayList<>();
-    protected Graphics2D g2d;
+    protected Polygon selectedHex;
 
     public void start()
     {
@@ -34,8 +34,23 @@ public class GraphicsHandler extends JFrame{
 			} 
 		});
         addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
             public void mouseMoved(MouseEvent e) {
-                iOHandler.mouseMoved(e);
+                Point translatedPoint = SwingUtilities.convertPoint(
+                    e.getComponent(), 
+                    e.getPoint(), 
+                    backgroundPanel // Your drawing panel
+                );
+                iOHandler.mouseMoved(new MouseEvent(
+                    backgroundPanel, 
+                    e.getID(), 
+                    e.getWhen(), 
+                    e.getModifiersEx(), 
+                    translatedPoint.x, 
+                    translatedPoint.y, 
+                    e.getClickCount(), 
+                    e.isPopupTrigger()
+                ));
             }
         });
     }
@@ -55,7 +70,7 @@ public class GraphicsHandler extends JFrame{
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g2d = (Graphics2D) g;
+                Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
                 // Set line thickness
@@ -66,7 +81,7 @@ public class GraphicsHandler extends JFrame{
                 double hexHeight = 2 * hexSize;
                 
 
-                rows = 3+(int)(getHeight()*2/hexHeight);
+                rows = (int)(getHeight()+1*2/hexHeight);
                 cols = (int)(getWidth()*0.75/hexWidth);
 
                 // Calculate starting position to center the grid
@@ -86,21 +101,22 @@ public class GraphicsHandler extends JFrame{
                             x += hexWidth*0.85;
                         }
                         
-                        //drawHexagon(g2d, x, y, Color.BLACK);
+                        drawHexagon(g2d, x, y, Color.BLACK);
                     }
                 }
 
-                //System.out.println(hexlist.size());
+                System.out.println(hexlist.size());
 
-                int count = 0;
-                for(Polygon hex : hexlist)
-                {
-                    for ( int p : hex.xpoints) {
-                        if (p < 0 || p > getWidth())
-                            count++;
+                if (selectedHex != null) {
+                    g2d = (Graphics2D) g.create();
+                    try {
+                        g2d.setStroke(new BasicStroke(thickness+2));
+                        g2d.setColor(Color.RED);
+                        g2d.draw(selectedHex);
+                    } finally {
+                        g2d.dispose();
                     }
                 }
-                System.out.println(count);
             }
         };
         contentPanel.setOpaque(false);
@@ -214,24 +230,14 @@ public class GraphicsHandler extends JFrame{
         g2d.draw(hexagon);
     }
 
-    public void drawHexagon2(Graphics2D g2d, double centerX, double centerY, Color color) {
-        super.paintComponents(g2d);
-        Polygon hexagon = new Polygon();
-        for (int i = 0; i < 6; i++) {
-            double angle = 2 * Math.PI / 6 * i;
-            double x = centerX + hexSize * Math.cos(angle);
-            double y = centerY + hexSize * Math.sin(angle);
-            hexagon.addPoint((int) x, (int) y);
-        }
-        System.out.println("Draw");
-        g2d.setColor(color);
-        g2d.draw(hexagon);
-    }
     public void drawSelectedTile(Polygon hex) {
-        g2d.setStroke(new BasicStroke(thickness+2));
-        g2d.setColor(Color.RED);
-		g2d.draw(hex);
+        // Need to trigger a repaint rather than trying to draw directly
+        selectedHex = hex; // Store the selected hexagon
+        repaint();
     }
+    
+    // Then in your paintComponent, after drawing all hexagons:
+    
 
     public void setHexSize(int size) {
         this.hexSize = size;
