@@ -2,10 +2,8 @@ package main;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -19,11 +17,12 @@ public class GraphicsHandler extends JFrame{
     private int rows;     // Number of rows
     private int cols;     // Number of columns
     private int thickness = 2; // Line thickness
-    ArrayList<Polygon> hexlist = new ArrayList();
+    protected ArrayList<Polygon> hexlist = new ArrayList<>();
+    protected Graphics2D g2d;
 
     public void start()
     {
-        System.err.println("geht doch du bastard");
+
     }
     private void mouse() 
     {
@@ -43,7 +42,7 @@ public class GraphicsHandler extends JFrame{
 
     public GraphicsHandler() 
     {
-        iOHandler = new IOHandler();
+        iOHandler = new IOHandler(this);
         setTitle("Resizable Window Example");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400); // Initial size
@@ -56,7 +55,7 @@ public class GraphicsHandler extends JFrame{
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g;
+                g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
                 // Set line thickness
@@ -67,27 +66,41 @@ public class GraphicsHandler extends JFrame{
                 double hexHeight = 2 * hexSize;
                 
 
-                rows = (int)(getHeight()*2/hexHeight)+4;
-                cols = (int)(getWidth()/hexWidth)+1;
+                rows = 3+(int)(getHeight()*2/hexHeight);
+                cols = (int)(getWidth()*0.75/hexWidth);
 
                 // Calculate starting position to center the grid
-                //int startX = (int) (getWidth() / 2 - (cols * hexWidth) / 2); 
-                //int startY = (int) (getHeight() / 2 - (rows * hexHeight * 0.75) / 2);
-                
+                // (int) (getHeight() / 2 - (rows * hexHeight * 0.75) / 2);
+                // (int) (getWidth() / 2 - (cols * hexWidth) / 2); 
+                int startX = 0;
+                int startY = 0;
+                hexlist.clear();
                 for (int row = 0; row < rows; row++) {
                     for (int col = 0; col < cols; col++) {
                         // Calculate hexagon center position
-                        double x =  col * hexWidth * 0.85*2;
-                        double y =  row * hexHeight * 0.444;
+                        double x =  startX + col * hexWidth * 0.85*2;
+                        double y =  startY + row * hexHeight * 0.444;
                         
                         // Offset every other row
                         if (row % 2 == 1) {
                             x += hexWidth*0.85;
                         }
                         
-                        drawHexagon(g2d, x, y);
+                        //drawHexagon(g2d, x, y, Color.BLACK);
                     }
                 }
+
+                //System.out.println(hexlist.size());
+
+                int count = 0;
+                for(Polygon hex : hexlist)
+                {
+                    for ( int p : hex.xpoints) {
+                        if (p < 0 || p > getWidth())
+                            count++;
+                    }
+                }
+                System.out.println(count);
             }
         };
         contentPanel.setOpaque(false);
@@ -186,7 +199,8 @@ public class GraphicsHandler extends JFrame{
         return null;
     }
 
-    private void drawHexagon(Graphics2D g2d, double centerX, double centerY) {
+    public void drawHexagon(Graphics2D g2d, double centerX, double centerY, Color color) {
+        
         Polygon hexagon = new Polygon();
         for (int i = 0; i < 6; i++) {
             double angle = 2 * Math.PI / 6 * i;
@@ -196,8 +210,27 @@ public class GraphicsHandler extends JFrame{
         }
         this.hexlist.add(hexagon);
         
-        g2d.setColor(Color.BLACK);
+        g2d.setColor(color);
         g2d.draw(hexagon);
+    }
+
+    public void drawHexagon2(Graphics2D g2d, double centerX, double centerY, Color color) {
+        super.paintComponents(g2d);
+        Polygon hexagon = new Polygon();
+        for (int i = 0; i < 6; i++) {
+            double angle = 2 * Math.PI / 6 * i;
+            double x = centerX + hexSize * Math.cos(angle);
+            double y = centerY + hexSize * Math.sin(angle);
+            hexagon.addPoint((int) x, (int) y);
+        }
+        System.out.println("Draw");
+        g2d.setColor(color);
+        g2d.draw(hexagon);
+    }
+    public void drawSelectedTile(Polygon hex) {
+        g2d.setStroke(new BasicStroke(thickness+2));
+        g2d.setColor(Color.RED);
+		g2d.draw(hex);
     }
 
     public void setHexSize(int size) {
@@ -216,5 +249,7 @@ public class GraphicsHandler extends JFrame{
         this.thickness = thickness;
         repaint();
     }
-
+    public ArrayList<Polygon> getHexlist() {
+        return hexlist;
+    }
 }
