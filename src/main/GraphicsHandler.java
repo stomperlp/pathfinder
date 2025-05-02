@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import tools.*;
 
 public class GraphicsHandler extends JFrame{
     
@@ -97,14 +98,13 @@ public class GraphicsHandler extends JFrame{
                 double hexHeight = 2 * hexSize;
                 
 
-                rows = (int)(getHeight()+1*2/hexHeight);
-                cols = (int)(getWidth()*0.75/hexWidth);
+                cols = (int)(getWidth()*0.75/hexWidth)+3;
+                rows = (int)(getHeight()+1*2/hexHeight)+3;
 
                 // Calculate starting position to center the grid
-                // (int) (getHeight() / 2 - (rows * hexHeight * 0.75) / 2);
-                // (int) (getWidth() / 2 - (cols * hexWidth) / 2); 
-                double startX = (double)gridOffset.x % (1.75*hexWidth);
-                double startY = (double)gridOffset.y % (0.85*hexHeight);
+                double startX = -2*hexWidth + Calc.preciseMod(gridOffset.x, hexWidth * 1.75);
+                double startY = -2*hexHeight + Calc.preciseMod(gridOffset.y, hexHeight * 0.85);
+
                 hexlist.clear();
                 for (int row = 0; row < rows; row++) {
                     for (int col = 0; col < cols; col++) {
