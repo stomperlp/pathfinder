@@ -9,7 +9,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GraphicsHandler extends JFrame{
     
-    IOHandler iOHandler;
+    private IOHandler io;
     private JLabel label;
     private JPanel backgroundPanel;
     private Image backgroundImage;
@@ -17,6 +17,11 @@ public class GraphicsHandler extends JFrame{
     private int rows;     // Number of rows
     private int cols;     // Number of columns
     private int thickness = 2; // Line thickness
+    private int backgroundHeight = 10; //Number of rows the image takes up
+    private int backgroundWidth = 10; //Number of columns the image takes up
+    
+    protected Point dragStart = null;
+    private Point gridOffset = new Point(0, 0);
     protected ArrayList<Polygon> hexlist = new ArrayList<>();
     protected Polygon selectedHex;
 
@@ -28,20 +33,27 @@ public class GraphicsHandler extends JFrame{
     {
         addMouseListener(new MouseAdapter() 
 		{ 
-			public void mouseClicked(MouseEvent e) 
+			public void mousePressed(MouseEvent e) 
 			{ 
-				iOHandler.mouseEvent(e);
+				io.mousePressed(e);
 			} 
+
+            public void mouseReleased(MouseEvent e) 
+            {
+                io.mouseReleased(e);
+            }
 		});
+
+        
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
                 Point translatedPoint = SwingUtilities.convertPoint(
                     e.getComponent(), 
                     e.getPoint(), 
-                    backgroundPanel // Your drawing panel
+                    backgroundPanel 
                 );
-                iOHandler.mouseMoved(new MouseEvent(
+                io.mouseMoved(new MouseEvent(
                     backgroundPanel, 
                     e.getID(), 
                     e.getWhen(), 
@@ -52,12 +64,16 @@ public class GraphicsHandler extends JFrame{
                     e.isPopupTrigger()
                 ));
             }
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                io.mouseDragged(e);
+            }
         });
     }
 
     public GraphicsHandler() 
     {
-        iOHandler = new IOHandler(this);
+        io = new IOHandler(this);
         setTitle("Resizable Window Example");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400); // Initial size
@@ -87,8 +103,8 @@ public class GraphicsHandler extends JFrame{
                 // Calculate starting position to center the grid
                 // (int) (getHeight() / 2 - (rows * hexHeight * 0.75) / 2);
                 // (int) (getWidth() / 2 - (cols * hexWidth) / 2); 
-                int startX = 0;
-                int startY = 0;
+                double startX = (double)gridOffset.x % (1.75*hexWidth);
+                double startY = (double)gridOffset.y % (0.85*hexHeight);
                 hexlist.clear();
                 for (int row = 0; row < rows; row++) {
                     for (int col = 0; col < cols; col++) {
@@ -105,9 +121,7 @@ public class GraphicsHandler extends JFrame{
                     }
                 }
 
-                System.out.println(hexlist.size());
-
-                if (selectedHex != null) {
+                if (selectedHex != null && dragStart == null) {
                     g2d = (Graphics2D) g.create();
                     try {
                         g2d.setStroke(new BasicStroke(thickness+2));
@@ -119,7 +133,7 @@ public class GraphicsHandler extends JFrame{
                 }
             }
         };
-        contentPanel.setOpaque(false);
+        GridPanel.setOpaque(false);
         //contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         backgroundPanel = new JPanel(new BorderLayout()) {
@@ -127,25 +141,20 @@ public class GraphicsHandler extends JFrame{
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 if (backgroundImage != null) {
-                    // Scale image to fit panel while maintaining aspect ratio
-                    int panelWidth = getWidth();
-                    int panelHeight = getHeight();
+                    // Scale image to fit the grid
+                    double hexWidth = Math.sqrt(3) * hexSize;
+                    double hexHeight = 2 * hexSize;
                     
                     double imageRatio = (double) backgroundImage.getWidth(null) / backgroundImage.getHeight(null);
-                    double panelRatio = (double) panelWidth / panelHeight;
+                    double formatRatio = (double) backgroundWidth / backgroundHeight;
                     
                     int drawWidth, drawHeight;
                     
-                    if (panelRatio > imageRatio) {
-                        drawHeight = panelHeight;
-                        drawWidth = (int) (drawHeight * imageRatio);
-                    } else {
-                        drawWidth = panelWidth;
-                        drawHeight = (int) (drawWidth / imageRatio);
-                    }
+                    drawHeight = (int) hexHeight * backgroundHeight;
+                    drawWidth = (int) (drawHeight * imageRatio * formatRatio);
                     
-                    int x = (panelWidth - drawWidth) / 2;
-                    int y = (panelHeight - drawHeight) / 2;
+                    int x = (int) ((hexWidth * backgroundWidth - drawWidth) / 2 + gridOffset.getX());
+                    int y = (int) ((hexHeight * backgroundHeight - drawHeight) / 2 + gridOffset.getY());
                     
                     g.drawImage(backgroundImage, x, y, drawWidth, drawHeight, this);
                 }
@@ -231,13 +240,25 @@ public class GraphicsHandler extends JFrame{
     }
 
     public void drawSelectedTile(Polygon hex) {
-        // Need to trigger a repaint rather than trying to draw directly
-        selectedHex = hex; // Store the selected hexagon
+        selectedHex = hex;
         repaint();
     }
     
-    // Then in your paintComponent, after drawing all hexagons:
-    
+    public void drag(MouseEvent e) {
+        if (dragStart != null) {
+            // Calculate drag distance
+            int dx = e.getX() - dragStart.x;
+            int dy = e.getY() - dragStart.y;
+            
+            // Update grid offset
+            gridOffset.translate(dx, dy);
+            
+            // Update drag start point for next movement
+            dragStart = e.getPoint();
+            System.out.println(gridOffset);
+            repaint();
+        }
+    }    
 
     public void setHexSize(int size) {
         this.hexSize = size;

@@ -1,0 +1,10 @@
+25.4.25
+v0.0.3
+
+- Hexagon Grid fertig gestellt
+- Maus Tracker eingefügt
+- Tile auf dem die maus ist wird Selected und Gehighlighted
+  - hat lange nicht funktioniert, da ich Graphics2D falsch verstanden habe und 
+    - das G2D object wird nur innerhalb der repaint methode genutzt und muss immer neu erstellt werden, da es beim speichern zu memory leaks führt
+  - Maus position war offset, weil die maus auf dem fenster liegt und das panel innerhalb dessen, also ist die position um die dicke des rahmen verschoben.
+    Das ist auch gefixt 
