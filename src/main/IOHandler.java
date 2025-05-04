@@ -16,6 +16,8 @@ public class IOHandler extends MouseAdapter{
 	public IOHandler(GraphicsHandler gh){
 		this.gh = gh;
 	}
+
+	//Raw inputs from listeners
     public void mousePressed(MouseEvent e) 
 	{
 		switch (e.getButton()) 
@@ -61,7 +63,7 @@ public class IOHandler extends MouseAdapter{
 		} else {
 
 		}
-		gh.zoom(notches);
+		gh.zoom(notches, e.getPoint());
 
 			
 	}
@@ -73,7 +75,24 @@ public class IOHandler extends MouseAdapter{
 
 		}
 	}
+	void keyTyped(KeyEvent e) {
 
+	}
+	void keyPressed(KeyEvent e) {
+        switch(e.getKeyChar()) {
+			case 'w' -> WPressed();
+		}
+	}
+	void keyReleased(KeyEvent e) {
+        
+    }
+
+
+
+
+
+
+	//spesific inputs
 	private void LMBPressed(MouseEvent e) {
 		switch (mode) 
 		{
@@ -95,13 +114,27 @@ public class IOHandler extends MouseAdapter{
 
 		}
 	}
+	private void APressed() {
+		
+	}
+	private void DPressed() {
+
+	}
+	private void SPressed() {
+
+	}
+	private void WPressed() {
+
+	}
 	private void MMBReleased() {
 
 	}
 	private void RMBReleased() {
 
 	}
-		
+	
+
+	//Other Methods
 	public void logMousePos(MouseEvent e) {
 		System.out.println("X: " + e.getX() + ", Y: " + e.getY());	
 	}
@@ -126,4 +159,6 @@ public class IOHandler extends MouseAdapter{
 			}
 		}
 	}
+
+    
 }

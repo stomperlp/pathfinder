@@ -14,11 +14,12 @@ public class GraphicsHandler extends JFrame{
     protected JLabel label;
     protected JPanel backgroundPanel;
     protected Image backgroundImage;
-    protected  int hexSize = 40; // Size of each hexagon
-    protected int thickness = 2; // Line thickness
+    protected int hexSize = 40; // Initial zoom
+    protected int thickness = 2; // Hexagon Line thickness
     protected int backgroundRows = 20; //Number of rows the image takes up
     protected int backgroundCols = 20; //Number of columns the image takes up
     protected Point backgroundCenter; 
+    int drawWidth, drawHeight;
 
     protected Point dragStart = null;
     private Point gridOffset = new Point(0, 0);
@@ -30,10 +31,9 @@ public class GraphicsHandler extends JFrame{
     {
 
     }
-    private void mouse() 
+    private void inputListener()
     {
-        addMouseListener(new MouseAdapter() 
-		{ 
+        addMouseListener(new MouseAdapter() { 
 			public void mousePressed(MouseEvent e) 
 			{ 
 				io.mousePressed(e);
@@ -44,8 +44,6 @@ public class GraphicsHandler extends JFrame{
                 io.mouseReleased(e);
             }
 		});
-
-        
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
@@ -73,7 +71,38 @@ public class GraphicsHandler extends JFrame{
         addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                io.mouseWheelMoved(e);
+                Point translatedPoint = SwingUtilities.convertPoint(
+                    e.getComponent(), 
+                    e.getPoint(), 
+                    backgroundPanel 
+                );
+                io.mouseWheelMoved(new MouseWheelEvent(
+                    backgroundPanel, 
+                    e.getID(), 
+                    e.getWhen(), 
+                    e.getModifiersEx(), 
+                    translatedPoint.x, 
+                    translatedPoint.y, 
+                    e.getClickCount(), 
+                    e.isPopupTrigger(), 
+                    e.getScrollType(), 
+                    e.getScrollAmount(), 
+                    e.getWheelRotation()
+                ));
+            }
+        });
+        addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                io.keyTyped(e);
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {
+                io.keyPressed(e);
+            }
+            @Override
+            public void keyReleased(KeyEvent e) {
+                io.keyReleased(e);    
             }
         });
     }
@@ -92,31 +121,33 @@ public class GraphicsHandler extends JFrame{
         JPanel GridPanel = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
+                //stops grid from generation when zoomed out too much
                 if(hexSize < 15) return;
+
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                // Grid Transparency
                 g2d.setComposite(AlphaComposite.SrcOver.derive(0.5f));
-                // Set line thickness
                 g2d.setStroke(new BasicStroke(thickness));
+                hexlist.clear();
                 
                 // Calculate hexagon geometry
                 double hexWidth = Math.sqrt(3) * hexSize;
                 double hexHeight = 2 * hexSize;
 
-                hexlist.clear();
-                int firstVisibleCol = (int) Math.floor(( -gridOffset.x - hexWidth) / (2 * hexWidth));
-                int lastVisibleCol = (int) Math.ceil((getWidth() - gridOffset.x + hexWidth) / hexWidth);
+                int firstVisibleCol = (int) Math.floor(( -gridOffset.x - hexWidth) / (2.5 * hexWidth))-2;
+                int lastVisibleCol = (int) Math.ceil((getWidth() - gridOffset.x + hexWidth) / hexWidth)+2;
                 
-                int firstVisibleRow = (int) Math.floor(( -gridOffset.y - hexHeight) * 2 / hexHeight);
-                int lastVisibleRow = (int) Math.ceil((getHeight() - gridOffset.y + hexHeight) * 2 / hexHeight);
+                int firstVisibleRow = (int) Math.floor(( -gridOffset.y - hexHeight) * 2.5 / hexHeight);
+                int lastVisibleRow = (int) Math.ceil((getHeight() - gridOffset.y + hexHeight) * 2.5 / hexHeight)+2;
                 
                 // Draw the grid
                 for (int row = firstVisibleRow; row <= lastVisibleRow; row++) {
                     for (int col = firstVisibleCol; col <= lastVisibleCol; col++) {
                         
                         double centerX = gridOffset.x + col * hexWidth * Math.sqrt(3);
-                        double centerY = gridOffset.y + row * hexHeight * 0.43;
+                        double centerY = gridOffset.y + row * hexHeight * 0.43; // No clue why 0.43 but don't touch it
                         
                         // Offset every other row
                         if (row % 2 != 0) {
@@ -140,22 +171,19 @@ public class GraphicsHandler extends JFrame{
             }
         };
         GridPanel.setOpaque(false);
-        //contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         backgroundPanel = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 if (backgroundImage != null) {
-                    
+
                     double imageRatio = (double) backgroundImage.getWidth(null) / backgroundImage.getHeight(null);
                     double formatRatio = (double) backgroundCols / backgroundRows;
                     
-                    int drawWidth, drawHeight;
-                    
                     drawHeight = (int) 2 * hexSize * backgroundCols;
                     drawWidth = (int) (drawHeight * imageRatio * formatRatio);
-                    
+
                     int x = (int) gridOffset.getX();
                     int y = (int) gridOffset.getY();
 
@@ -168,7 +196,6 @@ public class GraphicsHandler extends JFrame{
                 }
             }
         };
-        //backgroundPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         label = new JLabel("This window is resizable!", SwingConstants.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 24));
@@ -196,7 +223,7 @@ public class GraphicsHandler extends JFrame{
         // Center the window on screen
         setLocationRelativeTo(null);
         setBackgroundImage();
-        mouse();
+        inputListener();
 
 	}
     public final void setBackgroundImage() {
@@ -206,7 +233,7 @@ public class GraphicsHandler extends JFrame{
 
     private File openFileBrowser() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select a File");
+        fileChooser.setDialogTitle("Select a Background Image");
 
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -264,43 +291,61 @@ public class GraphicsHandler extends JFrame{
             
             // Update grid offset
             gridOffset.translate(dx, dy);
-            outOfBoundsCorrection(dx, dy);
+            outOfBoundsCorrection();
             // Update drag start point for next movement
             dragStart = e.getPoint();
-            System.out.println(gridOffset);
             repaint();
         }
     }    
-    private void outOfBoundsCorrection(int dx, int dy){
-
-        Point upLeftCorner = new Point(0,0);
-        Point upRightCorner = new Point(getWidth(),0);
-        Point downLeftCorner = new Point(0,getHeight());
-        Point downRightCorner = new Point(getWidth(),getHeight());
-
+    private void outOfBoundsCorrection(){
+        // Bound to the left
         if (gridOffset.x > getWidth()) {
             gridOffset.setLocation(getWidth(), gridOffset.y);
         }
-        if (-gridOffset.x > backgroundImage.getWidth(this)) {
-            gridOffset.setLocation(-backgroundImage.getWidth(this), gridOffset.y);
+        // Bound to the right
+        if (-gridOffset.x > drawWidth) {
+            gridOffset.setLocation(-drawWidth, gridOffset.y);
         }
+        // Bound at the top
         if (gridOffset.y > getHeight()) {
             gridOffset.setLocation(gridOffset.x, getHeight());
         }
-        if (-gridOffset.y > backgroundImage.getHeight(this)) {
-            gridOffset.setLocation(gridOffset.x, -backgroundImage.getHeight(this));
+        //Bound at the bottom
+        if (-gridOffset.y > drawHeight) {
+            gridOffset.setLocation(gridOffset.x, -drawHeight);
         }
     }
-    public void zoom(int notches) {
-        if ((notches < 0 && hexSize < 200) || (notches > 0 && hexSize > 10)) {
-            hexSize -= notches*Math.max((hexSize*zoomFactor/20),1);
-        } 
-        thickness = hexSize/30;
-		selectedHex = null;
-        System.out.println(hexSize + "|" + (hexSize/20));
-		repaint();
-    }
 
+    public void zoom(int notches, Point mousePoint) {
+        // Store previous values
+        int prevHexSize = hexSize;
+        double prevZoom = (double)prevHexSize / 40;  // baseHexSize should be your initial hex size
+        
+        // Calculate new hex size with constraints
+        if ((notches < 0 && hexSize < 200) || (notches > 0 && hexSize > 10)) {
+            hexSize -= notches * Math.max((hexSize * zoomFactor / 20), 1);
+        } else {
+            return;  // Don't zoom beyond min/max
+        }
+        
+        // Calculate zoom factors
+        double newZoom = (double)hexSize / 40;
+        
+        if (mousePoint != null) {
+            // Convert mouse point to world coordinates
+            double worldX = (mousePoint.x - gridOffset.x) / prevZoom;
+            double worldY = (mousePoint.y - gridOffset.y) / prevZoom;
+            
+            // Calculate new offset to keep mouse position stable
+            gridOffset.x = mousePoint.x - (int)(worldX * newZoom);
+            gridOffset.y = mousePoint.y - (int)(worldY * newZoom);
+        }
+        
+        thickness = Math.max(1, hexSize / 30);
+        selectedHex = null;
+        outOfBoundsCorrection();
+        repaint();
+    } 
 
     public void setHexSize(int size) {
         this.hexSize = size;
