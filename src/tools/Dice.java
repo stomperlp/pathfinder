@@ -2,13 +2,13 @@ package tools;
 
 import java.util.Random;
 
-public class dice 
+public class Dice 
 {
 	private int numDice;
 	private int numSides;
 	Random rand = new Random();
 
-	public dice(String dice) 
+	public Dice(String dice) 
 	{
 		String[] d = dice.split("d");
 		try 
