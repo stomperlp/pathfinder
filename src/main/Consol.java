@@ -21,8 +21,7 @@ public class Consol extends JTextField {
         }
     }
     private void help() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'help'");
+        
     }
     public boolean isActive() {
         return Active;
