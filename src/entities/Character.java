@@ -1,11 +1,13 @@
 package entities;
 
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 
 public class Character 
 {
+    private Image image;
     private Point location;
     private int maxHealth;
     private int health;
@@ -15,8 +17,9 @@ public class Character
     private int initiative;
     protected ArrayList<Path2D> hexTile = new ArrayList<>();
 
-    public Character(Point location, int maxhealth, int attack, int AC, int speed, int initiative)
+    public Character(Image image, Point location, int maxhealth, int attack, int AC, int speed, int initiative)
     {
+        this.image = image;
         this.location = location;
         this.maxHealth = maxhealth;
         this.health = maxhealth;
@@ -26,6 +29,12 @@ public class Character
         this.initiative = initiative;
     }
 
+    public Image getImage() {
+        return image;
+    }
+    public void setImage() {
+        this.image = image;
+    }
     public Point getLocation() {
         return location;
     }
@@ -74,4 +83,5 @@ public class Character
     public void setHexTile(ArrayList<Path2D> hexTile) {
         this.hexTile = hexTile;
     }
+
 }
