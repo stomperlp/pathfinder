@@ -1,18 +1,22 @@
 package main;
-
+import entities.*;
+import fx.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GraphicsHandler extends JFrame{
     
     private final IOHandler io;
-    protected JLabel label;
     protected JPanel backgroundPanel;
+    protected JPanel gridPanel;
+    protected JPanel contentPanel; 
+    protected JPanel fxPanel;
     protected Consol consol;
     protected Image backgroundImage;
     protected int hexSize = 40; // Initial zoom
@@ -25,8 +29,10 @@ public class GraphicsHandler extends JFrame{
     protected Point dragStart = null;
     private Point gridOffset = new Point(0, 0);
     protected ArrayList<Path2D> hexlist = new ArrayList<>();
+    protected ArrayList<Marker> markers = new ArrayList<>();
     protected Path2D selectedHex;
     private int zoomFactor = 1;
+    protected boolean debugMode = false;
 
     public void start()
     {
@@ -120,7 +126,7 @@ public class GraphicsHandler extends JFrame{
 
         setResizable(true);
 
-        JPanel contentPanel = new JPanel(new BorderLayout()) {
+        contentPanel = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -131,7 +137,7 @@ public class GraphicsHandler extends JFrame{
             }
         };
         contentPanel.setOpaque(false);
-        JPanel gridPanel = new JPanel(new BorderLayout()) {
+        gridPanel = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 //stops grid from generation when zoomed out too much
@@ -184,8 +190,29 @@ public class GraphicsHandler extends JFrame{
             }
         };
         gridPanel.setOpaque(false);
-        backgroundPanel = new JPanel(new BorderLayout()) {
+        fxPanel = new JPanel(new BorderLayout()) {
+            
             @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                for (Marker m: markers) {
+                    if (m.isDebugMarker() != debugMode) continue;
+                    switch (m.getPurpose()) {
+                        case Marker.COORDINATES -> {
+                            g2d.setColor(Color.BLACK);
+                            g2d.setFont(new Font("Arial", Font.BOLD, 18));
+                            g2d.drawString(m.getText(), m.getPoint().x, m.getPoint().y);
+                        }
+                    }
+                }
+            }
+        };
+        fxPanel.setOpaque(false);
+        backgroundPanel = new JPanel(new BorderLayout()) {
+        @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 if (backgroundImage != null) {
@@ -208,30 +235,13 @@ public class GraphicsHandler extends JFrame{
                 }
             }
         };
-        
         consol = new Consol();
         consol.setGraphicsHandler(this);
-    
-        label = new JLabel("This window is resizable!", SwingConstants.CENTER);
-        label.setFont(new Font("Arial", Font.BOLD, 24));
-        label.setBorder(BorderFactory.createEmptyBorder(50, 20, 50, 20));
         
-        // Add a component that shows the current window size
-        JLabel sizeLabel = new JLabel("Current size: " + getWidth() + " x " + getHeight());
-        sizeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        //sizeLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 10));
-        contentPanel.add(sizeLabel, BorderLayout.SOUTH);
-        
-        // Add component listener to update size label when resized
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                sizeLabel.setText("Current size: " + getWidth() + " x " + getHeight());
-            }
-        });
         backgroundPanel.add(contentPanel);
-        backgroundPanel.add(gridPanel);
+        contentPanel.add(gridPanel);
         backgroundPanel.add(consol, BorderLayout.SOUTH);
+        gridPanel.add(fxPanel);
         add(backgroundPanel);
         
         // Center the window on screen
@@ -251,7 +261,6 @@ public class GraphicsHandler extends JFrame{
             backgroundPanel.add(consol, BorderLayout.SOUTH);
             consol.requestFocusInWindow();
         }
-        System.out.println(consol.isActive());
         consol.setText("");
         revalidate();
         repaint();
@@ -263,32 +272,22 @@ public class GraphicsHandler extends JFrame{
             this.backgroundPanel.repaint();
         }
     }
-
     private File openFileBrowser() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select an Image");
 
-
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
             "PNG Images (*.png)", "png");
         fileChooser.setFileFilter(filter);
-        
         // Disable the "All files" option
         fileChooser.setAcceptAllFileFilterUsed(false);
-
         // Show the file chooser dialog
         int returnValue = fileChooser.showOpenDialog(this);
 
-
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            label.setText("Selected file: " + selectedFile.getAbsolutePath());
             return selectedFile;
-        } 
-        else {
-            label.setText("File selection cancelled");
         }
-
         return null;
     }
     private void drawHexagon(Graphics2D g2d, double centerX, double centerY, Color color) {
@@ -310,13 +309,11 @@ public class GraphicsHandler extends JFrame{
         g2d.setColor(color);
         g2d.draw(hex);
     }
-
     public void drawSelectedTile(Path2D hex) {
         selectedHex = hex;
         repaint();
     }
-    
-    public void drag(MouseEvent e) {
+        public void drag(MouseEvent e) {
         if (dragStart != null) {
             // Calculate drag distance
             int dx = e.getX() - dragStart.x;
@@ -348,10 +345,11 @@ public class GraphicsHandler extends JFrame{
             gridOffset.setLocation(gridOffset.x, -drawHeight);
         }
     }
+    public void toggleDebugMode() {
+        debugMode = !debugMode;
+        if (debugMode) {
 
-    public Object toggleDebugMode() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toggleDebugMode'");
+        }
     }
     public void zoom(int notches, Point mousePoint) {
         // Store previous values

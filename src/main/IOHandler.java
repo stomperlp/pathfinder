@@ -1,4 +1,6 @@
 package main;
+import fx.Marker;
+import java.awt.Point;
 import java.awt.event.*;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ public class IOHandler extends MouseAdapter{
 	protected int count = 0;
 	protected int mode = 0;
 	protected boolean shiftDown = false;
+	protected Marker mouseLog;
 
 	public IOHandler(GraphicsHandler gh){
 		this.gh = gh;
@@ -50,7 +53,7 @@ public class IOHandler extends MouseAdapter{
 	
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		//logMousePos(e);
+		if (gh.debugMode) logMousePos(e);
 		checkCurrentHexagon(e);
 	}
 
@@ -60,6 +63,7 @@ public class IOHandler extends MouseAdapter{
 	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		if (gh.debugMode) logMousePos(e);
 		switch (mode) 
 		{
 			case DRAG_MODE -> gh.drag(e);
@@ -84,12 +88,7 @@ public class IOHandler extends MouseAdapter{
 		}
     }
 
-
-
-
-
-
-	//spesific inputs
+	//spesific inputs ----------------------------------------
 	private void LMBPressed(MouseEvent e) {
 		switch (mode) 
 		{
@@ -138,7 +137,12 @@ public class IOHandler extends MouseAdapter{
 
 	//Other Methods
 	public void logMousePos(MouseEvent e) {
-		System.out.println("X: " + e.getX() + ", Y: " + e.getY());	
+		if (mouseLog == null) {
+			mouseLog = new Marker(new Point(0,0), Marker.COORDINATES, true);
+			gh.markers.add(mouseLog);
+		}
+		mouseLog.moveTo(e.getPoint());
+		gh.repaint();
 	}
 
 	public void checkCurrentHexagon(MouseEvent e) {

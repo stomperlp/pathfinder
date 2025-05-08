@@ -16,12 +16,12 @@ public class Consol extends JTextField {
             case "background", ":b" -> gh.setBackgroundImage();
             case "creature", ":c" -> gh.createCreature();
             case "help", ":h" -> help();
-            case "debug", ":bg" -> gh.toggleDebugMode();
+            case "debug", ":d" -> gh.toggleDebugMode();
             default -> {}
         }
     }
     private void help() {
-        
+
     }
     public boolean isActive() {
         return Active;
