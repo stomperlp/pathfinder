@@ -1,7 +1,6 @@
 package main;
-import java.awt.Polygon;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 
 
@@ -9,14 +8,17 @@ public class IOHandler extends MouseAdapter{
 	
 	private final int DRAG_MODE = 0;
 
-	protected Polygon currentHexagon;
+	protected Path2D currentHexagon;
 	protected GraphicsHandler gh;
 	protected int count = 0;
 	protected int mode = 0;
+	protected boolean shiftDown = false;
 
 	public IOHandler(GraphicsHandler gh){
 		this.gh = gh;
 	}
+
+	//Raw inputs from listeners
     public void mousePressed(MouseEvent e) 
 	{
 		switch (e.getButton()) 
@@ -51,15 +53,43 @@ public class IOHandler extends MouseAdapter{
 		//logMousePos(e);
 		checkCurrentHexagon(e);
 	}
+
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		int notches = e.getWheelRotation();
+		gh.zoom(notches, e.getPoint());
+	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		switch (mode) 
 		{
 			case DRAG_MODE -> gh.drag(e);
-
 		}
 	}
+	void keyTyped(KeyEvent e) {
 
+        switch(e.getKeyCode()) {
+		}
+	}
+	void keyPressed(KeyEvent e) {
+        switch(e.getKeyCode()) {
+			case 'W' -> WPressed();
+			case KeyEvent.SHIFT_DOWN_MASK -> shiftDown = true;
+			case KeyEvent.VK_ENTER -> enterPressed();
+		}
+	}
+	void keyReleased(KeyEvent e) {
+        
+        switch(e.getKeyCode()) {
+			case 16 -> shiftDown = false;
+		}
+    }
+
+
+
+
+
+
+	//spesific inputs
 	private void LMBPressed(MouseEvent e) {
 		switch (mode) 
 		{
@@ -81,17 +111,32 @@ public class IOHandler extends MouseAdapter{
 
 		}
 	}
+	private void APressed() {
+		
+	}
+	private void DPressed() {
+
+	}
+	private void SPressed() {
+
+	}
+	private void enterPressed() {
+		gh.toggleConsol();
+		System.out.println("[ENTER PRESSED]");
+	}
+	private void WPressed() {
+
+		System.out.println("[w]");
+	}
 	private void MMBReleased() {
 
 	}
 	private void RMBReleased() {
 
 	}
-
-
-
-
 	
+
+	//Other Methods
 	public void logMousePos(MouseEvent e) {
 		System.out.println("X: " + e.getX() + ", Y: " + e.getY());	
 	}
@@ -104,10 +149,10 @@ public class IOHandler extends MouseAdapter{
 				return;
 			}
 		}
-		ArrayList<Polygon> hexlist = gh.getHexlist();
+		ArrayList<Path2D> hexlist = gh.getHexlist();
 
 
-		for(Polygon hex : hexlist)
+		for(Path2D hex : hexlist)
 		{
 			if(hex.contains(e.getPoint()))
 			{
@@ -116,4 +161,6 @@ public class IOHandler extends MouseAdapter{
 			}
 		}
 	}
+
+    
 }
