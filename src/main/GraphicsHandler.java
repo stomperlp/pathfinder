@@ -13,6 +13,7 @@ public class GraphicsHandler extends JFrame{
     private final IOHandler io;
     protected JLabel label;
     protected JPanel backgroundPanel;
+    protected Consol consol;
     protected Image backgroundImage;
     protected int hexSize = 40; // Initial zoom
     protected int thickness = 2; // Hexagon Line thickness
@@ -29,7 +30,7 @@ public class GraphicsHandler extends JFrame{
 
     public void start()
     {
-
+        
     }
     private void inputListener()
     {
@@ -91,34 +92,46 @@ public class GraphicsHandler extends JFrame{
                 ));
             }
         });
-        addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                io.keyTyped(e);
+        Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
+            if (event instanceof KeyEvent e && !consol.isActive()) {
+                if (e.getID() == KeyEvent.KEY_PRESSED) {
+                    io.keyPressed(e);
+                }
+                if (e.getID() == KeyEvent.KEY_TYPED) {
+                    io.keyTyped(e);
+                }
+                if (e.getID() == KeyEvent.KEY_RELEASED) {
+                    io.keyReleased(e);
+                }
             }
-            @Override
-            public void keyPressed(KeyEvent e) {
-                io.keyPressed(e);
-            }
-            @Override
-            public void keyReleased(KeyEvent e) {
-                io.keyReleased(e);    
-            }
+        }, AWTEvent.KEY_EVENT_MASK);
+        consol.addActionListener((ActionEvent e) -> {
+            consol.command(consol.getText());
+            toggleConsol();
         });
     }
 
     public GraphicsHandler() 
     {
         io = new IOHandler(this);
-        setTitle("bitti bitti 15 punkte");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("Bitti bitti 15 punkte");
+        setDefaultCloseOperation(0);
         setSize(600, 400); // Initial size
 
         setResizable(true);
 
-        JPanel contentPanel = new JPanel(new BorderLayout(10, 10));
+        JPanel contentPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+
+            }
+        };
         contentPanel.setOpaque(false);
-        JPanel GridPanel = new JPanel(new BorderLayout()) {
+        JPanel gridPanel = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 //stops grid from generation when zoomed out too much
@@ -170,8 +183,7 @@ public class GraphicsHandler extends JFrame{
                 }
             }
         };
-        GridPanel.setOpaque(false);
-        
+        gridPanel.setOpaque(false);
         backgroundPanel = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -196,12 +208,13 @@ public class GraphicsHandler extends JFrame{
                 }
             }
         };
-
+        
+        consol = new Consol();
+        consol.setGraphicsHandler(this);
+    
         label = new JLabel("This window is resizable!", SwingConstants.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 24));
         label.setBorder(BorderFactory.createEmptyBorder(50, 20, 50, 20));
-        
-        contentPanel.add(label, BorderLayout.CENTER);
         
         // Add a component that shows the current window size
         JLabel sizeLabel = new JLabel("Current size: " + getWidth() + " x " + getHeight());
@@ -217,7 +230,8 @@ public class GraphicsHandler extends JFrame{
             }
         });
         backgroundPanel.add(contentPanel);
-        backgroundPanel.add(GridPanel);
+        backgroundPanel.add(gridPanel);
+        backgroundPanel.add(consol, BorderLayout.SOUTH);
         add(backgroundPanel);
         
         // Center the window on screen
@@ -226,14 +240,33 @@ public class GraphicsHandler extends JFrame{
         inputListener();
 
 	}
+
+    public void toggleConsol() {
+        consol.setVisible(!consol.isVisible());
+        consol.toggleActive();
+        if(!consol.isActive()) {
+            backgroundPanel.remove(consol);
+            backgroundPanel.requestFocusInWindow();
+        } else {
+            backgroundPanel.add(consol, BorderLayout.SOUTH);
+            consol.requestFocusInWindow();
+        }
+        System.out.println(consol.isActive());
+        consol.setText("");
+        revalidate();
+        repaint();
+    }
     public final void setBackgroundImage() {
-        this.backgroundImage = new ImageIcon(openFileBrowser().getPath()).getImage();
-        this.backgroundPanel.repaint();
+        File file = openFileBrowser();
+        if (file != null) {
+            this.backgroundImage = new ImageIcon(file.getPath()).getImage();
+            this.backgroundPanel.repaint();
+        }
     }
 
     private File openFileBrowser() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select a Background Image");
+        fileChooser.setDialogTitle("Select an Image");
 
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -316,6 +349,10 @@ public class GraphicsHandler extends JFrame{
         }
     }
 
+    public Object toggleDebugMode() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'toggleDebugMode'");
+    }
     public void zoom(int notches, Point mousePoint) {
         // Store previous values
         int prevHexSize = hexSize;
@@ -357,5 +394,8 @@ public class GraphicsHandler extends JFrame{
     }
     public ArrayList<Path2D> getHexlist() {
         return hexlist;
+    }
+    public void createCreature() {
+
     }
 }

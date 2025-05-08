@@ -12,6 +12,7 @@ public class IOHandler extends MouseAdapter{
 	protected GraphicsHandler gh;
 	protected int count = 0;
 	protected int mode = 0;
+	protected boolean shiftDown = false;
 
 	public IOHandler(GraphicsHandler gh){
 		this.gh = gh;
@@ -54,37 +55,33 @@ public class IOHandler extends MouseAdapter{
 	}
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		//logMousePos(e);
-
 		int notches = e.getWheelRotation();
-
-		if (notches < 0) {
-
-		} else {
-
-		}
 		gh.zoom(notches, e.getPoint());
-
-			
 	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		switch (mode) 
 		{
 			case DRAG_MODE -> gh.drag(e);
-
 		}
 	}
 	void keyTyped(KeyEvent e) {
 
+        switch(e.getKeyCode()) {
+		}
 	}
 	void keyPressed(KeyEvent e) {
-        switch(e.getKeyChar()) {
-			case 'w' -> WPressed();
+        switch(e.getKeyCode()) {
+			case 'W' -> WPressed();
+			case KeyEvent.SHIFT_DOWN_MASK -> shiftDown = true;
+			case KeyEvent.VK_ENTER -> enterPressed();
 		}
 	}
 	void keyReleased(KeyEvent e) {
         
+        switch(e.getKeyCode()) {
+			case 16 -> shiftDown = false;
+		}
     }
 
 
@@ -123,8 +120,13 @@ public class IOHandler extends MouseAdapter{
 	private void SPressed() {
 
 	}
+	private void enterPressed() {
+		gh.toggleConsol();
+		System.out.println("[ENTER PRESSED]");
+	}
 	private void WPressed() {
 
+		System.out.println("[w]");
 	}
 	private void MMBReleased() {
 
