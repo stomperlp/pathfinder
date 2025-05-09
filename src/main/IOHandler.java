@@ -1,10 +1,8 @@
 package main;
-import fx.Marker;
+import fx.*;
 import java.awt.Point;
 import java.awt.event.*;
-import java.awt.geom.Path2D;
 import java.io.File;
-import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -13,12 +11,12 @@ public class IOHandler extends MouseAdapter{
 	
 	private final int DRAG_MODE = 0;
 
-	protected Path2D currentHexagon;
+	protected Hexagon currentHexagon;
 	protected GraphicsHandler gh;
 	protected int count = 0;
 	protected int mode = 0;
 	protected boolean isShiftDown = false;
-	protected  boolean isCtrlDown = false;
+	protected boolean isCtrlDown = false;
 	protected Marker mouseLog;
 
 
@@ -50,11 +48,8 @@ public class IOHandler extends MouseAdapter{
 		switch (e.getButton()) 
 		{
 			case 1 -> LMBPressed(e);
-
 			case 2 -> MMBPressed();
-
 			case 3 -> RMBPressed();
-
 			default -> {}
 		}
 	}
@@ -65,11 +60,8 @@ public class IOHandler extends MouseAdapter{
 		switch (e.getButton()) 
 		{
 			case 1 -> LMBReleased(e);
-
 			case 2 -> MMBReleased();
-
 			case 3 -> RMBReleased();
-
 			default -> {}
 		}
 	}
@@ -77,7 +69,8 @@ public class IOHandler extends MouseAdapter{
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		if (gh.debugMode) logMousePos(e);
-		checkCurrentHexagon(e);
+		currentHexagon = gh.gm.checkCurrentHexagon(e.getPoint(), currentHexagon);
+		gh.drawSelectedTile(currentHexagon);
 	}
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
@@ -98,7 +91,7 @@ public class IOHandler extends MouseAdapter{
 		}
 	}
 	void keyPressed(KeyEvent e) {
-        if (gh.consol.isActive())
+		if (gh.consol.isActive())
 			//Any only active in consol
 			switch(e.getKeyCode()) {
 				case KeyEvent.VK_UP -> gh.consol.arrowUp();
@@ -184,26 +177,6 @@ public class IOHandler extends MouseAdapter{
 		gh.repaint();
 	}
 
-	public void checkCurrentHexagon(MouseEvent e) {
-
-		if (currentHexagon != null) {
-			if(currentHexagon.contains(e.getPoint()) )
-			{
-				return;
-			}
-		}
-		ArrayList<Path2D> hexlist = gh.getHexlist();
-
-
-		for(Path2D hex : hexlist)
-		{
-			if(hex.contains(e.getPoint()))
-			{
-				currentHexagon = hex;
-				gh.drawSelectedTile(currentHexagon);
-			}
-		}
-	}
 
     
 }

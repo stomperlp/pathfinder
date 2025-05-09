@@ -1,8 +1,9 @@
 package entities;
 
+import fx.Hexagon;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class Character 
@@ -15,7 +16,7 @@ public class Character
     public static final int GARGANTUAN = 3;
 
     private Image image;
-    private Point location;
+    private Hexagon tile;
     private int maxHealth;
     private int health;
     private int attack;
@@ -24,10 +25,12 @@ public class Character
     private int initiative;
     private int size;
     protected ArrayList<Path2D> hexTile = new ArrayList<>();
+    private Point2D location;
 
-    public Character(Image image, Point location, int maxhealth, int attack, int AC, int speed, int initiative, int size)
+    public Character(Image image, Hexagon tile, Point2D location, int maxhealth, int attack, int AC, int speed, int initiative, int size)
     {
         this.image = image;
+        this.tile = tile;
         this.location = location;
         this.maxHealth = maxhealth;
         this.health = maxhealth;
@@ -59,11 +62,18 @@ public class Character
     public void setImage(Image image) {
         this.image = image;
     }
-    public Point getLocation() {
+    public Hexagon getTile() {
+        return tile;
+    }
+    public void setTile(Hexagon tile) {
+        this.tile = tile;
+    }
+    public Point2D getLocation() {
+        if (tile != null) location = tile.getCenter();
         return location;
     }
-    public void setLocation(Point location) {
-        this.location = location;
+    public void setLocation(Point2D p) {
+        this.location = p;
     }
     public int getMaxHealth() {
         return maxHealth;

@@ -5,11 +5,10 @@ import entities.Character;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import tools.Calc;
 
 public class GraphicsHandler extends JFrame{
     
@@ -29,12 +28,13 @@ public class GraphicsHandler extends JFrame{
 
     protected Point dragStart = null;
     private Point gridOffset = new Point(0, 0);
-    protected ArrayList<Path2D> hexlist = new ArrayList<>();
+    protected ArrayList<Hexagon> hexlist = new ArrayList<>();
     protected ArrayList<Marker> markers = new ArrayList<>();
     protected ArrayList<Character> characters = new ArrayList<>();
-    protected Path2D selectedHex;
+    protected Hexagon selectedHex;
     private int zoomFactor = 1;
     protected boolean debugMode = false;
+    protected GameHandler gm;
 
     public void start()
     {
@@ -118,6 +118,7 @@ public class GraphicsHandler extends JFrame{
     public GraphicsHandler() 
     {
         io = new IOHandler(this);
+        gm = new GameHandler(this);
         setTitle("Bitti bitti 15 punkte");
         setDefaultCloseOperation(0);
         setSize(600, 400); // Initial size
@@ -131,7 +132,22 @@ public class GraphicsHandler extends JFrame{
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 for (Character c : characters) {
-                    g2d.drawImage(c.getImage(), c.getLocation().x, c.getLocation().y, (int)(c.getDrawSize()*hexSize), (int)(c.getDrawSize()*hexSize), this);
+                    Hexagon h = c.getTile();
+                    c.setTile(null);
+                    for(Hexagon hex : hexlist) {
+                        if (h.getGridPoint() == hex.getGridPoint()) {
+                            c.setTile(hex);
+                            break;
+                        }
+                    }
+                    if (c.getTile() == null) continue;
+                    g2d.drawImage(
+                        c.getImage(), 
+                        (int) c.getLocation().getX(), 
+                        (int) c.getLocation().getY(), 
+                        (int)(c.getDrawSize()*hexSize), 
+                        (int)(c.getDrawSize()*hexSize), this
+                    );
                 }
 
             }
@@ -172,8 +188,12 @@ public class GraphicsHandler extends JFrame{
                         if (row % 2 != 0) {
                             centerX += hexWidth * Math.sqrt(3)/2;
                         }
-                        
-                        drawHexagon(g2d, centerX, centerY, Color.BLACK);
+                        Point2D p = new Point2D.Double(centerX, centerY);
+                        Hexagon hex = new Hexagon(p, hexSize, new Point(row, col));
+        
+                        g2d.setColor(Color.BLACK);
+                        g2d.draw(hex.getShape());
+                        hexlist.add(hex);
                     }
                 }
 
@@ -182,7 +202,7 @@ public class GraphicsHandler extends JFrame{
                     try {
                         g2d.setStroke(new BasicStroke(thickness+2));
                         g2d.setColor(Color.RED);
-                        g2d.draw(selectedHex);
+                        g2d.draw(selectedHex.getShape());
                     } finally {
                         g2d.dispose();
                     }
@@ -209,7 +229,7 @@ public class GraphicsHandler extends JFrame{
                         case Marker.DICE -> {
                             int digits = m.getText().length();
                             g2d.setColor(Color.RED);
-                            g2d.fillRect(m.getPoint().x, m.getPoint().y, 16 +16*digits, 16+16*digits);
+                            g2d.fillRoundRect(m.getPoint().x, m.getPoint().y, 16 +16*digits, 16+16*digits, digits*2, digits*2);
 
                             g2d.setColor(Color.BLACK);
                             g2d.setFont(new Font("Arial", Font.BOLD, 32));
@@ -221,6 +241,21 @@ public class GraphicsHandler extends JFrame{
                             g2d.drawString(m.getText(), getWidth()/2, getHeight()/2);
                         }
                     }
+                }
+                for (Hexagon h : hexlist) {
+                    if (!debugMode) break;
+                    g2d.setColor(Color.RED);
+                    g2d.fillOval((int)h.getCenter().getX(), (int)h.getCenter().getY(), hexSize/10, hexSize/10);
+                    g2d.setColor(Color.BLACK);
+                    g2d.setFont(new Font("Arial", Font.BOLD, hexSize/3));
+                    String gridPoint = "[" + h.getGridPoint().x + "|" + h.getGridPoint().y + "]";
+                    int digits = gridPoint.length();
+                    g2d.drawString(
+                        gridPoint, 
+                        (int)h.getCenter().getX()-hexSize/3 - 2*digits, 
+                        (int)h.getCenter().getY()+hexSize/5
+                    );
+
                 }
             }
         };
@@ -287,27 +322,7 @@ public class GraphicsHandler extends JFrame{
             this.backgroundPanel.repaint();
         }
     }
-    
-    private void drawHexagon(Graphics2D g2d, double centerX, double centerY, Color color) {
-        Path2D hex = new Path2D.Double();
-        for (int i = 0; i < 6; i++) {
-            double angle = 2 * Math.PI / 6 * i;
-            double x = centerX + hexSize * Math.cos(angle);
-            double y = centerY + hexSize * Math.sin(angle);
-            if (i == 0) {
-                hex.moveTo(x, y);
-            } else {
-                hex.lineTo(x, y);
-            }
-        }
-        hex.closePath();
-        
-        this.hexlist.add(hex);
-        
-        g2d.setColor(color);
-        g2d.draw(hex);
-    }
-    public void drawSelectedTile(Path2D hex) {
+    public void drawSelectedTile(Hexagon hex) {
         selectedHex = hex;
         repaint();
     }
@@ -385,15 +400,22 @@ public class GraphicsHandler extends JFrame{
         this.thickness = thickness;
         repaint();
     }
-    public ArrayList<Path2D> getHexlist() {
+    public ArrayList<Hexagon> getHexlist() {
         return hexlist;
     }
     public void createCharacter() {
-        characters.add(
-            new Character(
-                new ImageIcon(io.openFileBrowser().getPath()).getImage(),
-                Calc.calcCenter(selectedHex), 
-                0, 0, 0, 0, 0, Character.NORMAL)
+        Point2D pos;
+        if (selectedHex == null) {
+            pos = new Point(getWidth()/2,getHeight()/2);
+        } else {
+            pos = selectedHex.getCenter();
+        }
+        Character c = new Character(
+            new ImageIcon(io.openFileBrowser().getPath()).getImage(),
+            selectedHex, pos,
+            0, 0, 0, 0, 0, Character.NORMAL
         );
+        System.out.println("gg");
+        characters.add(c);
     }
 }
