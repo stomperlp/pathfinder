@@ -24,7 +24,7 @@ public class Consol extends JTextField {
         switch(inputSegments[0]) {
             case "quit", ":q" -> System.exit(0);
             case "background", ":b" -> gh.setBackgroundImage();
-            case "creature", ":c" -> gh.createCreature();
+            case "character", ":c" -> gh.createCharacter();
             case "help", ":h" -> help(inputSegments[1]);
             case "debug", ":d" -> gh.toggleDebugMode();
             case "roll", ":r" -> roll(inputSegments);

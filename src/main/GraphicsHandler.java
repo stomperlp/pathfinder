@@ -1,5 +1,7 @@
 package main;
 import fx.*;
+import entities.Character;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Path2D;
@@ -7,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import tools.Calc;
 
 public class GraphicsHandler extends JFrame{
     
@@ -28,6 +31,7 @@ public class GraphicsHandler extends JFrame{
     private Point gridOffset = new Point(0, 0);
     protected ArrayList<Path2D> hexlist = new ArrayList<>();
     protected ArrayList<Marker> markers = new ArrayList<>();
+    protected ArrayList<Character> characters = new ArrayList<>();
     protected Path2D selectedHex;
     private int zoomFactor = 1;
     protected boolean debugMode = false;
@@ -126,7 +130,9 @@ public class GraphicsHandler extends JFrame{
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
+                for (Character c : characters) {
+                    g2d.drawImage(c.getImage(), c.getLocation().x, c.getLocation().y, (int)(c.getDrawSize()*hexSize), (int)(c.getDrawSize()*hexSize), this);
+                }
 
             }
         };
@@ -275,30 +281,13 @@ public class GraphicsHandler extends JFrame{
         repaint();
     }
     public final void setBackgroundImage() {
-        File file = openFileBrowser();
+        File file = io.openFileBrowser();
         if (file != null) {
             this.backgroundImage = new ImageIcon(file.getPath()).getImage();
             this.backgroundPanel.repaint();
         }
     }
-    private File openFileBrowser() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select an Image");
-
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-            "PNG Images (*.png)", "png");
-        fileChooser.setFileFilter(filter);
-        // Disable the "All files" option
-        fileChooser.setAcceptAllFileFilterUsed(false);
-        // Show the file chooser dialog
-        int returnValue = fileChooser.showOpenDialog(this);
-
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            return selectedFile;
-        }
-        return null;
-    }
+    
     private void drawHexagon(Graphics2D g2d, double centerX, double centerY, Color color) {
         Path2D hex = new Path2D.Double();
         for (int i = 0; i < 6; i++) {
@@ -399,7 +388,12 @@ public class GraphicsHandler extends JFrame{
     public ArrayList<Path2D> getHexlist() {
         return hexlist;
     }
-    public void createCreature() {
-
+    public void createCharacter() {
+        characters.add(
+            new Character(
+                new ImageIcon(io.openFileBrowser().getPath()).getImage(),
+                Calc.calcCenter(selectedHex), 
+                0, 0, 0, 0, 0, Character.NORMAL)
+        );
     }
 }

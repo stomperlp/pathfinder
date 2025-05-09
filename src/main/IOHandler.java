@@ -3,7 +3,10 @@ import fx.Marker;
 import java.awt.Point;
 import java.awt.event.*;
 import java.awt.geom.Path2D;
+import java.io.File;
 import java.util.ArrayList;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class IOHandler extends MouseAdapter{
@@ -23,6 +26,24 @@ public class IOHandler extends MouseAdapter{
 		this.gh = gh;
 	}
 
+	public File openFileBrowser() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select an Image");
+
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+            "PNG Images (*.png)", "png");
+        fileChooser.setFileFilter(filter);
+        // Disable the "All files" option
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        // Show the file chooser dialog
+        int returnValue = fileChooser.showOpenDialog(gh);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            return selectedFile;
+        }
+        return null;
+    }
 	//Raw inputs from listeners
     public void mousePressed(MouseEvent e) 
 	{

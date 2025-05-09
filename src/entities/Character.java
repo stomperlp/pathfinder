@@ -7,6 +7,13 @@ import java.util.ArrayList;
 
 public class Character 
 {
+    public static final int TINY = -2;
+    public static final int SMALL = -1;
+    public static final int NORMAL = 0;
+    public static final int LARGE = 1;
+    public static final int HUGE = 2;
+    public static final int GARGANTUAN = 3;
+
     private Image image;
     private Point location;
     private int maxHealth;
@@ -15,9 +22,10 @@ public class Character
     private int AC;
     private int speed;
     private int initiative;
+    private int size;
     protected ArrayList<Path2D> hexTile = new ArrayList<>();
 
-    public Character(Image image, Point location, int maxhealth, int attack, int AC, int speed, int initiative)
+    public Character(Image image, Point location, int maxhealth, int attack, int AC, int speed, int initiative, int size)
     {
         this.image = image;
         this.location = location;
@@ -25,14 +33,30 @@ public class Character
         this.health = maxhealth;
         this.attack = attack;
         this.AC = AC;
+
         this.speed = speed;
         this.initiative = initiative;
+        this.size = size;
     }
 
     public Image getImage() {
         return image;
     }
-    public void setImage() {
+    public int getSize() {
+        return size;
+    }
+    public double getDrawSize() {
+        return switch (size) {
+            case TINY -> 1;
+            case SMALL -> 1.5;
+            case NORMAL -> Math.sqrt(3);
+            case LARGE -> 3/4;
+            case HUGE -> 2;
+            case GARGANTUAN -> 2;
+            default -> 0;
+        };
+    }
+    public void setImage(Image image) {
         this.image = image;
     }
     public Point getLocation() {
