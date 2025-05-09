@@ -1,12 +1,10 @@
 package main;
-import entities.*;
 import fx.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.util.ArrayList;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -99,7 +97,7 @@ public class GraphicsHandler extends JFrame{
             }
         });
         Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
-            if (event instanceof KeyEvent e && !consol.isActive()) {
+            if (event instanceof KeyEvent e) {
                 if (e.getID() == KeyEvent.KEY_PRESSED) {
                     io.keyPressed(e);
                 }
@@ -111,10 +109,6 @@ public class GraphicsHandler extends JFrame{
                 }
             }
         }, AWTEvent.KEY_EVENT_MASK);
-        consol.addActionListener((ActionEvent e) -> {
-            consol.command(consol.getText());
-            toggleConsol();
-        });
     }
 
     public GraphicsHandler() 
@@ -266,6 +260,7 @@ public class GraphicsHandler extends JFrame{
 	}
 
     public void toggleConsol() {
+        System.out.println("CONSOL");
         consol.setVisible(!consol.isVisible());
         consol.toggleActive();
         if(!consol.isActive()) {

@@ -14,8 +14,10 @@ public class IOHandler extends MouseAdapter{
 	protected GraphicsHandler gh;
 	protected int count = 0;
 	protected int mode = 0;
-	protected boolean shiftDown = false;
+	protected boolean isShiftDown = false;
+	protected  boolean isCtrlDown = false;
 	protected Marker mouseLog;
+
 
 	public IOHandler(GraphicsHandler gh){
 		this.gh = gh;
@@ -75,16 +77,28 @@ public class IOHandler extends MouseAdapter{
 		}
 	}
 	void keyPressed(KeyEvent e) {
-        switch(e.getKeyCode()) {
+        if (gh.consol.isActive())
+			//Any only active in consol
+			switch(e.getKeyCode()) {
+				case KeyEvent.VK_UP -> gh.consol.arrowUp();
+                case KeyEvent.VK_DOWN -> gh.consol.arrowDown();
+			}
+		else switch(e.getKeyCode()) {
+			//Any only active out of consol
 			case 'W' -> WPressed();
-			case KeyEvent.SHIFT_DOWN_MASK -> shiftDown = true;
-			case KeyEvent.VK_ENTER -> enterPressed();
+		}
+		//Any always active
+		switch(e.getKeyCode()) {
+			case KeyEvent.SHIFT_DOWN_MASK -> isShiftDown = true;
+			case KeyEvent.CTRL_DOWN_MASK -> isCtrlDown = true;
+			case KeyEvent.VK_ENTER -> enterPressed(e);
 		}
 	}
 	void keyReleased(KeyEvent e) {
         
         switch(e.getKeyCode()) {
-			case 16 -> shiftDown = false;
+			case KeyEvent.SHIFT_DOWN_MASK -> isShiftDown = false;
+			case KeyEvent.CTRL_DOWN_MASK -> isCtrlDown = false;
 		}
     }
 
@@ -119,9 +133,13 @@ public class IOHandler extends MouseAdapter{
 	private void SPressed() {
 
 	}
-	private void enterPressed() {
-		gh.toggleConsol();
-		System.out.println("[ENTER PRESSED]");
+	private void enterPressed(KeyEvent e) {
+		e.consume();
+		if (e.isControlDown()) { 
+			gh.toggleConsol();
+			return;
+		}
+		if(gh.consol.isActive()) gh.consol.command(gh.consol.getText());
 	}
 	private void WPressed() {
 

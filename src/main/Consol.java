@@ -1,10 +1,7 @@
 package main;
 
 import fx.Marker;
-import java.awt.AWTEvent;
 import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTextField;
@@ -20,54 +17,7 @@ public class Consol extends JTextField {
     
     public Consol() {
         super();
-        Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
-            if (event instanceof KeyEvent e) {
-                switch(e.getKeyCode())
-                {
-                    case KeyEvent.VK_UP -> 
-                    {
-                        if (!commandHistory.isEmpty())
-                        {
-                            if(historyIndex == commandHistory.size())
-                            {
-                                currentInput = getText();
-                            }
-                            if(historyIndex > 0) 
-                            {
-                                historyIndex--;
-                                setText(commandHistory.get(historyIndex));
-                                setCaretPosition(currentInput.length());
-                            }
-                        }
-                    }
-                    case KeyEvent.VK_DOWN -> 
-                    {
-                        if (historyIndex < commandHistory.size() - 1)
-                        {
-                            historyIndex++;
-                            setText(commandHistory.get(historyIndex));
-                        } 
-                        else if (historyIndex == commandHistory.size() - 1) {
-                            historyIndex = commandHistory.size();
-                            setText(currentInput);
-                        }
-                        setCaretPosition(currentInput.length());
-                    }
-                    default -> 
-                    {
-                        if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_ENTER) {
-                            String input = getText();
-                            commandHistory.add(input);
-                            historyIndex = commandHistory.size();
-                            command(input);
-                            setText("");
-                            currentInput = "";
-                            break;
-                        }
-                    }
-                }
-            }
-        }, AWTEvent.KEY_EVENT_MASK);
+        
     }
     public void command(String input) {
         String[] inputSegments = input.split(" ");
@@ -75,13 +25,17 @@ public class Consol extends JTextField {
             case "quit", ":q" -> System.exit(0);
             case "background", ":b" -> gh.setBackgroundImage();
             case "creature", ":c" -> gh.createCreature();
-            case "help", ":h" -> help();
+            case "help", ":h" -> help(inputSegments[1]);
             case "debug", ":d" -> gh.toggleDebugMode();
             case "roll", ":r" -> roll(inputSegments);
             default -> {}
         }
+        commandHistory.add(input);
+        historyIndex = commandHistory.size();
+        setText("");
+        currentInput = "";
     }
-    private void help() {
+    private void help(String arg) {
 
     }
     private void roll(String[] inputSegments) {
@@ -117,5 +71,32 @@ public class Consol extends JTextField {
     }
     public void toggleActive() {
         Active = !Active;
+    }
+    public void arrowUp() {
+        if (!gh.consol.commandHistory.isEmpty())
+        {
+            if(historyIndex == commandHistory.size())
+            {
+                currentInput = getText();
+            }
+            if(historyIndex > 0) 
+            {
+                historyIndex--;
+                setText(commandHistory.get(historyIndex));
+                setCaretPosition(currentInput.length());
+            }
+        }
+    }
+    public void arrowDown() {
+        if (historyIndex < commandHistory.size() - 1)
+        {
+            historyIndex++;
+            setText(commandHistory.get(historyIndex));
+        } 
+        else if (historyIndex == commandHistory.size() - 1) {
+            historyIndex = commandHistory.size();
+            setText(currentInput);
+        }
+        setCaretPosition(currentInput.length());
     }
 }
