@@ -12,7 +12,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import tools.Calc;
 
 public class GraphicsHandler extends JFrame{
-    
+
     private final IOHandler io;
     protected JPanel backgroundPanel;
     protected JPanel gridPanel;

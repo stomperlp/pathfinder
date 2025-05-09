@@ -18,7 +18,7 @@ public class IOHandler extends MouseAdapter{
 	protected int count = 0;
 	protected int mode = 0;
 	protected boolean isShiftDown = false;
-	protected  boolean isCtrlDown = false;
+	protected boolean isCtrlDown = false;
 	protected Marker mouseLog;
 
 
@@ -26,6 +26,7 @@ public class IOHandler extends MouseAdapter{
 		this.gh = gh;
 	}
 
+	// File browser for opening images
 	public File openFileBrowser() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select an Image");
@@ -58,7 +59,6 @@ public class IOHandler extends MouseAdapter{
 			default -> {}
 		}
 	}
-
 
 	public void mouseReleased(MouseEvent e) 
 	{
@@ -93,16 +93,16 @@ public class IOHandler extends MouseAdapter{
 		}
 	}
 	void keyTyped(KeyEvent e) {
+		switch(e.getKeyCode()) {
 
-        switch(e.getKeyCode()) {
 		}
 	}
 	void keyPressed(KeyEvent e) {
-        if (gh.consol.isActive())
+		if (gh.consol.isActive())
 			//Any only active in consol
 			switch(e.getKeyCode()) {
 				case KeyEvent.VK_UP -> gh.consol.arrowUp();
-                case KeyEvent.VK_DOWN -> gh.consol.arrowDown();
+				case KeyEvent.VK_DOWN -> gh.consol.arrowDown();
 			}
 		else switch(e.getKeyCode()) {
 			//Any only active out of consol
@@ -116,19 +116,17 @@ public class IOHandler extends MouseAdapter{
 		}
 	}
 	void keyReleased(KeyEvent e) {
-        
-        switch(e.getKeyCode()) {
+		switch(e.getKeyCode()) {
 			case KeyEvent.SHIFT_DOWN_MASK -> isShiftDown = false;
 			case KeyEvent.CTRL_DOWN_MASK -> isCtrlDown = false;
 		}
     }
 
-	//spesific inputs ----------------------------------------
+	//spesific inputs ----------------------------------------------
 	private void LMBPressed(MouseEvent e) {
 		switch (mode) 
 		{
 			case DRAG_MODE -> gh.dragStart = e.getPoint();
-
 		}
 	}
 	
@@ -142,7 +140,6 @@ public class IOHandler extends MouseAdapter{
 		switch (mode) 
 		{
 			case DRAG_MODE -> gh.dragStart = null;
-
 		}
 	}
 	private void APressed() {
@@ -154,6 +151,8 @@ public class IOHandler extends MouseAdapter{
 	private void SPressed() {
 
 	}
+
+	// If enter is pressed, toggle consol if ctrl is down, else run command
 	private void enterPressed(KeyEvent e) {
 		e.consume();
 		if (e.isControlDown()) { 
@@ -173,8 +172,8 @@ public class IOHandler extends MouseAdapter{
 
 	}
 	
+	//Other Methods ----------------------------------------------
 
-	//Other Methods
 	public void logMousePos(MouseEvent e) {
 		if (mouseLog == null) {
 			mouseLog = new Marker(new Point(0,0), Marker.COORDINATES, true);
@@ -194,7 +193,6 @@ public class IOHandler extends MouseAdapter{
 		}
 		ArrayList<Path2D> hexlist = gh.getHexlist();
 
-
 		for(Path2D hex : hexlist)
 		{
 			if(hex.contains(e.getPoint()))
@@ -204,6 +202,4 @@ public class IOHandler extends MouseAdapter{
 			}
 		}
 	}
-
-    
 }
