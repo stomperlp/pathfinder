@@ -9,7 +9,7 @@ public class Calc {
     public static Point calcCenter(Path2D hex) {
         double left = hex.getCurrentPoint().getX();
         double right = left;
-        double x;
+        double x; 
         double y = 0;
         for (PathIterator i = hex.getPathIterator(null); !i.isDone(); i.next()) {
             Point2D p = hex.getCurrentPoint();

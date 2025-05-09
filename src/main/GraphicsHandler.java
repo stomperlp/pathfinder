@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 public class GraphicsHandler extends JFrame{
-    
+
     private final IOHandler io;
     protected JPanel backgroundPanel;
     protected JPanel gridPanel;

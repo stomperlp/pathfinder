@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 public class GameHandler {
 
+<<<<<<< HEAD
     protected GraphicsHandler gh;
     
     public GameHandler(GraphicsHandler gh){
@@ -32,4 +33,10 @@ public class GameHandler {
         return null;
 	}
     
+=======
+    @Override
+    public void run() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+>>>>>>> 0f54971dbb3d2df5a9f1efda13a1c077b2781c5f
 }
