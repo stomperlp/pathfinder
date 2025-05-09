@@ -176,28 +176,6 @@ public class IOHandler extends MouseAdapter{
 		gh.repaint();
 	}
 
-<<<<<<< HEAD
 
     
-=======
-	public void checkCurrentHexagon(MouseEvent e) {
-
-		if (currentHexagon != null) {
-			if(currentHexagon.contains(e.getPoint()) )
-			{
-				return;
-			}
-		}
-		ArrayList<Path2D> hexlist = gh.getHexlist();
-
-		for(Path2D hex : hexlist)
-		{
-			if(hex.contains(e.getPoint()))
-			{
-				currentHexagon = hex;
-				gh.drawSelectedTile(currentHexagon);
-			}
-		}
-	}
->>>>>>> 0f54971dbb3d2df5a9f1efda13a1c077b2781c5f
 }
