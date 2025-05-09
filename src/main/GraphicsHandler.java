@@ -206,6 +206,20 @@ public class GraphicsHandler extends JFrame{
                             g2d.setFont(new Font("Arial", Font.BOLD, 18));
                             g2d.drawString(m.getText(), m.getPoint().x, m.getPoint().y);
                         }
+                        case Marker.DICE -> {
+                            int digits = m.getText().length();
+                            g2d.setColor(Color.RED);
+                            g2d.fillRect(m.getPoint().x, m.getPoint().y, 16 +16*digits, 16+16*digits);
+
+                            g2d.setColor(Color.BLACK);
+                            g2d.setFont(new Font("Arial", Font.BOLD, 32));
+                            g2d.drawString(m.getText(), m.getPoint().x + 8, m.getPoint().y + 20 + 8*digits);
+                        }
+                        case Marker.DICERESULT -> {
+                            g2d.setColor(Color.BLACK);
+                            g2d.setFont(new Font("Arial", Font.BOLD, 50));
+                            g2d.drawString(m.getText(), getWidth()/2, getHeight()/2);
+                        }
                     }
                 }
             }
@@ -347,9 +361,6 @@ public class GraphicsHandler extends JFrame{
     }
     public void toggleDebugMode() {
         debugMode = !debugMode;
-        if (debugMode) {
-
-        }
     }
     public void zoom(int notches, Point mousePoint) {
         // Store previous values
