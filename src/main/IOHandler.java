@@ -10,6 +10,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class IOHandler extends MouseAdapter{
 	
 	private final int DRAG_MODE = 0;
+	private final int LENGTH_MODE = 1;
+	private final int HITBOX_MODE = 2;
+	private final int MARK_MODE = 3;
 
 	protected Hexagon currentHexagon;
 	protected GraphicsHandler gh;
@@ -18,6 +21,11 @@ public class IOHandler extends MouseAdapter{
 	protected boolean isShiftDown = false;
 	protected boolean isCtrlDown = false;
 	protected Marker mouseLog;
+
+	protected boolean ADown;
+	protected boolean DDown;
+	protected boolean SDown;
+	protected boolean WDown;
 
 
 	public IOHandler(GraphicsHandler gh){
@@ -48,9 +56,14 @@ public class IOHandler extends MouseAdapter{
 	{
 		switch (e.getButton()) 
 		{
-			case 1 -> LMBPressed(e);
-			case 2 -> MMBPressed();
-			case 3 -> RMBPressed();
+			case MouseEvent.BUTTON1 -> {
+				switch (mode) 
+				{
+					case DRAG_MODE -> gh.dragStart = e.getPoint();
+				}
+			}
+			case MouseEvent.BUTTON2 -> MMBPressed();
+			case MouseEvent.BUTTON3 -> RMBPressed();
 			default -> {}
 		}
 	}
@@ -69,13 +82,21 @@ public class IOHandler extends MouseAdapter{
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		if (gh.debugMode) logMousePos(e);
-		currentHexagon = gh.gm.checkCurrentHexagon(e.getPoint(), currentHexagon);
+		currentHexagon = gh.gm.findClosestHexagon(e.getPoint());
 		gh.drawSelectedTile(currentHexagon);
 	}
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int notches = e.getWheelRotation();
-		gh.zoom(notches, e.getPoint());
+		if(isCtrlDown) {
+			int base = gh.consol.getFont().getSize();
+			gh.consol.setFontSize(base-notches);
+
+			gh.revalidate();
+			gh.repaint();
+		} else {
+			gh.zoom(notches, e.getPoint());
+		}
 	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
@@ -99,29 +120,63 @@ public class IOHandler extends MouseAdapter{
 			}
 		else switch(e.getKeyCode()) {
 			//Any only active out of consol
-			case 'W' -> WPressed();
+			case 'W' -> {
+				WDown = true;
+			}
+			case 'A' -> {
+				ADown = true;
+			}
+			case 'S' -> {
+				SDown = true;
+			} 
+			case 'D' -> {
+				DDown = true;
+			}
 		}
 		//Any always active
 		switch(e.getKeyCode()) {
-			case KeyEvent.SHIFT_DOWN_MASK -> isShiftDown = true;
-			case KeyEvent.CTRL_DOWN_MASK -> isCtrlDown = true;
-			case KeyEvent.VK_ENTER -> enterPressed(e);
+			case KeyEvent.VK_SHIFT -> isShiftDown = true;
+			case KeyEvent.VK_CONTROL -> isCtrlDown = true;
+			case KeyEvent.VK_ENTER -> {
+				e.consume();
+				if (isCtrlDown) { 
+					gh.toggleConsol();
+					return;
+				}
+				if(gh.consol.isActive()) gh.consol.command(gh.consol.getText());
+			}
 		}
 	}
 	void keyReleased(KeyEvent e) {
+		if (gh.consol.isActive())
+			//Any only active in consol
+			switch(e.getKeyCode()) {
+				case KeyEvent.VK_UP -> gh.consol.arrowUp();
+				case KeyEvent.VK_DOWN -> gh.consol.arrowDown();
+			}
+		else switch(e.getKeyCode()) {
+			//Any only active out of consol
+			case 'W' -> {
+				WDown = false;
+			}
+			case 'A' -> {
+				ADown = false;
+			}
+			case 'S' -> {
+				SDown = false;
+			}
+			case 'D' -> {
+				DDown = false;       
+			}
+		}
+		//Any Always active
 		switch(e.getKeyCode()) {
-			case KeyEvent.SHIFT_DOWN_MASK -> isShiftDown = false;
-			case KeyEvent.CTRL_DOWN_MASK -> isCtrlDown = false;
+			case KeyEvent.VK_SHIFT -> isShiftDown = false;
+			case KeyEvent.VK_CONTROL -> isCtrlDown = false;
 		}
     }
 
 	//spesific inputs ----------------------------------------------
-	private void LMBPressed(MouseEvent e) {
-		switch (mode) 
-		{
-			case DRAG_MODE -> gh.dragStart = e.getPoint();
-		}
-	}
 	
 	private void MMBPressed() {
 
@@ -135,29 +190,7 @@ public class IOHandler extends MouseAdapter{
 			case DRAG_MODE -> gh.dragStart = null;
 		}
 	}
-	private void APressed() {
-		
-	}
-	private void DPressed() {
-
-	}
-	private void SPressed() {
-
-	}
-
 	// If enter is pressed, toggle consol if ctrl is down, else run command
-	private void enterPressed(KeyEvent e) {
-		e.consume();
-		if (e.isControlDown()) { 
-			gh.toggleConsol();
-			return;
-		}
-		if(gh.consol.isActive()) gh.consol.command(gh.consol.getText());
-	}
-	private void WPressed() {
-
-		System.out.println("[w]");
-	}
 	private void MMBReleased() {
 
 	}

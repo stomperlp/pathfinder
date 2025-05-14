@@ -1,10 +1,12 @@
 package entities;
 
 import fx.Hexagon;
+import fx.Marker;
 import java.awt.Image;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import main.GraphicsHandler;
 
 public class Character 
 {
@@ -15,6 +17,7 @@ public class Character
     public static final int HUGE = 2;
     public static final int GARGANTUAN = 3;
 
+    private final GraphicsHandler gh;
     private Image image;
     private Hexagon tile;
     private int maxHealth;
@@ -26,9 +29,11 @@ public class Character
     private int size;
     protected ArrayList<Path2D> hexTile = new ArrayList<>();
     private Point2D location;
+    private Marker debugMarker;
 
-    public Character(Image image, Hexagon tile, Point2D location, int maxhealth, int attack, int AC, int speed, int initiative, int size)
+    public Character(GraphicsHandler gh, Image image, Hexagon tile, Point2D location, int maxhealth, int attack, int AC, int speed, int initiative, int size)
     {
+        this.gh = gh;
         this.image = image;
         this.tile = tile;
         this.location = location;
@@ -40,6 +45,8 @@ public class Character
         this.speed = speed;
         this.initiative = initiative;
         this.size = size;
+        this.debugMarker = new Marker(tile.getGridPoint(), Marker.COORDINATES, true);
+        gh.addMarker(debugMarker);
     }
 
     public Image getImage() {
@@ -58,6 +65,9 @@ public class Character
             case GARGANTUAN -> 2;
             default -> 0;
         };
+    }
+    public void debugUpdate() {
+        debugMarker.moveTo(location, tile.getGridPoint());
     }
     public void setImage(Image image) {
         this.image = image;

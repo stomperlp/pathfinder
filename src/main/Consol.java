@@ -1,6 +1,8 @@
 package main;
 
 import fx.Marker;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +19,12 @@ public class Consol extends JTextField {
     
     public Consol() {
         super();
-        
+        this.setPreferredSize(new Dimension(200, 32));
+        this.setFont(new Font("Arial", Font.PLAIN, 20));
     }
     public void command(String input) {
         String[] inputSegments = input.split(" ");
-        switch(inputSegments[0]) {
+        switch(inputSegments[0].toLowerCase()) {
             case "quit", ":q" -> System.exit(0);
             case "background", ":b" -> gh.setBackgroundImage();
             case "character", ":c" -> gh.createCharacter();
@@ -34,6 +37,7 @@ public class Consol extends JTextField {
         historyIndex = commandHistory.size();
         setText("");
         currentInput = "";
+        gh.repaint();
     }
     private void help(String arg) {
 
@@ -98,5 +102,9 @@ public class Consol extends JTextField {
             setText(currentInput);
         }
         setCaretPosition(currentInput.length());
+    }
+    public void setFontSize(int s){
+        this.setPreferredSize(new Dimension(200, s*8/5));
+        this.setFont(new Font("Arial", Font.PLAIN, s));
     }
 }

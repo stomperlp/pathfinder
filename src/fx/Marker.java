@@ -1,19 +1,21 @@
 package fx;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 
 public class Marker {
     public static final int COORDINATES = 0;
     public static final int STAT = 1;
     public static final int DICE = 2;
     public static final int DICERESULT = 3;
-    private Point coords;
+    private Point2D coords;
+    private Point2D displayCoords;
     private final int purpose;
     private int stat;
-    private boolean isDebugMarker;
+    private final boolean isDebugMarker;
 
-    public Marker(Point coords, int purpose, boolean isDebugMarker) {
-        this.coords = coords;
+    public Marker(Point2D location, int purpose, boolean isDebugMarker) {
+        this.coords = location;
         this.purpose = purpose;
         this.isDebugMarker = isDebugMarker;
     }
@@ -24,15 +26,20 @@ public class Marker {
         this.isDebugMarker = isDebugMarker;
     }
 
-    public void moveTo(Point p) {
+    public void moveTo(Point2D p) {
         coords = p;
+        displayCoords = p;
     }
-    public void moveBy(Point p) {
-        coords.translate(p.x, p.y);
+    public void moveTo(Point2D p, Point2D dp) {
+        coords = p;
+        displayCoords = dp;
+    }
+    public void moveBy(Point2D p) {
+        coords.setLocation(coords.getX()+p.getX(), coords.getY()+ p.getY());
     }
     public String getText() {
         return switch (purpose) {
-            case 0 -> "[" + coords.x + "|" + coords.y + "]";
+            case 0 -> "[" + (int)displayCoords.getX() + "|" + (int)displayCoords.getY() + "]";
             case 1, 2, 3 -> Integer.toString(stat);
             default -> "";
         };
@@ -47,7 +54,7 @@ public class Marker {
     public void setStat(int stat) {
         this.stat = stat;
     }
-    public Point getPoint() {
+    public Point2D getPoint() {
         return coords;
     }
     public boolean isDebugMarker() {

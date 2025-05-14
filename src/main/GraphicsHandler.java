@@ -12,7 +12,7 @@ import javax.swing.*;
 
 public class GraphicsHandler extends JFrame{
 
-    private final IOHandler io;
+    protected final IOHandler io;
     protected JPanel backgroundPanel;
     protected JPanel gridPanel;
     protected JPanel contentPanel; 
@@ -27,19 +27,16 @@ public class GraphicsHandler extends JFrame{
     int drawWidth, drawHeight;
 
     protected Point dragStart = null;
-    private Point gridOffset = new Point(0, 0);
+    Point gridOffset = new Point(0, 0);
     protected ArrayList<Hexagon> hexlist = new ArrayList<>();
     protected ArrayList<Marker> markers = new ArrayList<>();
     protected ArrayList<Character> characters = new ArrayList<>();
     protected Hexagon selectedHex;
-    private int zoomFactor = 1;
+    protected int zoomFactor = 1;
     protected boolean debugMode = false;
     protected GameHandler gm;
 
-    public void start()
-    {
-        
-    }
+    
     private void inputListener()
     {
         addMouseListener(new MouseAdapter() { 
@@ -119,6 +116,7 @@ public class GraphicsHandler extends JFrame{
     {
         io = new IOHandler(this);
         gm = new GameHandler(this);
+		gm.run();
         setTitle("Bitti bitti 15 punkte");
         setDefaultCloseOperation(0);
         setSize(600, 400); // Initial size
@@ -132,19 +130,26 @@ public class GraphicsHandler extends JFrame{
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 for (Character c : characters) {
+                    if(c.getTile() == null) {
+                        g2d.fillOval((int)c.getLocation().getX(), (int)c.getLocation().getY(), hexSize/10, hexSize/10);
+                        continue;
+                    }
                     Hexagon h = c.getTile();
-                    c.setTile(null);
+                    c.debugUpdate();
+                    boolean gridPointFound = false;
                     for(Hexagon hex : hexlist) {
-                        if (h.getGridPoint() == hex.getGridPoint()) {
+                        if (h.getGridPoint().equals(hex.getGridPoint())) {
                             c.setTile(hex);
+                            c.setLocation(hex.getCenter());
+                            gridPointFound = true;
                             break;
                         }
                     }
-                    if (c.getTile() == null) continue;
+                    if(!gridPointFound) continue;
                     g2d.drawImage(
                         c.getImage(), 
-                        (int) c.getLocation().getX(), 
-                        (int) c.getLocation().getY(), 
+                        (int) c.getLocation().getX()-(int)(Math.sqrt(3)*hexSize/2), 
+                        (int) c.getLocation().getY()-(int)(Math.sqrt(3)*hexSize/2), 
                         (int)(c.getDrawSize()*hexSize), 
                         (int)(c.getDrawSize()*hexSize), this
                     );
@@ -171,11 +176,11 @@ public class GraphicsHandler extends JFrame{
                 double hexWidth = Math.sqrt(3) * hexSize;
                 double hexHeight = 2 * hexSize;
 
-                int firstVisibleCol = (int) Math.floor(( -gridOffset.x - hexWidth) / (2.5 * hexWidth))-2;
-                int lastVisibleCol = (int) Math.ceil((getWidth() - gridOffset.x + hexWidth) / hexWidth)+2;
+                int firstVisibleCol = (int) Math.floor(( -gridOffset.x - hexWidth) / (Math.sqrt(3) * hexWidth))-2;
+                int lastVisibleCol = (int) Math.ceil((getWidth() - gridOffset.x + hexWidth) / (Math.sqrt(3)*hexWidth))+2;
                 
-                int firstVisibleRow = (int) Math.floor(( -gridOffset.y - hexHeight) * 2.5 / hexHeight);
-                int lastVisibleRow = (int) Math.ceil((getHeight() - gridOffset.y + hexHeight) * 2.5 / hexHeight)+2;
+                int firstVisibleRow = (int) Math.floor(( -gridOffset.y - hexHeight) * 7/3 / hexHeight);
+                int lastVisibleRow = (int) Math.ceil((getHeight() - gridOffset.y + hexHeight) * 7/3 / hexHeight)+2;
                 
                 // Draw the grid
                 for (int row = firstVisibleRow; row <= lastVisibleRow; row++) {
@@ -224,16 +229,16 @@ public class GraphicsHandler extends JFrame{
                         case Marker.COORDINATES -> {
                             g2d.setColor(Color.BLACK);
                             g2d.setFont(new Font("Arial", Font.BOLD, 18));
-                            g2d.drawString(m.getText(), m.getPoint().x, m.getPoint().y);
+                            g2d.drawString(m.getText(), (int)m.getPoint().getX(),(int) m.getPoint().getY());
                         }
                         case Marker.DICE -> {
                             int digits = m.getText().length();
                             g2d.setColor(Color.RED);
-                            g2d.fillRoundRect(m.getPoint().x, m.getPoint().y, 16 +16*digits, 16+16*digits, digits*2, digits*2);
+                            g2d.fillRoundRect((int)m.getPoint().getX(), (int)m.getPoint().getY(), 16 +16*digits, 16+16*digits, digits*2, digits*2);
 
                             g2d.setColor(Color.BLACK);
                             g2d.setFont(new Font("Arial", Font.BOLD, 32));
-                            g2d.drawString(m.getText(), m.getPoint().x + 8, m.getPoint().y + 20 + 8*digits);
+                            g2d.drawString(m.getText(), (int)m.getPoint().getX() + 8, (int)m.getPoint().getY() + 20 + 8*digits);
                         }
                         case Marker.DICERESULT -> {
                             g2d.setColor(Color.BLACK);
@@ -301,7 +306,6 @@ public class GraphicsHandler extends JFrame{
 	}
 
     public void toggleConsol() {
-        System.out.println("CONSOL");
         consol.setVisible(!consol.isVisible());
         consol.toggleActive();
         if(!consol.isActive()) {
@@ -333,7 +337,7 @@ public class GraphicsHandler extends JFrame{
             int dy = e.getY() - dragStart.y;
             
             // Update grid offset
-            gridOffset.translate(dx, dy);
+            gridOffset(dx, dy);
             outOfBoundsCorrection();
             // Update drag start point for next movement
             dragStart = e.getPoint();
@@ -342,6 +346,8 @@ public class GraphicsHandler extends JFrame{
     }    
     private void outOfBoundsCorrection(){
         // Bound to the left
+        if(backgroundImage == null) return;
+
         if (gridOffset.x > getWidth()) {
             gridOffset.setLocation(getWidth(), gridOffset.y);
         }
@@ -404,18 +410,29 @@ public class GraphicsHandler extends JFrame{
         return hexlist;
     }
     public void createCharacter() {
-        Point2D pos;
         if (selectedHex == null) {
-            pos = new Point(getWidth()/2,getHeight()/2);
-        } else {
-            pos = selectedHex.getCenter();
+            Point2D center = new Point2D.Double(getWidth()/2, getHeight()/2);
+            selectedHex = gm.findClosestHexagon(center);
         }
-        Character c = new Character(
-            new ImageIcon(io.openFileBrowser().getPath()).getImage(),
-            selectedHex, pos,
-            0, 0, 0, 0, 0, Character.NORMAL
-        );
-        System.out.println("gg");
-        characters.add(c);
+        
+        if (selectedHex != null) {
+            Character c = new Character(
+                this,
+                new ImageIcon(io.openFileBrowser().getPath()).getImage(),
+                selectedHex, 
+                selectedHex.getCenter(),
+                0, 0, 0, 0, 0, Character.NORMAL
+            );
+            characters.add(c);
+        } else {
+            System.err.println("No valid hexagon found for character placement!");
+        }
+    }
+    public void addMarker(Marker m) {
+        markers.add(m);
+    }
+    public void gridOffset(int x, int y) {
+        gridOffset.translate(x, y);
+        selectedHex = null;
     }
 }
