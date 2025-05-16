@@ -154,7 +154,7 @@ public class IOHandler extends MouseAdapter{
 				DDown = true;
 			}
 			case 'H' -> {
-				for (Hexagon h : AStar.getNeighbors(gh.selectedHex, gh))
+				for (Hexagon h : AStar.getNeighbors(gh.selectedTile, gh))
 				{
 					System.out.println(h.getGridPoint());
 				}
