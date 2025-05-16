@@ -10,15 +10,20 @@ public class Hexagon {
     private final Point gridCoords;
     
     public Hexagon (Point2D center, int hexSize, Point gridCoords) {
+
         this.center = center;
-        this.shape = new Path2D.Double();
+        this.shape  = new Path2D.Double();
+
         for (int i = 0; i < 6; i++) {
+
             double angle = 2 * Math.PI / 6 * i;
+
             double x = center.getX() + hexSize * Math.cos(angle);
             double y = center.getY() + hexSize * Math.sin(angle);
+
             if (i == 0) {
                 shape.moveTo(x, y);
-            } else {
+            }    else   {
                 shape.lineTo(x, y);
             }
         }

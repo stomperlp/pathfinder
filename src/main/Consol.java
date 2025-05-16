@@ -1,5 +1,6 @@
 package main;
 
+import entities.Character;
 import fx.Marker;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -23,14 +24,14 @@ public class Consol extends JTextField {
         this.setFont(new Font("Arial", Font.PLAIN, 20));
     }
     public void command(String input) {
-        String[] inputSegments = input.split(" ");
-        switch(inputSegments[0].toLowerCase()) {
-            case "quit", ":q" -> System.exit(0);
+        String[] args = input.split(" ");
+        switch(args[0].toLowerCase()) {
+            case "quit",       ":q" -> System.exit(0);
             case "background", ":b" -> gh.setBackgroundImage();
-            case "character", ":c" -> gh.createCharacter();
-            case "help", ":h" -> help(inputSegments[1]);
-            case "debug", ":d" -> gh.toggleDebugMode();
-            case "roll", ":r" -> roll(inputSegments);
+            case "debug",      ":d" -> gh.toggleDebugMode();
+            case "character",  ":c" -> character(args);
+            case "help",       ":h" -> help(args[1]);
+            case "roll",       ":r" -> roll(args);
             default -> {}
         }
         commandHistory.add(input);
@@ -38,6 +39,59 @@ public class Consol extends JTextField {
         setText("");
         currentInput = "";
         gh.repaint();
+    }
+    private void character(String[] args) {
+        int size = 0; // hasValue[0]
+        int maxHealth = 0; // hasValue[1]
+        int AC = 0; // hasValue[2]
+        int speed = 0; // hasValue[3]
+        int initiative = 0; // hasValue[4]
+        boolean[] hasValue = new boolean[5];
+        do{
+            try {
+                switch (args[1].toLowerCase()) {
+                    case "d",  "delete"     -> {gh.deleteCharacter();                   }
+                    case "s",  "size"       -> {size        = Integer.parseInt(args[2]); hasValue[0] = true;}
+                    case "h",  "maxhealth"  -> {maxHealth   = Integer.parseInt(args[2]); hasValue[1] = true;}
+                    case "ac", "armorclass" -> {AC          = Integer.parseInt(args[2]); hasValue[2] = true;}
+                    case "sp", "speed"      -> {speed       = Integer.parseInt(args[2]); hasValue[3] = true;}
+                    case "i",  "initiative" -> {initiative  = Integer.parseInt(args[2]); hasValue[4] = true;}
+                    default -> {}
+                }
+                args = cutArgs(args);
+            } 
+            catch (Exception e) {}
+            
+        } while(args.length > 3);
+
+
+        boolean entitySelected = false;
+        try {
+            entitySelected = gh.tileUnderMouse.getGridPoint().equals(gh.selectedEntityTile.getGridPoint());
+        } catch (Exception e) {
+        }
+
+        if (entitySelected) {
+            Character c = (Character) gh.selectEntity(gh.selectedEntityTile);
+            if (hasValue[0]) c.setSize(size);
+            if (hasValue[1]) c.setMaxHealth(maxHealth);
+            if (hasValue[2]) c.setAC(AC);
+            if (hasValue[3]) c.setSpeed(speed);
+            if (hasValue[4]) c.setInitiative(initiative);
+            
+        } else {
+            gh.createCharacter(size, maxHealth, AC, speed, initiative);
+        }
+    }
+    private String[] cutArgs(String[] args) {
+        
+        String[] temp = new String[args.length - 2];
+        temp[0] = args[0];
+
+        for(int i = 3; i < args.length - 1; i++) {
+            temp[i-2] = args[i];
+        }
+        return temp;
     }
     private void help(String arg) {
 

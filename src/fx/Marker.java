@@ -5,9 +5,9 @@ import java.awt.geom.Point2D;
 
 public class Marker {
     public static final int COORDINATES = 0;
-    public static final int STAT = 1;
-    public static final int DICE = 2;
-    public static final int DICERESULT = 3;
+    public static final int STAT        = 1;
+    public static final int DICE        = 2;
+    public static final int DICERESULT  = 3;
     private Point2D coords;
     private Point2D displayCoords;
     private final int purpose;
@@ -15,14 +15,14 @@ public class Marker {
     private final boolean isDebugMarker;
 
     public Marker(Point2D location, int purpose, boolean isDebugMarker) {
-        this.coords = location;
-        this.purpose = purpose;
-        this.isDebugMarker = isDebugMarker;
+        this.coords         = location;
+        this.purpose        = purpose;
+        this.isDebugMarker  = isDebugMarker;
     }
     public Marker(int stat, Point coords, int purpose, boolean isDebugMarker) {
-        this.stat = stat;
-        this.coords = coords;
-        this.purpose = purpose;
+        this.stat          = stat;
+        this.coords        = coords;
+        this.purpose       = purpose;
         this.isDebugMarker = isDebugMarker;
     }
 
@@ -39,15 +39,15 @@ public class Marker {
     }
     public String getText() {
         return switch (purpose) {
-            case 0 -> "[" + (int)displayCoords.getX() + "|" + (int)displayCoords.getY() + "]";
+            case 0       -> "[" + (int)displayCoords.getX() + "|" + (int)displayCoords.getY() + "]";
             case 1, 2, 3 -> Integer.toString(stat);
-            default -> "";
+            default      -> "";
         };
     }
     public Object getRawContent() {
         return switch (purpose) {
-            case 0 -> coords;
-            case 1 -> stat;
+            case 0  -> coords;
+            case 1  -> stat;
             default -> null;
         };
     }

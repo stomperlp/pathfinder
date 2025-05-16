@@ -1,4 +1,5 @@
 package main;
+import entities.Character;
 import entities.Entity;
 import fx.*;
 import java.awt.Point;
@@ -11,23 +12,24 @@ import tools.AStar;
 
 public class IOHandler extends MouseAdapter{
 	
-	private static final int DRAG_MODE = 0;
+	private static final int DRAG_MODE 	 = 0;
 	private static final int LENGTH_MODE = 1;
 	private static final int HITBOX_MODE = 2;
-	private static final int MARK_MODE = 3;
+	private static final int MARK_MODE   = 3;
 
 	protected Hexagon currentHexagon;
-	protected GraphicsHandler gh;
+	protected final GraphicsHandler gh;
 	protected int count = 0;
-	protected int mode = 0;
+	protected int mode  = 0;
 	protected boolean isShiftDown = false;
-	protected boolean isCtrlDown = false;
+	protected boolean isCtrlDown  = false;
 	protected Marker mouseLog;
 
 	protected boolean ADown;
 	protected boolean DDown;
 	protected boolean SDown;
 	protected boolean WDown;
+
 	private boolean hasSelectedEntity;
 	private Point mousePos;
 
@@ -38,6 +40,7 @@ public class IOHandler extends MouseAdapter{
 
 	// File browser for opening images
 	public File openFileBrowser() {
+
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select an Image");
 
@@ -163,9 +166,9 @@ public class IOHandler extends MouseAdapter{
 		}
 		//Any always active
 		switch(e.getKeyCode()) {
-			case KeyEvent.VK_SHIFT -> isShiftDown = true;
+			case KeyEvent.VK_SHIFT 	 -> isShiftDown = true;
 			case KeyEvent.VK_CONTROL -> isCtrlDown = true;
-			case KeyEvent.VK_ENTER -> {
+			case KeyEvent.VK_ENTER   -> {
 				e.consume();
 				if (isCtrlDown) { 
 					gh.toggleConsol();
@@ -179,8 +182,7 @@ public class IOHandler extends MouseAdapter{
 		if (gh.consol.isActive())
 			//Any only active in consol
 			switch(e.getKeyCode()) {
-				case KeyEvent.VK_UP -> gh.consol.arrowUp();
-				case KeyEvent.VK_DOWN -> gh.consol.arrowDown();
+				
 			}
 		else switch(e.getKeyCode()) {
 			//Any only active out of consol
@@ -215,13 +217,17 @@ public class IOHandler extends MouseAdapter{
 	}
 	public void selectEntity(){
 		if (gh.selectedEntityTile != null) {
-			if (currentHexagon.getGridPoint().equals(gh.selectedEntityTile.getGridPoint())) {
+			if (currentHexagon.getGridPoint().equals(
+				gh.selectedEntityTile.getGridPoint()
+			)) {
 				gh.drawSelectedEntityTile(null);
 				return;
 			}
 		}
 		for(Entity en : gh.entities) {
-			if(currentHexagon.getGridPoint().equals(en.getTile().getGridPoint())) {
+			if(currentHexagon.getGridPoint().equals(
+				en.getTile().getGridPoint()
+			)) {
 				gh.drawSelectedEntityTile(currentHexagon);
 				hasSelectedEntity = true;
 			}
@@ -229,21 +235,33 @@ public class IOHandler extends MouseAdapter{
 	}
 	public void selectTile() {
 		if (gh.selectedEntityTile != null && !hasSelectedEntity){
-			if (currentHexagon.getGridPoint().equals(gh.selectedEntityTile.getGridPoint())){
+
+			if (currentHexagon.getGridPoint().equals(
+				gh.selectedEntityTile.getGridPoint()
+			)) {
 				gh.drawSelectedTile(null);
 				return;
 			}
 		}
 		if (gh.selectedTile != null) {
-			if (currentHexagon.getGridPoint().equals(gh.selectedTile.getGridPoint())) {
+			if (currentHexagon.getGridPoint().equals(
+				gh.selectedTile.getGridPoint()
+			)) {
 				gh.drawSelectedTile(null);
 				return;
 			} 
 		}
 		gh.drawSelectedTile(currentHexagon);
 
+		if (gh.selectedEntityTile == null) return;
+
+		Entity selectedEntity = gh.selectEntity(gh.selectedEntityTile);
+
+		if (gh.selectedTile != null 
+			&& !currentHexagon.getGridPoint().equals(gh.selectedEntityTile.getGridPoint()) 
+			&& selectedEntity instanceof Character
+		) {
+			gh.gm.moveCharacter(currentHexagon, (Character)selectedEntity);
+		}
 	}
-
-
-    
 }

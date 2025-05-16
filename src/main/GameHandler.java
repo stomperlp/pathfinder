@@ -1,12 +1,13 @@
 package main;
 
+import entities.Character;
 import fx.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class GameHandler implements Runnable{
 
-    protected GraphicsHandler gh;
+    protected final GraphicsHandler gh;
 	private final Object lock = new Object();
 
     
@@ -79,6 +80,11 @@ public class GameHandler implements Runnable{
 			}
 		});
 		producer.start();
+	}
+
+	public void moveCharacter(Hexagon h, Character c) {
+		// TODO: A* Implementation
+		c.setTile(h);
 	}
 	
 }

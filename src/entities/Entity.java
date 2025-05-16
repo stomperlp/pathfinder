@@ -9,25 +9,18 @@ import main.GraphicsHandler;
 
 public class Entity {
 
-    public static final int TINY = -2;
-    public static final int SMALL = -1;
-    public static final int NORMAL = 0;
-    public static final int LARGE = 1;
-    public static final int HUGE = 2;
-    public static final int GARGANTUAN = 3;
-
-    private Image image;
+    private Image   image;
     private Hexagon tile;
-    private int size;
-    protected ArrayList<Path2D> hexTile = new ArrayList<>();
     private Point2D location;
+    
+    protected ArrayList<Path2D> hexTile = new ArrayList<>();
     private final Marker debugMarker;
-    public Entity(GraphicsHandler gh, Image image, Hexagon tile, Point2D location, int size)
+
+    public Entity(GraphicsHandler gh, Image image, Hexagon tile, Point2D location)
     {
-        this.image = image;
-        this.tile = tile;
-        this.location = location;
-        this.size = size;
+        this.image       = image;
+        this.tile        = tile;
+        this.location    = location;
         this.debugMarker = new Marker(tile.getGridPoint(), Marker.COORDINATES, true);
         gh.addMarker(debugMarker);
     }
@@ -35,22 +28,8 @@ public class Entity {
     public Image getImage() {
         return image;
     }
-    public int getSize() {
-        return size;
-    }
-    public void setSize(int s) {
-        this.size = s;
-    }
     public double getDrawSize() {
-        return switch (size) {
-            case TINY -> 1;
-            case SMALL -> 1.5;
-            case NORMAL -> Math.sqrt(3);
-            case LARGE -> 3/4;
-            case HUGE -> 2;
-            case GARGANTUAN -> 2;
-            default -> 0;
-        };
+        return Math.sqrt(3);
     }
     public void debugUpdate() {
         debugMarker.moveTo(location, tile.getGridPoint());

@@ -13,7 +13,7 @@ public class Dice
 		String[] d = dice.split("d");
 		try 
 		{
-			this.numDice = Integer.parseInt(d[0]);
+			this.numDice  = Integer.parseInt(d[0]);
 			this.numSides = Integer.parseInt(d[1]);
 		}
 		catch (Exception e) 
