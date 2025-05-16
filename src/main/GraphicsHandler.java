@@ -1,10 +1,10 @@
 package main;
 import fx.*;
+import entities.Entity;
 import entities.Character;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.ArrayList;
@@ -30,8 +30,10 @@ public class GraphicsHandler extends JFrame{
     Point gridOffset = new Point(0, 0);
     protected ArrayList<Hexagon> hexlist = new ArrayList<>();
     protected ArrayList<Marker> markers = new ArrayList<>();
-    protected ArrayList<Character> characters = new ArrayList<>();
-    protected Hexagon selectedHex;
+    protected ArrayList<Entity> entities = new ArrayList<>();
+    protected Hexagon tileUnderMouse;
+    protected Hexagon selectedTile;
+    protected Hexagon selectedEntityTile;
     protected int zoomFactor = 1;
     protected boolean debugMode = false;
     protected GameHandler gm;
@@ -129,9 +131,11 @@ public class GraphicsHandler extends JFrame{
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                for (Character c : characters) {
+                for (Entity c : entities) {
+                    if (c instanceof Character){
+                    }
                     if(c.getTile() == null) {
-                        g2d.fillOval((int)c.getLocation().getX(), (int)c.getLocation().getY(), hexSize/10, hexSize/10);
+                        g2d.fillOval((int)c.getLocation().getX()-hexSize/10, (int)c.getLocation().getY()-hexSize/10, hexSize/10, hexSize/10);
                         continue;
                     }
                     Hexagon h = c.getTile();
@@ -201,16 +205,34 @@ public class GraphicsHandler extends JFrame{
                         hexlist.add(hex);
                     }
                 }
-
-                if (selectedHex != null && dragStart == null) {
-                    g2d = (Graphics2D) g.create();
-                    try {
-                        g2d.setStroke(new BasicStroke(thickness+2));
-                        g2d.setColor(Color.RED);
-                        g2d.draw(selectedHex.getShape());
-                    } finally {
-                        g2d.dispose();
+                for(Hexagon hex : hexlist) {
+                    if (selectedTile == null) break;
+                    if (selectedTile.getGridPoint().equals(hex.getGridPoint())) {
+                        selectedTile = hex;
+                        break;
                     }
+                }
+                for(Hexagon hex : hexlist) {
+                    if (selectedEntityTile == null) break;
+                    if (selectedEntityTile.getGridPoint().equals(hex.getGridPoint())) {
+                        selectedEntityTile = hex;
+                        break;
+                    }
+                }
+                if (tileUnderMouse != null && dragStart == null) {
+                    g2d.setStroke(new BasicStroke(thickness+2));
+                    g2d.setColor(Color.BLACK);
+                    g2d.draw(tileUnderMouse.getShape());
+                                    }
+                if (selectedTile != null && !selectedTile.equals(selectedEntityTile)) {
+                    g2d.setStroke(new BasicStroke(thickness+2));
+                    g2d.setColor(Color.RED);
+                    g2d.draw(selectedTile.getShape());
+                }
+                if (selectedEntityTile != null) {
+                    g2d.setStroke(new BasicStroke(thickness+2));
+                    g2d.setColor(Color.BLUE);
+                    g2d.draw(selectedEntityTile.getShape());
                 }
             }
         };
@@ -250,7 +272,7 @@ public class GraphicsHandler extends JFrame{
                 for (Hexagon h : hexlist) {
                     if (!debugMode) break;
                     g2d.setColor(Color.RED);
-                    g2d.fillOval((int)h.getCenter().getX(), (int)h.getCenter().getY(), hexSize/10, hexSize/10);
+                    g2d.fillOval((int)h.getCenter().getX()-hexSize/10, (int)h.getCenter().getY()-hexSize/10, hexSize/10, hexSize/10);
                     g2d.setColor(Color.BLACK);
                     g2d.setFont(new Font("Arial", Font.BOLD, hexSize/3));
                     String gridPoint = "[" + h.getGridPoint().x + "|" + h.getGridPoint().y + "]";
@@ -326,8 +348,16 @@ public class GraphicsHandler extends JFrame{
             this.backgroundPanel.repaint();
         }
     }
+    public void drawTileUnderMouse(Hexagon hex) {
+        tileUnderMouse = hex;
+        repaint();
+    }
     public void drawSelectedTile(Hexagon hex) {
-        selectedHex = hex;
+        selectedTile = hex;
+        repaint();
+    }
+    public void drawSelectedEntityTile(Hexagon hex) {
+        selectedEntityTile = hex;
         repaint();
     }
         public void drag(MouseEvent e) {
@@ -391,9 +421,11 @@ public class GraphicsHandler extends JFrame{
             gridOffset.x = mousePoint.x - (int)(worldX * newZoom);
             gridOffset.y = mousePoint.y - (int)(worldY * newZoom);
         }
+              
         
+
         thickness = Math.max(1, hexSize / 30);
-        selectedHex = null;
+        tileUnderMouse = null;
         outOfBoundsCorrection();
         repaint();
     } 
@@ -410,20 +442,21 @@ public class GraphicsHandler extends JFrame{
         return hexlist;
     }
     public void createCharacter() {
-        if (selectedHex == null) {
-            Point2D center = new Point2D.Double(getWidth()/2, getHeight()/2);
-            selectedHex = gm.findClosestHexagon(center);
-        }
+        Hexagon tile;
+        // tile the character spawns on
+        if (selectedTile != null) tile = selectedTile;
+        else if (tileUnderMouse != null) tile = tileUnderMouse;
+        else tile = gm.findClosestHexagon(new Point2D.Double(getWidth()/2, getHeight()/2));
         
-        if (selectedHex != null) {
+        if (tileUnderMouse != null) {
             Character c = new Character(
                 this,
                 new ImageIcon(io.openFileBrowser().getPath()).getImage(),
-                selectedHex, 
-                selectedHex.getCenter(),
+                tile, 
+                tile.getCenter(),
                 0, 0, 0, 0, 0, Character.NORMAL
             );
-            characters.add(c);
+            entities.add(c);
         } else {
             System.err.println("No valid hexagon found for character placement!");
         }
@@ -433,6 +466,15 @@ public class GraphicsHandler extends JFrame{
     }
     public void gridOffset(int x, int y) {
         gridOffset.translate(x, y);
-        selectedHex = null;
+        tileUnderMouse = null;
+    }
+    public Entity selectEntity(Hexagon hex) {
+
+        for(Entity e : entities) {
+            if (e.getTile().getGridPoint().equals(hex.getGridPoint())) {
+                return e;
+            }
+        }
+        return null;
     }
 }

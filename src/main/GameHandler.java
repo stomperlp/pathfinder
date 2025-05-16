@@ -47,6 +47,7 @@ public class GameHandler implements Runnable{
 		return closest;
 	}
     public void tick(){
+
         if(gh.io.ADown) {
             gh.gridOffset(3, 0);
             gh.repaint();
@@ -68,7 +69,6 @@ public class GameHandler implements Runnable{
 	@Override
 	public void run() {
 		Thread producer = new Thread(() -> {
-
 			synchronized (lock) {
 				while (true) { 
 					tick();
@@ -80,4 +80,5 @@ public class GameHandler implements Runnable{
 		});
 		producer.start();
 	}
+	
 }

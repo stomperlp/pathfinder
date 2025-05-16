@@ -1,4 +1,5 @@
 package main;
+import entities.Entity;
 import fx.*;
 import java.awt.Point;
 import java.awt.event.*;
@@ -10,10 +11,10 @@ import tools.AStar;
 
 public class IOHandler extends MouseAdapter{
 	
-	private final int DRAG_MODE = 0;
-	private final int LENGTH_MODE = 1;
-	private final int HITBOX_MODE = 2;
-	private final int MARK_MODE = 3;
+	private static final int DRAG_MODE = 0;
+	private static final int LENGTH_MODE = 1;
+	private static final int HITBOX_MODE = 2;
+	private static final int MARK_MODE = 3;
 
 	protected Hexagon currentHexagon;
 	protected GraphicsHandler gh;
@@ -27,6 +28,8 @@ public class IOHandler extends MouseAdapter{
 	protected boolean DDown;
 	protected boolean SDown;
 	protected boolean WDown;
+	private boolean hasSelectedEntity;
+	private Point mousePos;
 
 
 	public IOHandler(GraphicsHandler gh){
@@ -53,29 +56,43 @@ public class IOHandler extends MouseAdapter{
         return null;
     }
 	//Raw inputs from listeners
+    @Override
     public void mousePressed(MouseEvent e) 
 	{
 		switch (e.getButton()) 
 		{
 			case MouseEvent.BUTTON1 -> {
+				currentHexagon = gh.gm.findClosestHexagon(mousePos);
+				selectEntity();
+				selectTile();
+			}
+			case MouseEvent.BUTTON2 -> {}
+			case MouseEvent.BUTTON3 -> {
+				
 				switch (mode) 
 				{
 					case DRAG_MODE -> gh.dragStart = e.getPoint();
 				}
 			}
-			case MouseEvent.BUTTON2 -> MMBPressed();
-			case MouseEvent.BUTTON3 -> RMBPressed();
 			default -> {}
 		}
 	}
 
+    @Override
 	public void mouseReleased(MouseEvent e) 
 	{
 		switch (e.getButton()) 
 		{
-			case 1 -> LMBReleased(e);
-			case 2 -> MMBReleased();
-			case 3 -> RMBReleased();
+			case MouseEvent.BUTTON1 -> {
+
+			}
+			case MouseEvent.BUTTON2 -> {}
+			case MouseEvent.BUTTON3 -> {
+				switch (mode) 
+				{
+					case DRAG_MODE -> gh.dragStart = null;
+				}
+			}
 			default -> {}
 		}
 	}
@@ -83,10 +100,12 @@ public class IOHandler extends MouseAdapter{
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		if (gh.debugMode) logMousePos(e);
-		currentHexagon = gh.gm.findClosestHexagon(e.getPoint());
-		gh.drawSelectedTile(currentHexagon);
+		mousePos = e.getPoint();
+		currentHexagon = gh.gm.findClosestHexagon(mousePos);
+		gh.drawTileUnderMouse(currentHexagon);
 	}
 
+    @Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int notches = e.getWheelRotation();
 		if(isCtrlDown) {
@@ -106,10 +125,11 @@ public class IOHandler extends MouseAdapter{
 		{
 			case DRAG_MODE -> gh.drag(e);
 		}
+		
 	}
 	void keyTyped(KeyEvent e) {
 		switch(e.getKeyCode()) {
-
+			
 		}
 	}
 	void keyPressed(KeyEvent e) {
@@ -183,29 +203,6 @@ public class IOHandler extends MouseAdapter{
 			case KeyEvent.VK_CONTROL -> isCtrlDown = false;
 		}
     }
-
-	//spesific inputs ----------------------------------------------
-	
-	private void MMBPressed() {
-
-	}
-	private void RMBPressed() {
-
-	}
-	private void LMBReleased(MouseEvent e) {
-		switch (mode) 
-		{
-			case DRAG_MODE -> gh.dragStart = null;
-		}
-	}
-	// If enter is pressed, toggle consol if ctrl is down, else run command
-	private void MMBReleased() {
-
-	}
-	private void RMBReleased() {
-
-	}
-	
 	//Other Methods ----------------------------------------------
 
 	public void logMousePos(MouseEvent e) {
@@ -215,6 +212,36 @@ public class IOHandler extends MouseAdapter{
 		}
 		mouseLog.moveTo(e.getPoint());
 		gh.repaint();
+	}
+	public void selectEntity(){
+		if (gh.selectedEntityTile != null) {
+			if (currentHexagon.getGridPoint().equals(gh.selectedEntityTile.getGridPoint())) {
+				gh.drawSelectedEntityTile(null);
+				return;
+			}
+		}
+		for(Entity en : gh.entities) {
+			if(currentHexagon.getGridPoint().equals(en.getTile().getGridPoint())) {
+				gh.drawSelectedEntityTile(currentHexagon);
+				hasSelectedEntity = true;
+			}
+		}
+	}
+	public void selectTile() {
+		if (gh.selectedEntityTile != null && !hasSelectedEntity){
+			if (currentHexagon.getGridPoint().equals(gh.selectedEntityTile.getGridPoint())){
+				gh.drawSelectedTile(null);
+				return;
+			}
+		}
+		if (gh.selectedTile != null) {
+			if (currentHexagon.getGridPoint().equals(gh.selectedTile.getGridPoint())) {
+				gh.drawSelectedTile(null);
+				return;
+			} 
+		}
+		gh.drawSelectedTile(currentHexagon);
+
 	}
 
 
