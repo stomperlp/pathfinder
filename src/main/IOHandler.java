@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import tools.AStar;
 
 
 public class IOHandler extends MouseAdapter{
@@ -132,6 +133,13 @@ public class IOHandler extends MouseAdapter{
 			case 'D' -> {
 				DDown = true;
 			}
+			case 'H' -> {
+				for (Hexagon h : AStar.getNeighbors(gh.selectedHex, gh))
+				{
+					System.out.println(h.getGridPoint());
+				}
+			}
+			
 		}
 		//Any always active
 		switch(e.getKeyCode()) {
