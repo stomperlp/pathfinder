@@ -1,10 +1,10 @@
 package entities;
 
+import fx.*;
 import java.awt.Image;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import fx.*;
 import main.GraphicsHandler;
 
 public class Entity {
@@ -16,16 +16,14 @@ public class Entity {
     public static final int HUGE = 2;
     public static final int GARGANTUAN = 3;
 
-    private final GraphicsHandler gh;
     private Image image;
     private Hexagon tile;
     private int size;
     protected ArrayList<Path2D> hexTile = new ArrayList<>();
     private Point2D location;
-    private Marker debugMarker;
+    private final Marker debugMarker;
     public Entity(GraphicsHandler gh, Image image, Hexagon tile, Point2D location, int size)
     {
-        this.gh = gh;
         this.image = image;
         this.tile = tile;
         this.location = location;
@@ -39,6 +37,9 @@ public class Entity {
     }
     public int getSize() {
         return size;
+    }
+    public void setSize(int s) {
+        this.size = s;
     }
     public double getDrawSize() {
         return switch (size) {

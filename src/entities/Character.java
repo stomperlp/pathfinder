@@ -2,9 +2,7 @@ package entities;
 
 import fx.*;
 import java.awt.Image;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import main.GraphicsHandler;
 
 public class Character extends Entity
@@ -18,7 +16,7 @@ public class Character extends Entity
 
     public Character(GraphicsHandler gh, Image image, Hexagon tile, Point2D location, int maxhealth, int attack, int AC, int speed, int initiative, int size)
     {
-        super(gh, null, tile, location, size);
+        super(gh, image, tile, location, size);
         this.maxHealth = maxhealth;
         this.health = maxhealth;
         this.attack = attack;
@@ -63,11 +61,4 @@ public class Character extends Entity
     public void setInitiative(int initiative) {
         this.initiative = initiative;
     }
-    public ArrayList<Path2D> getHexTile() {
-        return hexTile;
-    }
-    public void setHexTile(ArrayList<Path2D> hexTile) {
-        this.hexTile = hexTile;
-    }
-
 }
