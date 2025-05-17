@@ -10,7 +10,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import tools.AStar;
 
 
-public class IOHandler extends MouseAdapter{
+public class IOHandler extends MouseAdapter {
 	
 	private static final int DRAG_MODE 	 = 0;
 	private static final int LENGTH_MODE = 1;
@@ -172,12 +172,19 @@ public class IOHandler extends MouseAdapter{
 				DDown = true;
 			}
 			case 'H' -> {
-				for (Hexagon h : AStar.getNeighbors(gh.selectedTiles.get(0), gh))
-				{
-					System.out.println(h.getGridPoint());
+				if (gh.selectedTiles.get(0) != null) {
+					Hexagon[] neighbors = AStar.getNeighbors(gh.selectedTiles.get(0), gh);
+					if (neighbors != null) {
+						for (Hexagon h : neighbors) {
+							if (h != null) {
+								System.out.println(h.getGridPoint());
+							}
+						}
+					}
+				} else {
+					System.out.println("No tile selected.");
 				}
 			}
-			
 		}
 		//Any always active
 		switch(e.getKeyCode()) {
@@ -289,7 +296,17 @@ public class IOHandler extends MouseAdapter{
 			&& selectedEntity instanceof Character
 			&& isShiftDown
 		) {
-			gh.gm.moveCharacter(currentHexagon, (entities.Character)selectedEntity);
+			// gh.gm.moveCharacter(currentHexagon, (entities.Character)selectedEntity);
+			if (gh.selectedTiles.get(0) != null && gh.selectedEntityTiles.get(0) != null) {
+					Entity selectedEntity2 = gh.selectEntity(gh.selectedEntityTiles.get(0));
+					if (selectedEntity2 instanceof Character) {
+						AStar.run(gh.selectedEntityTiles.get(0), gh.selectedTiles.get(0), gh);
+					} else {
+						System.out.println("No character selected.");
+					}
+				} else {
+					System.out.println("Select both a character and destination tile.");
+				}
 		}
 	}
 }

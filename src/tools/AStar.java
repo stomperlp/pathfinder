@@ -1,72 +1,163 @@
 package tools;
 
 import fx.Hexagon;
+import java.awt.Point;
+import java.util.*;
 import main.GraphicsHandler;
 
 public class AStar 
 {
-    public static void run(Hexagon start, Hexagon end)
-    {
+    private static HashMap<Point, Hexagon[]> neighborCache = new HashMap<>();
+
+    public static Hexagon[] getNeighbors(Hexagon hex, GraphicsHandler gh) {
+        Point key = hex.getGridPoint();
         
-    }
-
-    public static Hexagon[] getNeighbors(Hexagon hex, GraphicsHandler gh)
-    {
-        Hexagon[] neighbors = new Hexagon[6];
-
-        int hexX = (int) hex.getGridPoint().getX();
-        int hexY = (int) hex.getGridPoint().getY();
-
-        for(Hexagon h: gh.getHexlist())
-        {
-            if(hex.getGridPoint().getX() % 2 == 0) {
-                int hX = (int) h.getGridPoint().getX();
-                int hY = (int) h.getGridPoint().getY();
-
-                if(hX == hexX-2 && hY == hexY){
-                    neighbors[0] = h;
-                }
-                else if(hX == hexX-1 && hY == hexY){
-                    neighbors[1] = h;
-                }
-                else if(hX == hexX+1 && hY == hexY){
-                    neighbors[2] = h;
-                }
-                else if(hX == hexX+2 && hY == hexY){
-                    neighbors[3] = h;
-                }
-                else if(hX == hexX+1 && hY == hexY-1){
-                    neighbors[4] = h;
-                }
-                else if(hX == hexX-1 && hY == hexY-1){
-                    neighbors[5] = h;
-                }
-            }
-            else {
-                    int hX = (int) h.getGridPoint().getX();
-                    int hY = (int) h.getGridPoint().getY();
-    
-                    if(hX == hexX-2 && hY == hexY){
-                        neighbors[0] = h;
-                    }
-                    else if(hX == hexX-1 && hY == hexY+1){
-                        neighbors[1] = h;
-                    }
-                    else if(hX == hexX+1 && hY == hexY+1){
-                        neighbors[2] = h;
-                    }
-                    else if(hX == hexX+2 && hY == hexY){
-                        neighbors[3] = h;
-                    }
-                    else if(hX == hexX+1 && hY == hexY){
-                        neighbors[4] = h;
-                    }
-                    else if(hX == hexX-1 && hY == hexY){
-                        neighbors[5] = h;
-                    }
-                }
+        // Return cached result if available
+        if (neighborCache.containsKey(key)) {
+            return neighborCache.get(key);
         }
+        
+        Hexagon[] neighbors = new Hexagon[6];
+        int hexX = (int) key.getX();
+        int hexY = (int) key.getY();
+        
+        // Create a temporary map for quick lookup
+        HashMap<Point, Hexagon> hexMap = new HashMap<>();
+        for (Hexagon h : gh.getHexlist()) {
+            hexMap.put(h.getGridPoint(), h);
+        }
+        
+        // Define all possible neighbor positions
+        Point[] neighborPositions;
+        if (hexX % 2 == 0) {
+            neighborPositions = new Point[] {
+                new Point(hexX-2, hexY),
+                new Point(hexX-1, hexY),
+                new Point(hexX+1, hexY),
+                new Point(hexX+2, hexY),
+                new Point(hexX+1, hexY-1),
+                new Point(hexX-1, hexY-1)
+            };
+        } else {
+            neighborPositions = new Point[] {
+                new Point(hexX-2, hexY),
+                new Point(hexX-1, hexY+1),
+                new Point(hexX+1, hexY+1),
+                new Point(hexX+2, hexY),
+                new Point(hexX+1, hexY),
+                new Point(hexX-1, hexY)
+            };
+        }
+        
+        // Look up each position
+        for (int i = 0; i < 6; i++) {
+            neighbors[i] = hexMap.get(neighborPositions[i]);
+        }
+        
+        // Cache the result
+        neighborCache.put(key, neighbors);
         return neighbors;
     }
-    
+
+    public static double heuristic(Hexagon a, Hexagon b) {
+        // Manhattan distance for hex grid
+        int ax = (int) a.getGridPoint().getX();
+        int ay = (int) a.getGridPoint().getY();
+        int bx = (int) b.getGridPoint().getX();
+        int by = (int) b.getGridPoint().getY();
+
+        return Math.abs(ax - bx) + Math.abs(ay - by);
+    }
+
+    public static void run(Hexagon start, Hexagon end, GraphicsHandler gh)
+    {
+        if (start == null || end == null) return;
+
+        // Open list (hexagons to be evaluated)
+        PriorityQueue<HexNode> openList = new PriorityQueue<>((a, b) ->
+            Double.compare(a.fCost, b.fCost));
+
+        // Closed list (already evaluated hexagons)
+        HashSet<Point> closedList = new HashSet<>();
+
+        // Map to track the best path
+        HashMap<Point, Point> cameFrom = new HashMap<>();
+
+        // Map to store g costs
+        HashMap<Point, Double> gCost = new HashMap<>();
+
+        // Initial node
+        HexNode startNode = new HexNode(start, 0, heuristic(start, end));
+        openList.add(startNode);
+        gCost.put(start.getGridPoint(), 0.0);
+
+        while (!openList.isEmpty()) {
+            HexNode current = openList.poll();
+            Hexagon currentHex = current.hex;
+            Point currentPoint = currentHex.getGridPoint();
+
+            // If we reached the end, reconstruct and return the path
+            if (currentPoint.equals(end.getGridPoint())) {
+                // Path found - could reconstruct here if needed
+                System.out.println("Path found!");
+                System.out.println("Shortest path is " + current.gCost + " tiles long.");
+                return;
+            }
+
+            closedList.add(currentPoint);
+
+            // Check all neighbors
+            Hexagon[] neighbors = getNeighbors(currentHex, gh);
+            for (Hexagon neighbor : neighbors) {
+                if (neighbor == null) continue;
+
+                Point neighborPoint = neighbor.getGridPoint();
+
+                // Skip already evaluated hexagons
+                if (closedList.contains(neighborPoint)) continue;
+
+                // Calculate tentative g cost
+                double tentativeGCost = gCost.get(currentPoint) + 1; // Assuming uniform cost
+
+                // If neighbor not in open list or new path is better
+                Double neighborGCost = gCost.get(neighborPoint);
+                if (neighborGCost == null || tentativeGCost < neighborGCost) {
+                    // Update this path as the best path to neighbor
+                    cameFrom.put(neighborPoint, currentPoint);
+                    gCost.put(neighborPoint, tentativeGCost);
+
+                    double fCost = tentativeGCost + heuristic(neighbor, end);
+
+                    // Add to open list if not already there
+                    boolean found = false;
+                    for (HexNode node : openList) {
+                        if (node.hex.getGridPoint().equals(neighborPoint)) {
+                            found = true;
+                            node.fCost = fCost;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        openList.add(new HexNode(neighbor, tentativeGCost, fCost));
+                    }
+                }
+            }
+        }
+
+        // No path found
+        System.out.println("No path found");
+    }
+
+    private static class HexNode {
+        Hexagon hex;
+        double gCost;
+        double fCost;
+
+        public HexNode(Hexagon hex, double gCost, double fCost) {
+            this.hex = hex;
+            this.gCost = gCost;
+            this.fCost = fCost;
+        }
+    }
 }
