@@ -1,6 +1,7 @@
 package main;
 
 import entities.Character;
+import fx.Hexagon;
 import fx.Marker;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -17,6 +18,9 @@ public class Consol extends JTextField {
     private int historyIndex = -1;
     private String currentInput = "";
     private Marker[] diceMarkers = {};
+    private boolean confirm = false;
+    
+    private final Object lock = new Object();
     
     public Consol() {
         super();
@@ -24,15 +28,28 @@ public class Consol extends JTextField {
         this.setFont(new Font("Arial", Font.PLAIN, 20));
     }
     public void command(String input) {
-        String[] args = input.split(" ");
-        switch(args[0].toLowerCase()) {
-            case "quit",       ":q" -> System.exit(0);
-            case "background", ":b" -> gh.setBackgroundImage();
-            case "debug",      ":d" -> gh.toggleDebugMode();
-            case "character",  ":c" -> character(args);
-            case "help",       ":h" -> help(args[1]);
-            case "roll",       ":r" -> roll(args);
-            default -> {}
+        if (confirm) {
+
+            if(input.toLowerCase().endsWith("y") 
+            || input.toLowerCase().startsWith("y")) 
+                confirm();
+            if(input.toLowerCase().endsWith("n") 
+            || input.toLowerCase().startsWith("n")) 
+                deny();
+            confirm = false;
+
+        } else {
+            String[] args = input.split(" ");
+
+            switch(args[0].toLowerCase()) {
+                case "quit",       ":q" -> System.exit(0);
+                case "background", ":b" -> gh.setBackgroundImage();
+                case "debug",      ":d" -> gh.toggleDebugMode();
+                case "character",  ":c" -> character(args);
+                case "help",       ":h" -> help(args[1]);
+                case "roll",       ":r" -> roll(args);
+                default -> {}
+            }
         }
         commandHistory.add(input);
         historyIndex = commandHistory.size();
@@ -64,23 +81,18 @@ public class Consol extends JTextField {
             
         } while(args.length > 3);
 
-
-        boolean entitySelected = false;
-        try {
-            entitySelected = gh.tileUnderMouse.getGridPoint().equals(gh.selectedEntityTile.getGridPoint());
-        } catch (Exception e) {
-        }
-
-        if (entitySelected) {
-            Character c = (Character) gh.selectEntity(gh.selectedEntityTile);
-            if (hasValue[0]) c.setSize(size);
-            if (hasValue[1]) c.setMaxHealth(maxHealth);
-            if (hasValue[2]) c.setAC(AC);
-            if (hasValue[3]) c.setSpeed(speed);
-            if (hasValue[4]) c.setInitiative(initiative);
+        if (!gh.selectedEntityTiles.isEmpty()) {
+            for (Hexagon h : gh.selectedEntityTiles){
+                Character c = (Character) gh.selectEntity(h);
+                if (hasValue[0]) c.setSize(size);
+                if (hasValue[1]) c.setMaxHealth(maxHealth);
+                if (hasValue[2]) c.setAC(AC);
+                if (hasValue[3]) c.setSpeed(speed);
+                if (hasValue[4]) c.setInitiative(initiative);
+            }
             
         } else {
-            gh.createCharacter(size, maxHealth, AC, speed, initiative);
+            gh.spawnCharacter(size, maxHealth, AC, speed, initiative);
         }
     }
     private String[] cutArgs(String[] args) {
@@ -160,5 +172,16 @@ public class Consol extends JTextField {
     public void setFontSize(int s){
         this.setPreferredSize(new Dimension(200, s*8/5));
         this.setFont(new Font("Arial", Font.PLAIN, s));
+    }
+    public void displayConfirmText(String s) {
+        setText(s);
+        confirm = true;
+    }
+    private void confirm() {
+        gh.waiter.provideAnswer(true);
+    }
+    private void deny() {
+        gh.waiter.provideAnswer(false);
+        
     }
 }
