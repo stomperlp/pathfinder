@@ -29,6 +29,11 @@ public class Consol extends JTextField {
         this.setSelectedTextColor(Color.BLACK);
     }
     public void command(String input) {
+        commandHistory.add(input);
+        historyIndex = commandHistory.size();
+        setText("");
+        currentInput = "";
+        gh.repaint();
         if (confirm) {
 
             if(input.toLowerCase().endsWith("y") 
@@ -47,17 +52,14 @@ public class Consol extends JTextField {
                 case "background", ":b"  -> gh.setBackgroundImage();
                 case "debug",      ":d"  -> gh.toggleDebugMode();
                 case "character",  ":c"  -> character(args);
+                case "wall",       ":w"  -> gh.summonWall();
+                case "entity",     ":e"  -> gh.summonEntity();
                 case "help",       ":h"  -> help(args[1]);
                 case "roll",       ":r"  -> roll(args);
                 case "darkmode",   ":dm" -> gh.toggleDarkMode();
                 default -> {}
             }
         }
-        commandHistory.add(input);
-        historyIndex = commandHistory.size();
-        setText("");
-        currentInput = "";
-        gh.repaint();
     }
     private void character(String[] args) {
         int size = 0;       // hasValue[0]
@@ -66,10 +68,11 @@ public class Consol extends JTextField {
         int speed = 0;      // hasValue[3]
         int initiative = 0; // hasValue[4]
         boolean[] hasValue = new boolean[5];
+        //runs until all arguments are consumed
         do{
             try {
                 switch (args[1].toLowerCase()) {
-                    case "d",  "delete"     -> {gh.deleteCharacter();                                       }
+                    case "d",  "delete"     -> {gh.deleteEntities();                                       }
                     case "s",  "size"       -> {size        = Integer.parseInt(args[2]); hasValue[0] = true;}
                     case "h",  "maxhealth"  -> {maxHealth   = Integer.parseInt(args[2]); hasValue[1] = true;}
                     case "ac", "armorclass" -> {AC          = Integer.parseInt(args[2]); hasValue[2] = true;}
@@ -81,7 +84,7 @@ public class Consol extends JTextField {
             } 
             catch (Exception e) {}
             
-        } while(args.length > 3);
+        } while(args.length >= 3);
 
         if (!gh.selectedEntityTiles.isEmpty()) {
             for (Hexagon h : gh.selectedEntityTiles){
@@ -101,8 +104,8 @@ public class Consol extends JTextField {
         
         String[] temp = new String[args.length - 2];
         temp[0] = args[0];
-
-        for(int i = 3; i < args.length - 1; i++) {
+        
+        for(int i = 3; i < args.length; i++) {
             temp[i-2] = args[i];
         }
         return temp;

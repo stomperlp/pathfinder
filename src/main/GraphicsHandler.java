@@ -1,6 +1,7 @@
 package main;
 import entities.Character;
 import entities.Entity;
+import entities.Wall;
 import fx.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -198,21 +199,28 @@ public class GraphicsHandler extends JFrame{
                             default -> h.getCenter().getY() - (e.getDrawSize() * hexSize/2);
                         };
                         e.setLocation(new Point2D.Double(x,y));
+                        g2d.drawImage(
+                            e.getImage(), 
+                            (int) (e.getLocation().getX()), 
+                            (int) (e.getLocation().getY()), 
+                            (int) (e.getDrawSize() * hexSize), 
+                            (int) (e.getDrawSize() * hexSize), this
+                        );
                     }
                     else {
                         e.setLocation(new Point2D.Double( 
-                            h.getCenter().getX() - (Math.sqrt(3) * hexSize/2), 
+                            h.getCenter().getX() - (hexSize), 
                             h.getCenter().getY() - (Math.sqrt(3) * hexSize/2)
                         ));
+                        g2d.drawImage(
+                            e.getImage(), 
+                            (int) (e.getLocation().getX()), 
+                            (int) (e.getLocation().getY()), 
+                            (int) (e.getDrawSize() * hexSize*2/Math.sqrt(3)), 
+                            (int) (e.getDrawSize() * hexSize), this
+                        );
                     }
 
-                    g2d.drawImage(
-                        e.getImage(), 
-                        (int) (e.getLocation().getX()), 
-                        (int) (e.getLocation().getY()), 
-                        (int) (e.getDrawSize() * hexSize), 
-                        (int) (e.getDrawSize() * hexSize), this
-                    );
                 }
 
             }
@@ -533,7 +541,7 @@ public class GraphicsHandler extends JFrame{
     public void spawnCharacter(int size, int maxhealth, int AC, int speed, int initiative) {
         ArrayList<Hexagon> tiles = new ArrayList<>();
         // tile the character spawns on
-        if (selectedTiles.size() == 1) tiles.add(selectedTiles.get(0));
+        if (selectedTiles.size() == 1) tiles.add(selectedTiles.getFirst());
         else if (selectedTiles.size() > 1) {
         
             new Thread(() -> {
@@ -599,7 +607,7 @@ public class GraphicsHandler extends JFrame{
         return null;
     }
 
-    public void deleteCharacter() {
+    public void deleteEntities() {
         ArrayList<Entity> delEntites = new ArrayList<>();
         for(Entity e : entities) {
             for(Hexagon tile : selectedEntityTiles) {
@@ -625,5 +633,41 @@ public class GraphicsHandler extends JFrame{
         consol.setSelectedTextColor(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
         consol.setSelectionColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
         consol.setBorder(new LineBorder(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
+    }
+
+    public void summonWall() {
+        Image image = new ImageIcon(io.openFileBrowser().getPath()).getImage();
+         
+        for(Hexagon tile : selectedTiles) {
+            //try {
+                Wall w = new Wall(
+                    this,
+                    image,
+                    tile, 
+                    tile.getCenter()
+                );
+                entities.add(w);
+            /* } catch (Exception e) {
+                System.err.println("Wall summon cancled");
+            }*/
+        }
+    }
+
+    public void summonEntity() {
+        Image image = new ImageIcon(io.openFileBrowser().getPath()).getImage();
+         
+        for(Hexagon tile : selectedTiles) {
+            //try {
+                Entity w = new Entity(
+                    this,
+                    image,
+                    tile, 
+                    tile.getCenter()
+                );
+                entities.add(w);
+            /*} catch (Exception e) {
+                System.err.println("Wall summon cancled");
+            }*/
+        }
     }
 }
