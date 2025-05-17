@@ -8,10 +8,13 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.*;
+import tools.AnswerWaiter;
 
 public class GraphicsHandler extends JFrame{
 
     protected final IOHandler io;
+    protected GameHandler gm;
+    protected AnswerWaiter waiter = new AnswerWaiter();
 
     protected JPanel backgroundPanel;
     protected JPanel gridPanel;
@@ -32,17 +35,16 @@ public class GraphicsHandler extends JFrame{
     protected Point dragStart = null;
     Point gridOffset = new Point(0, 0);
 
-    protected ArrayList<Hexagon> hexlist  = new ArrayList<>();
-    protected ArrayList<Marker>  markers  = new ArrayList<>();
+    protected ArrayList<Hexagon> hexlist = new ArrayList<>();
+    protected ArrayList<Marker>  markers = new ArrayList<>();
     protected ArrayList<Entity>  entities = new ArrayList<>();
+    protected ArrayList<Hexagon>  selectedTiles = new ArrayList<>();
+    protected ArrayList<Hexagon>  selectedEntityTiles = new ArrayList<>();
 
     protected Hexagon tileUnderMouse;
-    protected Hexagon selectedTile;
-    protected Hexagon selectedEntityTile;
 
     protected int zoomFactor = 1;
     protected boolean debugMode = false;
-    protected GameHandler gm;
 
     
     private void inputListener()
@@ -222,19 +224,22 @@ public class GraphicsHandler extends JFrame{
                     }
                 }
                 for(Hexagon hex : hexlist) {
-                    if (selectedTile == null) break;
-
-                    if (selectedTile.getGridPoint().equals(hex.getGridPoint())) {
-                        selectedTile = hex;
-                        break;
+                    if (selectedTiles.isEmpty()) break;
+                    for (Hexagon seltile : selectedTiles){
+                        if (seltile.getGridPoint().equals(hex.getGridPoint())) {
+                            selectedTiles.set(selectedTiles.indexOf(seltile), hex);
+                            break;
+                        }
                     }
                 }
                 for(Hexagon hex : hexlist) {
-                    if (selectedEntityTile == null) break;
-
-                    if (selectedEntityTile.getGridPoint().equals(hex.getGridPoint())) {
-                        selectedEntityTile = hex;
-                        break;
+                    int i = 0;
+                    for (Hexagon seltile : selectedEntityTiles){
+                        if (seltile.getGridPoint().equals(hex.getGridPoint())) {
+                            selectedEntityTiles.set(i, hex);
+                            break;
+                        }
+                        i++;
                     }
                 }
                 if (tileUnderMouse != null && dragStart == null) {
@@ -243,17 +248,19 @@ public class GraphicsHandler extends JFrame{
                     g2d.setColor(Color.BLACK);
                     g2d.draw(tileUnderMouse.getShape());
                 }
-                if (selectedTile != null && !selectedTile.equals(selectedEntityTile)) {
-
-                    g2d.setStroke(new BasicStroke(thickness+2));
-                    g2d.setColor(Color.RED);
-                    g2d.draw(selectedTile.getShape());
+                if (!selectedTiles.isEmpty()) {
+                    for (Hexagon h : selectedTiles){
+                        g2d.setStroke(new BasicStroke(thickness+2));
+                        g2d.setColor(Color.RED);
+                        g2d.draw(h.getShape());
+                    }
                 }
-                if (selectedEntityTile != null) {
-                    
-                    g2d.setStroke(new BasicStroke(thickness+2));
-                    g2d.setColor(Color.BLUE);
-                    g2d.draw(selectedEntityTile.getShape());
+                if (!selectedEntityTiles.isEmpty()) {
+                    for (Hexagon h : selectedEntityTiles){
+                        g2d.setStroke(new BasicStroke(thickness+2));
+                        g2d.setColor(Color.BLUE);
+                        g2d.draw(h.getShape());
+                    }
                 }
             }
         };
@@ -389,12 +396,12 @@ public class GraphicsHandler extends JFrame{
         tileUnderMouse = hex;
         repaint();
     }
-    public void drawSelectedTile(Hexagon hex) {
-        selectedTile = hex;
+    public void addSelectedTile(Hexagon hex) {
+        selectedTiles.add(hex);
         repaint();
     }
-    public void drawSelectedEntityTile(Hexagon hex) {
-        selectedEntityTile = hex;
+    public void addSelectedEntityTile(Hexagon hex) {
+        selectedEntityTiles.add(hex);
         repaint();
     }
         public void drag(MouseEvent e) {
@@ -481,18 +488,49 @@ public class GraphicsHandler extends JFrame{
     public ArrayList<Hexagon> getHexlist() {
         return hexlist;
     }
-    public void createCharacter(int size, int maxhealth, int AC, int speed, int initiative) {
-        Hexagon tile;
+    public void spawnCharacter(int size, int maxhealth, int AC, int speed, int initiative) {
+        ArrayList<Hexagon> tiles = new ArrayList<>();
         // tile the character spawns on
-        if (selectedTile != null) tile = selectedTile;
-        else if (tileUnderMouse != null) tile = tileUnderMouse;
-        else tile = gm.findClosestHexagon(new Point2D.Double(getWidth()/2, getHeight()/2));
+        if (selectedTiles.size() == 1) tiles.set(0, selectedTiles.get(0));
+        else if (selectedTiles.size() > 1) {
         
-        if (tileUnderMouse != null) {
+            new Thread(() -> {
+                try {
+                    consol.displayConfirmText("are you sure you want to create [" + selectedTiles.size() + "] Characters: (Y/N)" );
+                    boolean confirm = (boolean)waiter.waitForAnswer();
+                    if (confirm) {
+                        for (Hexagon tile : selectedTiles) {
+                            tiles.add(tile);
+                        }
+                        spawnCharacterAt(size, maxhealth, AC, speed, initiative, tiles);
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }).start();
+            return;
+        }
+        else if (tileUnderMouse != null) {
+
+            tiles.set(0,tileUnderMouse);
+        }
+        else {
+
+            tiles.set(0, gm.findClosestHexagon(
+                new Point2D.Double(getWidth()/2, getHeight()/2)
+            ));
+        }
+
+        spawnCharacterAt(size, maxhealth, AC, speed, initiative, tiles);
+    }
+    public void spawnCharacterAt(int size, int maxhealth, int AC, int speed, int initiative, ArrayList<Hexagon> tiles) {
+        Image image = new ImageIcon(io.openFileBrowser().getPath()).getImage();
+         
+        for(Hexagon tile : tiles) {
             try {
                 Character c = new Character(
                     this,
-                    new ImageIcon(io.openFileBrowser().getPath()).getImage(),
+                    image,
                     tile, 
                     tile.getCenter(),
                     size, maxhealth, AC, speed, initiative
@@ -501,8 +539,6 @@ public class GraphicsHandler extends JFrame{
             } catch (Exception e) {
                 System.err.println("Character summon cancled");
             }
-        } else {
-            System.err.println("No valid hexagon found for character placement!");
         }
     }
     public void addMarker(Marker m) {
@@ -523,12 +559,16 @@ public class GraphicsHandler extends JFrame{
     }
 
     public void deleteCharacter() {
+        ArrayList<Entity> delEntites = new ArrayList<>();
         for(Entity e : entities) {
-            if (e.getTile().getGridPoint().equals(selectedEntityTile.getGridPoint())) {
-                entities.remove(e);
-                selectedEntityTile = null;
-                return;
+            for(Hexagon tile : selectedEntityTiles) {
+                if (e.getTile().getGridPoint().equals(tile.getGridPoint())) {
+                    delEntites.add(e);
+                }
             }
+        }
+        for (Entity e : delEntites) {
+            entities.remove(e);
         }
     }
 }

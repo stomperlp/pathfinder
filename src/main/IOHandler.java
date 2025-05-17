@@ -65,6 +65,10 @@ public class IOHandler extends MouseAdapter{
 		switch (e.getButton()) 
 		{
 			case MouseEvent.BUTTON1 -> {
+				if (!isCtrlDown){
+					gh.selectedEntityTiles.clear();
+					gh.selectedTiles.clear();
+				}
 				currentHexagon = gh.gm.findClosestHexagon(mousePos);
 				selectEntity();
 				selectTile();
@@ -157,7 +161,7 @@ public class IOHandler extends MouseAdapter{
 				DDown = true;
 			}
 			case 'H' -> {
-				for (Hexagon h : AStar.getNeighbors(gh.selectedTile, gh))
+				for (Hexagon h : AStar.getNeighbors(gh.selectedTiles.get(0), gh))
 				{
 					System.out.println(h.getGridPoint());
 				}
@@ -216,49 +220,60 @@ public class IOHandler extends MouseAdapter{
 		gh.repaint();
 	}
 	public void selectEntity(){
-		if (gh.selectedEntityTile != null) {
-			if (currentHexagon.getGridPoint().equals(
-				gh.selectedEntityTile.getGridPoint()
-			)) {
-				gh.drawSelectedEntityTile(null);
-				return;
+		if (!gh.selectedEntityTiles.isEmpty()) {
+			for(Hexagon h : gh.selectedEntityTiles){
+				if (currentHexagon.getGridPoint().equals(
+					h.getGridPoint()
+				)) {
+					gh.selectedEntityTiles.remove(h);
+					return;
+				}
 			}
 		}
 		for(Entity en : gh.entities) {
 			if(currentHexagon.getGridPoint().equals(
 				en.getTile().getGridPoint()
 			)) {
-				gh.drawSelectedEntityTile(currentHexagon);
+				gh.addSelectedEntityTile(currentHexagon);
 				hasSelectedEntity = true;
 			}
 		}
 	}
 	public void selectTile() {
-		if (gh.selectedEntityTile != null && !hasSelectedEntity){
+		/*if (!gh.selectedEntityTiles.isEmpty() && !hasSelectedEntity) {
 
+			for(Hexagon h : gh.selectedTiles){
+				if (currentHexagon.getGridPoint().equals(
+					h.getGridPoint()
+				)) {
+					gh.selectedTiles.remove(h);
+					return;
+				}
+			}
 			if (currentHexagon.getGridPoint().equals(
 				gh.selectedEntityTile.getGridPoint()
 			)) {
 				gh.drawSelectedTile(null);
 				return;
 			}
+		}*/
+		if (!gh.selectedTiles.isEmpty()) {
+			for(Hexagon h : gh.selectedTiles){
+				if (currentHexagon.getGridPoint().equals(
+					h.getGridPoint()
+				)) {
+					gh.selectedTiles.remove(h);
+					return;
+				} 
+			}
 		}
-		if (gh.selectedTile != null) {
-			if (currentHexagon.getGridPoint().equals(
-				gh.selectedTile.getGridPoint()
-			)) {
-				gh.drawSelectedTile(null);
-				return;
-			} 
-		}
-		gh.drawSelectedTile(currentHexagon);
+		gh.addSelectedTile(currentHexagon);
 
-		if (gh.selectedEntityTile == null) return;
+		if (gh.selectedEntityTiles.size() != 1) return;
 
-		Entity selectedEntity = gh.selectEntity(gh.selectedEntityTile);
+		Entity selectedEntity = gh.selectEntity(gh.selectedEntityTiles.getFirst());
 
-		if (gh.selectedTile != null 
-			&& !currentHexagon.getGridPoint().equals(gh.selectedEntityTile.getGridPoint()) 
+		if (!currentHexagon.getGridPoint().equals(gh.selectedEntityTiles.getFirst().getGridPoint()) 
 			&& selectedEntity instanceof Character
 		) {
 			gh.gm.moveCharacter(currentHexagon, (Character)selectedEntity);
