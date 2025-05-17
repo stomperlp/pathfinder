@@ -250,11 +250,14 @@ public class IOHandler extends MouseAdapter {
 			}
 		}
 		for(Entity en : gh.entities) {
-			if(currentHexagon.getGridPoint().equals(
-				en.getTile().getGridPoint()
-			)) {
-				gh.addSelectedEntityTile(currentHexagon);
-				hasSelectedEntity = true;
+			for (Hexagon occTile : en.getOccupiedTiles()){
+
+				if(currentHexagon.getGridPoint().equals(
+					occTile.getGridPoint()
+				)) {
+					gh.addSelectedEntityTile(en.getTile());
+					hasSelectedEntity = true;
+				}
 			}
 		}
 	}
@@ -296,7 +299,7 @@ public class IOHandler extends MouseAdapter {
 			&& selectedEntity instanceof Character
 			&& isShiftDown
 		) {
-			// gh.gm.moveCharacter(currentHexagon, (entities.Character)selectedEntity);
+			gh.gm.moveCharacter(currentHexagon, (entities.Character)selectedEntity);
 			
 			AStar.run(gh.selectedEntityTiles.getFirst(), currentHexagon, gh);
 

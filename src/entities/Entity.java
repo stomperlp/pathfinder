@@ -9,18 +9,22 @@ import main.GraphicsHandler;
 
 public class Entity {
 
-    private Image   image;
-    private Hexagon tile;
-    private Point2D location;
+    protected Image   image;
+    protected Hexagon tile;
+    protected Point2D location;
     
+    protected ArrayList<Hexagon> occupiedTiles = new ArrayList<>();
     protected ArrayList<Path2D> hexTile = new ArrayList<>();
-    private final Marker debugMarker;
+
+    protected final Marker debugMarker;
+    protected GraphicsHandler gh;
 
     public Entity(GraphicsHandler gh, Image image, Hexagon tile, Point2D location)
     {
         this.image       = image;
         this.tile        = tile;
         this.location    = location;
+        this.gh = gh;
         this.debugMarker = new Marker(tile.getGridPoint(), Marker.COORDINATES, true);
         gh.addMarker(debugMarker);
     }
@@ -34,6 +38,9 @@ public class Entity {
     public void debugUpdate() {
         debugMarker.moveTo(location, tile.getGridPoint());
     }
+    public Marker getMarker() {
+        return debugMarker;
+    }
     public void setImage(Image image) {
         this.image = image;
     }
@@ -43,8 +50,13 @@ public class Entity {
     public void setTile(Hexagon tile) {
         this.tile = tile;
     }
+    public ArrayList<Hexagon> getOccupiedTiles() {
+        return occupiedTiles;
+    }
+    public void setOccupiedTiles(ArrayList<Hexagon> occupiedTiles) {
+        this.occupiedTiles = occupiedTiles;
+    }
     public Point2D getLocation() {
-        if (tile != null) location = tile.getCenter();
         return location;
     }
     public void setLocation(Point2D p) {

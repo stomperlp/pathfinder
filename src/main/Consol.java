@@ -14,16 +14,15 @@ import tools.Dice;
 public class Consol extends JTextField {
     private boolean Active = true;
     private GraphicsHandler gh;
-    private List<String> commandHistory = new ArrayList<>();
+    private final List<String> commandHistory = new ArrayList<>();
     private int historyIndex = -1;
     private String currentInput = "";
     private Marker[] diceMarkers = {};
     private boolean confirm = false;
     
-    private final Object lock = new Object();
-    
-    public Consol() {
+    public Consol(GraphicsHandler gh) {
         super();
+        this.gh = gh;
         this.setPreferredSize(new Dimension(200, 32));
         this.setFont(new Font("Arial", Font.PLAIN, 20));
     }
@@ -58,10 +57,10 @@ public class Consol extends JTextField {
         gh.repaint();
     }
     private void character(String[] args) {
-        int size = 0; // hasValue[0]
-        int maxHealth = 0; // hasValue[1]
-        int AC = 0; // hasValue[2]
-        int speed = 0; // hasValue[3]
+        int size = 0;       // hasValue[0]
+        int maxHealth = 0;  // hasValue[1]
+        int AC = 0;         // hasValue[2]
+        int speed = 0;      // hasValue[3]
         int initiative = 0; // hasValue[4]
         boolean[] hasValue = new boolean[5];
         do{
@@ -106,6 +105,14 @@ public class Consol extends JTextField {
         return temp;
     }
     private void help(String arg) {
+         switch(arg) {
+                case "quit",       ":q" -> {}
+                case "background", ":b" -> {}
+                case "debug",      ":d" -> {}
+                case "character",  ":c" -> {}
+                case "roll",       ":r" -> {}
+                default -> {}
+            }
 
     }
     private void roll(String[] inputSegments) {

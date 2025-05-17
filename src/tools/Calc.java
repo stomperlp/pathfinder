@@ -35,10 +35,8 @@ public class Calc {
         for (int y = 0; y < diameter; y++) {
             for (int x = 0; x < diameter; x++) {
                 double distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
-                if (distance <= radius*0.8) {
+                if (distance <= radius) {
                     output.setRGB(x, y, bImage.getRGB(x, y));
-                } else if(distance <= radius) {
-                    output.setRGB(x, y, bImage.getRGB(x, y)+999999999);
                 }
             }
         }

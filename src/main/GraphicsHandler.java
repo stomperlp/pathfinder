@@ -38,8 +38,8 @@ public class GraphicsHandler extends JFrame{
     protected ArrayList<Hexagon> hexlist = new ArrayList<>();
     protected ArrayList<Marker>  markers = new ArrayList<>();
     protected ArrayList<Entity>  entities = new ArrayList<>();
-    protected ArrayList<Hexagon>  selectedTiles = new ArrayList<>();
-    protected ArrayList<Hexagon>  selectedEntityTiles = new ArrayList<>();
+    protected ArrayList<Hexagon> selectedTiles = new ArrayList<>();
+    protected ArrayList<Hexagon> selectedEntityTiles = new ArrayList<>();
 
     protected Hexagon tileUnderMouse;
 
@@ -153,27 +153,27 @@ public class GraphicsHandler extends JFrame{
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+                
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                for (Entity c : entities) {
-                    if (c instanceof Character){
-                    }
 
-                    if(c.getTile() == null) {
-                        g2d.fillOval((int) c.getLocation().getX() - hexSize/10, (int) c.getLocation().getY() - hexSize/10, 
+                for (Entity e : entities) {
+
+                    if(e.getTile() == null) {
+                        g2d.fillOval((int) e.getLocation().getX() - hexSize/10, (int) e.getLocation().getY() - hexSize/10, 
                             hexSize/10, hexSize/10);
                         continue;
                     }
-                    Hexagon h = c.getTile();
-                    c.debugUpdate();
+                    e.debugUpdate();
+
+                    Hexagon h = e.getTile();
 
                     boolean gridPointFound = false;
-
                     for(Hexagon hex : hexlist) {
                         if (h.getGridPoint().equals(hex.getGridPoint())) {
 
-                            c.setTile(hex);
-                            c.setLocation(hex.getCenter());
+                            e.setTile(hex);
+                            h = hex;
 
                             gridPointFound = true;
                             break;
@@ -181,13 +181,30 @@ public class GraphicsHandler extends JFrame{
                     }
                     if(!gridPointFound) continue;
 
+                    if (e instanceof Character c){
+                        double x = switch (c.getSize()) {
+                            case Character.LARGE      -> h.getCenter().getX();
+                            case Character.GARGANTUAN -> h.getCenter().getX() - ((e.getDrawSize()-2) * hexSize/2);
+                            default                   -> h.getCenter().getX() - (e.getDrawSize() * hexSize/2);
+                        };
+                        double y = switch (e.getDrawSize()) {
+                            default -> h.getCenter().getY() - (e.getDrawSize() * hexSize/2);
+                        };
+                        e.setLocation(new Point2D.Double(x,y));
+                    }
+                    else {
+                        e.setLocation(new Point2D.Double( 
+                            h.getCenter().getX() - (Math.sqrt(3) * hexSize/2), 
+                            h.getCenter().getY() - (Math.sqrt(3) * hexSize/2)
+                        ));
+                    }
+
                     g2d.drawImage(
-                        c.getImage(), 
-                        (int) (c.getLocation().getX() - (Math.sqrt(3) * hexSize/2)), 
-                        (int) (c.getLocation().getY() - (Math.sqrt(3) * hexSize/2)), 
-                        
-                        (int) (c.getDrawSize() * hexSize), 
-                        (int) (c.getDrawSize() * hexSize), this
+                        e.getImage(), 
+                        (int) (e.getLocation().getX()), 
+                        (int) (e.getLocation().getY()), 
+                        (int) (e.getDrawSize() * hexSize), 
+                        (int) (e.getDrawSize() * hexSize), this
                     );
                 }
 
@@ -272,7 +289,12 @@ public class GraphicsHandler extends JFrame{
                     for (Hexagon h : selectedEntityTiles){
                         g2d.setStroke(new BasicStroke(thickness+2));
                         g2d.setColor(Color.BLUE);
-                        g2d.draw(h.getShape());
+                        try {
+                            for (Hexagon tile : selectEntity(h).getOccupiedTiles()) {
+                                g2d.draw(tile.getShape());
+                            }
+                        } catch (Exception e) {
+                        }
                     }
                 }
             }
@@ -363,8 +385,7 @@ public class GraphicsHandler extends JFrame{
                 }
             }
         };
-        consol = new Consol();
-        consol.setGraphicsHandler(this);
+        consol = new Consol(this);
         
         backgroundPanel.add(contentPanel);
         contentPanel.add(gridPanel);
@@ -575,6 +596,7 @@ public class GraphicsHandler extends JFrame{
         for(Entity e : entities) {
             for(Hexagon tile : selectedEntityTiles) {
                 if (e.getTile().getGridPoint().equals(tile.getGridPoint())) {
+                    markers.remove(e.getMarker());
                     delEntites.add(e);
                 }
             }
