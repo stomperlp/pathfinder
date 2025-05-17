@@ -34,19 +34,19 @@ public class Hexagon {
     public boolean contains(Point2D p) {
         return shape.contains(p);
     }
-    public Path2D getShape(){
+    public Path2D getShape() {
         return shape;
     }
-    public Point2D getCenter(){
+    public Point2D getCenter() {
         return center;
     }
-    public Point getGridPoint(){
+    public Point getGridPoint() {
         return gridCoords;
     }
-    public void setShape(Path2D shape){
+    public void setShape(Path2D shape) {
         this.shape = shape;
     }
-    public void setCenter(Point2D center){
+    public void setCenter(Point2D center) {
         this.center = center;
     }
 }
