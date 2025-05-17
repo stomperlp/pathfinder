@@ -181,7 +181,6 @@ public class Consol extends JTextField {
         gh.waiter.provideAnswer(true);
     }
     private void deny() {
-        gh.waiter.provideAnswer(false);
-        
+        gh.waiter.provideAnswer(false); 
     }
 }

@@ -85,7 +85,21 @@ public class GraphicsHandler extends JFrame{
             }
             @Override
             public void mouseDragged(MouseEvent e) {
-                io.mouseDragged(e);
+                Point translatedPoint = SwingUtilities.convertPoint(
+                    e.getComponent(), 
+                    e.getPoint(), 
+                    backgroundPanel 
+                );
+                io.mouseDragged(new MouseEvent(
+                    backgroundPanel, 
+                    e.getID(), 
+                    e.getWhen(), 
+                    e.getModifiersEx(), 
+                    translatedPoint.x, 
+                    translatedPoint.y, 
+                    e.getClickCount(), 
+                    e.isPopupTrigger()
+                ));
             }
         });
         
@@ -404,7 +418,7 @@ public class GraphicsHandler extends JFrame{
         selectedEntityTiles.add(hex);
         repaint();
     }
-        public void drag(MouseEvent e) {
+    public void drag(MouseEvent e) {
         if (dragStart != null) {
             // Calculate drag distance
             int dx = e.getX() - dragStart.x;
@@ -491,7 +505,7 @@ public class GraphicsHandler extends JFrame{
     public void spawnCharacter(int size, int maxhealth, int AC, int speed, int initiative) {
         ArrayList<Hexagon> tiles = new ArrayList<>();
         // tile the character spawns on
-        if (selectedTiles.size() == 1) tiles.set(0, selectedTiles.get(0));
+        if (selectedTiles.size() == 1) tiles.add(selectedTiles.get(0));
         else if (selectedTiles.size() > 1) {
         
             new Thread(() -> {
@@ -512,11 +526,10 @@ public class GraphicsHandler extends JFrame{
         }
         else if (tileUnderMouse != null) {
 
-            tiles.set(0,tileUnderMouse);
+            tiles.add(tileUnderMouse);
         }
         else {
-
-            tiles.set(0, gm.findClosestHexagon(
+            tiles.add(gm.findClosestHexagon(
                 new Point2D.Double(getWidth()/2, getHeight()/2)
             ));
         }

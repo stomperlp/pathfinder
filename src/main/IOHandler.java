@@ -32,6 +32,7 @@ public class IOHandler extends MouseAdapter{
 
 	private boolean hasSelectedEntity;
 	private Point mousePos;
+	private boolean LMBDown;
 
 
 	public IOHandler(GraphicsHandler gh){
@@ -65,8 +66,10 @@ public class IOHandler extends MouseAdapter{
 		switch (e.getButton()) 
 		{
 			case MouseEvent.BUTTON1 -> {
-				if (!isCtrlDown){
-					gh.selectedEntityTiles.clear();
+				LMBDown = true;
+				if (!isCtrlDown && !isShiftDown){
+					if (!isCtrlDown)
+						gh.selectedEntityTiles.clear();
 					gh.selectedTiles.clear();
 				}
 				currentHexagon = gh.gm.findClosestHexagon(mousePos);
@@ -78,7 +81,7 @@ public class IOHandler extends MouseAdapter{
 				
 				switch (mode) 
 				{
-					case DRAG_MODE -> gh.dragStart = e.getPoint();
+					case DRAG_MODE -> gh.dragStart = mousePos;
 				}
 			}
 			default -> {}
@@ -91,7 +94,7 @@ public class IOHandler extends MouseAdapter{
 		switch (e.getButton()) 
 		{
 			case MouseEvent.BUTTON1 -> {
-
+				LMBDown = false;
 			}
 			case MouseEvent.BUTTON2 -> {}
 			case MouseEvent.BUTTON3 -> {
@@ -111,28 +114,36 @@ public class IOHandler extends MouseAdapter{
 		currentHexagon = gh.gm.findClosestHexagon(mousePos);
 		gh.drawTileUnderMouse(currentHexagon);
 	}
-
-    @Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		int notches = e.getWheelRotation();
-		if(isCtrlDown) {
-			int base = gh.consol.getFont().getSize();
-			gh.consol.setFontSize(base-notches);
-
-			gh.revalidate();
-			gh.repaint();
-		} else {
-			gh.zoom(notches, e.getPoint());
-		}
-	}
+	
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		mousePos = e.getPoint();
 		if (gh.debugMode) logMousePos(e);
+		
+		currentHexagon = gh.gm.findClosestHexagon(e.getPoint());
+		
+		if (isCtrlDown && !gh.selectedTiles.contains(currentHexagon) && LMBDown) {
+			gh.addSelectedTile(currentHexagon);
+			selectEntity();
+		}
 		switch (mode) 
 		{
 			case DRAG_MODE -> gh.drag(e);
 		}
 		
+	}
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		int notches = e.getWheelRotation();
+		if(isCtrlDown) {
+			int base = gh.consol.getFont().getSize();
+			gh.consol.setFontSize(base-notches);
+			
+			gh.revalidate();
+			gh.repaint();
+		} else {
+			gh.zoom(notches, e.getPoint());
+		}
 	}
 	void keyTyped(KeyEvent e) {
 		switch(e.getKeyCode()) {
@@ -205,8 +216,8 @@ public class IOHandler extends MouseAdapter{
 		}
 		//Any Always active
 		switch(e.getKeyCode()) {
-			case KeyEvent.VK_SHIFT -> isShiftDown = false;
-			case KeyEvent.VK_CONTROL -> isCtrlDown = false;
+			case KeyEvent.VK_SHIFT   -> isShiftDown = false;
+			case KeyEvent.VK_CONTROL -> isCtrlDown  = false;
 		}
     }
 	//Other Methods ----------------------------------------------
@@ -220,6 +231,7 @@ public class IOHandler extends MouseAdapter{
 		gh.repaint();
 	}
 	public void selectEntity(){
+		if(isShiftDown) return;
 		if (!gh.selectedEntityTiles.isEmpty()) {
 			for(Hexagon h : gh.selectedEntityTiles){
 				if (currentHexagon.getGridPoint().equals(
@@ -269,14 +281,15 @@ public class IOHandler extends MouseAdapter{
 		}
 		gh.addSelectedTile(currentHexagon);
 
-		if (gh.selectedEntityTiles.size() != 1) return;
+		if (gh.selectedEntityTiles.isEmpty()) return;
 
 		Entity selectedEntity = gh.selectEntity(gh.selectedEntityTiles.getFirst());
 
 		if (!currentHexagon.getGridPoint().equals(gh.selectedEntityTiles.getFirst().getGridPoint()) 
 			&& selectedEntity instanceof Character
+			&& isShiftDown
 		) {
-			gh.gm.moveCharacter(currentHexagon, (Character)selectedEntity);
+			gh.gm.moveCharacter(currentHexagon, (entities.Character)selectedEntity);
 		}
 	}
 }
