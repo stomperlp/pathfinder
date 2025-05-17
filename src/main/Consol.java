@@ -3,6 +3,7 @@ package main;
 import entities.Character;
 import fx.Hexagon;
 import fx.Marker;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
@@ -25,6 +26,7 @@ public class Consol extends JTextField {
         this.gh = gh;
         this.setPreferredSize(new Dimension(200, 32));
         this.setFont(new Font("Arial", Font.PLAIN, 20));
+        this.setSelectedTextColor(Color.BLACK);
     }
     public void command(String input) {
         if (confirm) {
@@ -41,12 +43,13 @@ public class Consol extends JTextField {
             String[] args = input.split(" ");
 
             switch(args[0].toLowerCase()) {
-                case "quit",       ":q" -> System.exit(0);
-                case "background", ":b" -> gh.setBackgroundImage();
-                case "debug",      ":d" -> gh.toggleDebugMode();
-                case "character",  ":c" -> character(args);
-                case "help",       ":h" -> help(args[1]);
-                case "roll",       ":r" -> roll(args);
+                case "quit",       ":q"  -> System.exit(0);
+                case "background", ":b"  -> gh.setBackgroundImage();
+                case "debug",      ":d"  -> gh.toggleDebugMode();
+                case "character",  ":c"  -> character(args);
+                case "help",       ":h"  -> help(args[1]);
+                case "roll",       ":r"  -> roll(args);
+                case "darkmode",   ":dm" -> gh.toggleDarkMode();
                 default -> {}
             }
         }

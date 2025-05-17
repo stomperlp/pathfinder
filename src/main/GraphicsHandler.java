@@ -8,9 +8,15 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import tools.AnswerWaiter;
 
 public class GraphicsHandler extends JFrame{
+
+    public final Color DARK_PRIMARY = new Color(0x0D1219);
+    public final Color DARK_SECONDARY = new Color(0x626972);
+    public final Color LIGHT_PRIMARY = new Color(0xD0D0D0);
+    public final Color LIGHT_SECONDARY = new Color(0x000000);
 
     protected final IOHandler io;
     protected GameHandler gm;
@@ -44,7 +50,8 @@ public class GraphicsHandler extends JFrame{
     protected Hexagon tileUnderMouse;
 
     protected int zoomFactor = 1;
-    protected boolean debugMode = false;
+    protected boolean debugMode = false; // :d or debug to change
+    protected boolean darkMode = true; //Starts on Light :dm or darkmode to change
 
     
     private void inputListener()
@@ -146,7 +153,7 @@ public class GraphicsHandler extends JFrame{
         setTitle("Bitti bitti 15 punkte");
         setDefaultCloseOperation(0);
         setSize(600, 400); // Initial size
-
+        setBackground(Color.GRAY);
         setResizable(true);
 
         contentPanel = new JPanel(new BorderLayout()) {
@@ -247,8 +254,8 @@ public class GraphicsHandler extends JFrame{
                         }
                         Point2D p   = new Point2D.Double(centerX, centerY);
                         Hexagon hex = new Hexagon(p, hexSize, new Point(row, col));
-        
-                        g2d.setColor(Color.BLACK);
+                        
+                        g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
                         g2d.draw(hex.getShape());
                         hexlist.add(hex);
                     }
@@ -275,7 +282,7 @@ public class GraphicsHandler extends JFrame{
                 if (tileUnderMouse != null && dragStart == null) {
 
                     g2d.setStroke(new BasicStroke(thickness+2));
-                    g2d.setColor(Color.BLACK);
+                    g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
                     g2d.draw(tileUnderMouse.getShape());
                 }
                 if (!selectedTiles.isEmpty()) {
@@ -315,7 +322,7 @@ public class GraphicsHandler extends JFrame{
                     switch (m.getPurpose()) {
                         case Marker.COORDINATES -> {
 
-                            g2d.setColor(Color.BLACK);
+                            g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
                             g2d.setFont(new Font("Arial", Font.BOLD, 18));
                             g2d.drawString(m.getText(), (int) m.getPoint().getX(), (int) m.getPoint().getY());
                         }
@@ -326,12 +333,12 @@ public class GraphicsHandler extends JFrame{
                             g2d.fillRoundRect((int) m.getPoint().getX(), (int) m.getPoint().getY(),
                                 16 * digits + 16, 16 * digits + 16, digits * 2, digits * 2);
 
-                            g2d.setColor(Color.BLACK);
+                            g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
                             g2d.setFont(new Font("Arial", Font.BOLD, 32));
                             g2d.drawString(m.getText(), (int) m.getPoint().getX() + 8, (int) m.getPoint().getY() + 20 + 8*digits);
                         }
                         case Marker.DICERESULT -> {
-                            g2d.setColor(Color.BLACK);
+                            g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
                             g2d.setFont(new Font("Arial", Font.BOLD, 50));
                             g2d.drawString(m.getText(), getWidth()/2, getHeight()/2);
                         }
@@ -344,7 +351,7 @@ public class GraphicsHandler extends JFrame{
                     g2d.fillOval( (int) h.getCenter().getX() - hexSize/10, (int) h.getCenter().getY() - hexSize/10, 
                         hexSize/10, hexSize/10);
                     
-                    g2d.setColor(Color.BLACK);
+                    g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
                     g2d.setFont(new Font("Arial", Font.BOLD, hexSize/3));
 
                     String gridPoint = "[" + h.getGridPoint().x + "|" + h.getGridPoint().y + "]";
@@ -392,6 +399,7 @@ public class GraphicsHandler extends JFrame{
         backgroundPanel.add(consol, BorderLayout.SOUTH);
         gridPanel.add(fxPanel);
         add(backgroundPanel);
+        toggleDarkMode();
         
         // Center the window on screen
         setLocationRelativeTo(null);
@@ -604,5 +612,18 @@ public class GraphicsHandler extends JFrame{
         for (Entity e : delEntites) {
             entities.remove(e);
         }
+    }
+    public void toggleDarkMode() {
+        darkMode = !darkMode;
+        
+        setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
+        contentPanel.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
+        gridPanel.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
+        consol.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
+        backgroundPanel.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
+        consol.setForeground(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+        consol.setSelectedTextColor(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
+        consol.setSelectionColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+        consol.setBorder(new LineBorder(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
     }
 }
