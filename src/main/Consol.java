@@ -67,7 +67,7 @@ public class Consol extends JTextField {
         do{
             try {
                 switch (args[1].toLowerCase()) {
-                    case "d",  "delete"     -> {gh.deleteCharacter();                   }
+                    case "d",  "delete"     -> {gh.deleteCharacter();                                       }
                     case "s",  "size"       -> {size        = Integer.parseInt(args[2]); hasValue[0] = true;}
                     case "h",  "maxhealth"  -> {maxHealth   = Integer.parseInt(args[2]); hasValue[1] = true;}
                     case "ac", "armorclass" -> {AC          = Integer.parseInt(args[2]); hasValue[2] = true;}

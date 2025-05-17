@@ -68,7 +68,7 @@ public class IOHandler extends MouseAdapter {
 			case MouseEvent.BUTTON1 -> {
 				LMBDown = true;
 				if (!isCtrlDown && !isShiftDown){
-					if (!isCtrlDown)
+					if (!isShiftDown)
 						gh.selectedEntityTiles.clear();
 					gh.selectedTiles.clear();
 				}
@@ -297,16 +297,9 @@ public class IOHandler extends MouseAdapter {
 			&& isShiftDown
 		) {
 			// gh.gm.moveCharacter(currentHexagon, (entities.Character)selectedEntity);
-			if (gh.selectedTiles.get(0) != null && gh.selectedEntityTiles.get(0) != null) {
-					Entity selectedEntity2 = gh.selectEntity(gh.selectedEntityTiles.get(0));
-					if (selectedEntity2 instanceof Character) {
-						AStar.run(gh.selectedEntityTiles.get(0), gh.selectedTiles.get(0), gh);
-					} else {
-						System.out.println("No character selected.");
-					}
-				} else {
-					System.out.println("Select both a character and destination tile.");
-				}
+			
+			AStar.run(gh.selectedEntityTiles.getFirst(), currentHexagon, gh);
+
 		}
 	}
 }

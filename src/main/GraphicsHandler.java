@@ -198,7 +198,6 @@ public class GraphicsHandler extends JFrame{
             @Override
             protected void paintComponent(Graphics g) {
                 //stops grid from generation when zoomed out too much
-                if(hexSize < 15) return;
 
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
@@ -212,22 +211,22 @@ public class GraphicsHandler extends JFrame{
                 double hexWidth = Math.sqrt(3) * hexSize;
                 double hexHeight = 2 * hexSize;
 
-                int firstVisibleCol = (int) Math.floor((           - gridOffset.x - hexWidth) / (Math.sqrt(3) * hexWidth))-2;
-                int lastVisibleCol  = (int) Math.ceil((getWidth()  - gridOffset.x + hexWidth) / (Math.sqrt(3) * hexWidth))+2;
+                int firstVisibleCol = (int) Math.floor((           - gridOffset.x - hexWidth) * 2 / (Math.sqrt(3) * hexWidth))-2;
+                int lastVisibleCol  = (int) Math.ceil((getWidth()  - gridOffset.x + hexWidth) * 2 / (Math.sqrt(3) * hexWidth))+2;
                 
-                int firstVisibleRow = (int) Math.floor((           - gridOffset.y - hexHeight) * 7/3 / hexHeight);
-                int lastVisibleRow  = (int) Math.ceil((getHeight() - gridOffset.y + hexHeight) * 7/3 / hexHeight)+2;
+                int firstVisibleRow = (int) Math.floor((           - gridOffset.y - hexHeight) * 1.16 / hexHeight);
+                int lastVisibleRow  = (int) Math.ceil((getHeight() - gridOffset.y + hexHeight) * 1.16 / hexHeight)+2;
                 
                 // Draw the grid
                 for (    int row = firstVisibleRow; row <= lastVisibleRow; row++) {
                     for (int col = firstVisibleCol; col <= lastVisibleCol; col++) {
                         
-                        double centerX = gridOffset.x + col * hexWidth  * Math.sqrt(3);
-                        double centerY = gridOffset.y + row * hexHeight * 0.43; // No clue why 0.43 but don't touch it
+                        double centerX = gridOffset.x + col * hexWidth  * Math.sqrt(3)/2;
+                        double centerY = gridOffset.y + row * hexHeight * 0.865; // No clue why 0.86 but don't touch it
                         
                         // Offset every other row
-                        if (row % 2 != 0) {
-                            centerX += hexWidth * Math.sqrt(3)/2;
+                        if (col % 2 != 0) {
+                            centerY += hexHeight/2.336; // No clue why 2.336 but don't touch it
                         }
                         Point2D p   = new Point2D.Double(centerX, centerY);
                         Hexagon hex = new Hexagon(p, hexSize, new Point(row, col));
@@ -462,7 +461,7 @@ public class GraphicsHandler extends JFrame{
         
         // Calculate new hex size with constraints
         if (  (notches < 0 && hexSize < 200) 
-           || (notches > 0 && hexSize > 10)
+           || (notches > 0 && hexSize > 15)
         ){
             hexSize -= notches * Math.max((hexSize * zoomFactor / 20), 1);
 
