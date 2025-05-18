@@ -9,6 +9,30 @@ public class AStar
 {
     private static HashMap<Point, Hexagon[]> neighborCache = new HashMap<>();
 
+    public static ArrayList<Hexagon> range(Hexagon center, int speed, GraphicsHandler gh) {
+
+        if(speed == 0 || center == null) return new ArrayList<>();
+
+        ArrayList<Hexagon> available       = new ArrayList<>();
+        ArrayList<Hexagon> currentHexagons = new ArrayList<>();
+        currentHexagons.add(center);
+
+        for (int i = 0; i < speed; i++) {
+            ArrayList<Hexagon> nextHexagons = new ArrayList<>();
+            for (Hexagon h : currentHexagons) {
+                for (Hexagon hex : getNeighbors(h, gh)) {
+                    if (hex != null   && !available.contains(hex) && 
+                    hex != center && !nextHexagons.contains(hex)) {
+                        available.add(hex);
+                        nextHexagons.add(hex);
+                    }
+                }
+            }
+            currentHexagons = nextHexagons;
+        }
+        return available;
+    }
+
     public static Hexagon[] getNeighbors(Hexagon hex, GraphicsHandler gh) {
         Point key = hex.getGridPoint();
         

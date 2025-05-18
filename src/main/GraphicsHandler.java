@@ -35,18 +35,18 @@ public class GraphicsHandler extends JFrame{
     protected Point dragStart = null;
     Point gridOffset = new Point(0, 0);
 
-    protected ArrayList<Hexagon> hexlist = new ArrayList<>();
-    protected ArrayList<Marker>  markers = new ArrayList<>();
-    protected ArrayList<Entity>  entities = new ArrayList<>();
-    protected ArrayList<Hexagon>  selectedTiles = new ArrayList<>();
-    protected ArrayList<Hexagon>  selectedEntityTiles = new ArrayList<>();
+    protected ArrayList<Hexagon> hexlist             = new ArrayList<>();
+    protected ArrayList<Marker>  markers             = new ArrayList<>();
+    protected ArrayList<Entity>  entities            = new ArrayList<>();
+    protected ArrayList<Hexagon> selectedTiles       = new ArrayList<>();
+    protected ArrayList<Hexagon> selectedEntityTiles = new ArrayList<>();
+    protected ArrayList<Hexagon> entityRangeTiles    = new ArrayList<>();
 
     protected Hexagon tileUnderMouse;
 
     protected int zoomFactor = 1;
     protected boolean debugMode = false;
 
-    
     private void inputListener()
     {
         addMouseListener(new MouseAdapter() { 
@@ -273,6 +273,13 @@ public class GraphicsHandler extends JFrame{
                     for (Hexagon h : selectedEntityTiles){
                         g2d.setStroke(new BasicStroke(thickness+2));
                         g2d.setColor(Color.BLUE);
+                        g2d.draw(h.getShape());
+                    }
+                }
+                if (!entityRangeTiles.isEmpty()) {
+                    for (Hexagon h : entityRangeTiles){
+                        g2d.setStroke(new BasicStroke(thickness+2));
+                        g2d.setColor(Color.GREEN);
                         g2d.draw(h.getShape());
                     }
                 }

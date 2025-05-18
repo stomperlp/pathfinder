@@ -5,10 +5,11 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
 public class Hexagon {
+
     private Path2D shape;
     private Point2D center;
     private final Point gridCoords;
-    
+
     public Hexagon (Point2D center, int hexSize, Point gridCoords) {
 
         this.center = center;

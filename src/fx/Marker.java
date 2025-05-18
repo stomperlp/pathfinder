@@ -42,7 +42,7 @@ public class Marker {
     }
     public String getText() {
         return switch (purpose) {
-            case 0       -> "[" + (int)displayCoords.getX() + "|" + (int)displayCoords.getY() + "]";
+            case 0       -> "[" + (int) displayCoords.getX() + "|" + (int) displayCoords.getY() + "]";
             case 1, 2, 3 -> Integer.toString(stat);
             default      -> "";
         };

@@ -300,6 +300,7 @@ public class IOHandler extends MouseAdapter {
 			if (gh.selectedTiles.get(0) != null && gh.selectedEntityTiles.get(0) != null) {
 					Entity selectedEntity2 = gh.selectEntity(gh.selectedEntityTiles.get(0));
 					if (selectedEntity2 instanceof Character) {
+
 						AStar.run(gh.selectedEntityTiles.get(0), gh.selectedTiles.get(0), gh);
 					} else {
 						System.out.println("No character selected.");

@@ -58,10 +58,10 @@ public class Consol extends JTextField {
         gh.repaint();
     }
     private void character(String[] args) {
-        int size = 0; // hasValue[0]
-        int maxHealth = 0; // hasValue[1]
-        int AC = 0; // hasValue[2]
-        int speed = 0; // hasValue[3]
+        int size       = 0; // hasValue[0]
+        int maxHealth  = 0; // hasValue[1]
+        int AC         = 0; // hasValue[2]
+        int speed      = 0; // hasValue[3]
         int initiative = 0; // hasValue[4]
         boolean[] hasValue = new boolean[5];
         do{
