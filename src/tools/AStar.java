@@ -7,7 +7,7 @@ import main.GraphicsHandler;
 
 public class AStar 
 {
-    private static HashMap<Point, Hexagon[]> neighborCache = new HashMap<>();
+    private static final HashMap<Point, Point[]> neighborCache = new HashMap<>();
 
     public static ArrayList<Hexagon> range(Hexagon center, int speed, GraphicsHandler gh) {
 
@@ -36,12 +36,20 @@ public class AStar
     public static Hexagon[] getNeighbors(Hexagon hex, GraphicsHandler gh) {
         Point key = hex.getGridPoint();
         
+        Hexagon[] neighbors = new Hexagon[6];
+
         // Return cached result if available
         if (neighborCache.containsKey(key)) {
-            return neighborCache.get(key);
+            for(Point p : neighborCache.get(key)) {
+                for (Hexagon h : gh.getHexlist()) {
+                    if (h.getGridPoint().equals(p)) {
+                        neighbors[Arrays.asList(neighborCache.get(key)).indexOf(p)] = h;
+                    }
+                }
+            }
+            return neighbors;
         }
         
-        Hexagon[] neighbors = new Hexagon[6];
         int hexX = (int) key.getX();
         int hexY = (int) key.getY();
         
@@ -53,23 +61,23 @@ public class AStar
         
         // Define all possible neighbor positions
         Point[] neighborPositions;
-        if (hexX % 2 == 0) {
+        if (hexY % 2 == 0) {
             neighborPositions = new Point[] {
-                new Point(hexX-2, hexY),
-                new Point(hexX-1, hexY),
-                new Point(hexX+1, hexY),
-                new Point(hexX+2, hexY),
-                new Point(hexX+1, hexY-1),
+                new Point(hexX-1, hexY  ),
+                new Point(hexX-1, hexY+1),
+                new Point(hexX  , hexY+1),
+                new Point(hexX+1, hexY  ),
+                new Point(hexX  , hexY-1),
                 new Point(hexX-1, hexY-1)
             };
         } else {
             neighborPositions = new Point[] {
-                new Point(hexX-2, hexY),
-                new Point(hexX-1, hexY+1),
+                new Point(hexX-1, hexY  ),
+                new Point(hexX  , hexY+1),
                 new Point(hexX+1, hexY+1),
-                new Point(hexX+2, hexY),
-                new Point(hexX+1, hexY),
-                new Point(hexX-1, hexY)
+                new Point(hexX+1, hexY  ),
+                new Point(hexX+1, hexY-1),
+                new Point(hexX  , hexY-1)
             };
         }
         
@@ -79,7 +87,7 @@ public class AStar
         }
         
         // Cache the result
-        neighborCache.put(key, neighbors);
+        neighborCache.put(key, neighborPositions);
         return neighbors;
     }
 

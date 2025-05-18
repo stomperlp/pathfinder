@@ -3,6 +3,7 @@ package main;
 import entities.Character;
 import fx.Hexagon;
 import fx.Marker;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
@@ -14,20 +15,25 @@ import tools.Dice;
 public class Consol extends JTextField {
     private boolean Active = true;
     private GraphicsHandler gh;
-    private List<String> commandHistory = new ArrayList<>();
+    private final List<String> commandHistory = new ArrayList<>();
     private int historyIndex = -1;
     private String currentInput = "";
     private Marker[] diceMarkers = {};
     private boolean confirm = false;
     
-    private final Object lock = new Object();
-    
-    public Consol() {
+    public Consol(GraphicsHandler gh) {
         super();
+        this.gh = gh;
         this.setPreferredSize(new Dimension(200, 32));
         this.setFont(new Font("Arial", Font.PLAIN, 20));
+        this.setSelectedTextColor(Color.BLACK);
     }
     public void command(String input) {
+        commandHistory.add(input);
+        historyIndex = commandHistory.size();
+        setText("");
+        currentInput = "";
+        gh.repaint();
         if (confirm) {
 
             if(input.toLowerCase().endsWith("y") 
@@ -42,20 +48,18 @@ public class Consol extends JTextField {
             String[] args = input.split(" ");
 
             switch(args[0].toLowerCase()) {
-                case "quit",       ":q" -> System.exit(0);
-                case "background", ":b" -> gh.setBackgroundImage();
-                case "debug",      ":d" -> gh.toggleDebugMode();
-                case "character",  ":c" -> character(args);
-                case "help",       ":h" -> help(args[1]);
-                case "roll",       ":r" -> roll(args);
+                case "quit",       ":q"  -> System.exit(0);
+                case "background", ":b"  -> gh.setBackgroundImage();
+                case "debug",      ":d"  -> gh.toggleDebugMode();
+                case "character",  ":c"  -> character(args);
+                case "wall",       ":w"  -> gh.summonWall();
+                case "entity",     ":e"  -> gh.summonEntity();
+                case "help",       ":h"  -> help(args[1]);
+                case "roll",       ":r"  -> roll(args);
+                case "darkmode",   ":dm" -> gh.toggleDarkMode();
                 default -> {}
             }
         }
-        commandHistory.add(input);
-        historyIndex = commandHistory.size();
-        setText("");
-        currentInput = "";
-        gh.repaint();
     }
     private void character(String[] args) {
         int size       = 0; // hasValue[0]
@@ -64,10 +68,11 @@ public class Consol extends JTextField {
         int speed      = 0; // hasValue[3]
         int initiative = 0; // hasValue[4]
         boolean[] hasValue = new boolean[5];
+        //runs until all arguments are consumed
         do{
             try {
                 switch (args[1].toLowerCase()) {
-                    case "d",  "delete"     -> {gh.deleteCharacter();                   }
+                    case "d",  "delete"     -> {gh.deleteEntities();                                       }
                     case "s",  "size"       -> {size        = Integer.parseInt(args[2]); hasValue[0] = true;}
                     case "h",  "maxhealth"  -> {maxHealth   = Integer.parseInt(args[2]); hasValue[1] = true;}
                     case "ac", "armorclass" -> {AC          = Integer.parseInt(args[2]); hasValue[2] = true;}
@@ -79,7 +84,7 @@ public class Consol extends JTextField {
             } 
             catch (Exception e) {}
             
-        } while(args.length > 3);
+        } while(args.length >= 3);
 
         if (!gh.selectedEntityTiles.isEmpty()) {
             for (Hexagon h : gh.selectedEntityTiles){
@@ -99,13 +104,21 @@ public class Consol extends JTextField {
         
         String[] temp = new String[args.length - 2];
         temp[0] = args[0];
-
-        for(int i = 3; i < args.length - 1; i++) {
+        
+        for(int i = 3; i < args.length; i++) {
             temp[i-2] = args[i];
         }
         return temp;
     }
     private void help(String arg) {
+         switch(arg) {
+                case "quit",       ":q" -> {}
+                case "background", ":b" -> {}
+                case "debug",      ":d" -> {}
+                case "character",  ":c" -> {}
+                case "roll",       ":r" -> {}
+                default -> {}
+            }
 
     }
     private void roll(String[] inputSegments) {

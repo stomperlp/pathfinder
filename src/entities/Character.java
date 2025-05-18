@@ -3,7 +3,10 @@ package entities;
 import fx.*;
 import java.awt.Image;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Arrays;
 import main.GraphicsHandler;
+import tools.AStar;
 import tools.Calc;
 
 public class Character extends Entity
@@ -33,8 +36,6 @@ public class Character extends Entity
         this.AC         = AC;
         this.speed      = speed;
         this.initiative = initiative;
-        
-
     }
     
     public int getSize() {
@@ -43,6 +44,38 @@ public class Character extends Entity
     public void setSize(int s) {
         this.size = s;
     }
+
+    @Override
+    public ArrayList<Hexagon> getOccupiedTiles() {
+        occupiedTiles.clear();
+        Hexagon[] neighbors = AStar.getNeighbors(tile, gh);
+        occupiedTiles.add(tile);
+        switch (size) {
+            case TINY       -> {}
+            case SMALL      -> {}
+            case NORMAL     -> {}
+            case LARGE      -> {
+                occupiedTiles.add(neighbors[1]);
+                occupiedTiles.add(neighbors[2]);
+            }
+            case HUGE       -> {
+                occupiedTiles.addAll(Arrays.asList(neighbors));
+            }
+            case GARGANTUAN -> {
+                occupiedTiles.addAll(Arrays.asList(neighbors));
+                Hexagon[] neighbors2 = AStar.getNeighbors(neighbors[1], gh);
+                Hexagon[] neighbors3 = AStar.getNeighbors(neighbors[2], gh);
+                occupiedTiles.add(neighbors2[0]);
+                occupiedTiles.add(neighbors2[1]);
+                occupiedTiles.add(neighbors2[2]);
+                occupiedTiles.add(neighbors3[2]);
+                occupiedTiles.add(neighbors3[3]);
+            }
+            default         -> {}
+        };
+        return occupiedTiles;
+    }
+
     @Override
     public double getDrawSize() {
         return switch (size) {
@@ -51,7 +84,7 @@ public class Character extends Entity
             case NORMAL     -> Math.sqrt(3);
             case LARGE      -> 2;
             case HUGE       -> 4;
-            case GARGANTUAN -> 6;
+            case GARGANTUAN -> Math.sqrt(3)*5/2 + 1;
             default         -> Math.sqrt(3);
         };
     }
