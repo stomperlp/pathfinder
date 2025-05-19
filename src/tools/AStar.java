@@ -91,14 +91,61 @@ public class AStar
         return neighbors;
     }
 
+    public static Hexagon getNeighbor(Hexagon hex, int neighborNR, GraphicsHandler gh) {
+
+        Hexagon neighbor;
+
+        int hexX = (int) hex.getGridPoint().getX();
+        int hexY = (int) hex.getGridPoint().getY();
+
+        if (hexY % 2 == 0) {
+            neighbor = switch(neighborNR) {
+                case 1  -> gh.getHexlist().get(hexX-1, hexY  );
+                case 2  -> gh.getHexlist().get(hexX-1, hexY+1);
+                case 3  -> gh.getHexlist().get(hexX  , hexY+1);
+                case 4  -> gh.getHexlist().get(hexX+1, hexY  );
+                case 5  -> gh.getHexlist().get(hexX  , hexY-1);
+                case 6  -> gh.getHexlist().get(hexX-1, hexY-1);
+                default -> null;
+            };
+        } else {
+            neighbor = switch(neighborNR) {
+                case 1  -> gh.getHexlist().get(hexX-1, hexY  );
+                case 2  -> gh.getHexlist().get(hexX  , hexY+1);
+                case 3  -> gh.getHexlist().get(hexX+1, hexY+1);
+                case 4  -> gh.getHexlist().get(hexX+1, hexY  );
+                case 5  -> gh.getHexlist().get(hexX+1, hexY-1);
+                case 6  -> gh.getHexlist().get(hexX  , hexY-1);
+                default -> null;
+            };
+        }
+        return neighbor;
+    }
+
     public static double heuristic(Hexagon a, Hexagon b) {
-        // Manhattan distance for hex grid
+
+        // Proper hexagonal distance for odd-q offset coordinates
         int ax = (int) a.getGridPoint().getX();
         int ay = (int) a.getGridPoint().getY();
         int bx = (int) b.getGridPoint().getX();
         int by = (int) b.getGridPoint().getY();
-
-        return Math.abs(ax - bx) + Math.abs(ay - by);
+        
+        // Convert to cube coordinates
+        int a_offset = (ay >> 1); // Equivalent to ay/2 for offset adjustment
+        int ax_cube = ax - a_offset;
+        int az_cube = ay;
+        int ay_cube = -ax_cube - az_cube;
+        
+        int b_offset = (by >> 1); // Equivalent to by/2 for offset adjustment
+        int bx_cube = bx - b_offset;
+        int bz_cube = by;
+        int by_cube = -bx_cube - bz_cube;
+        
+        // Hex distance in cube coordinates is the maximum of the absolute differences
+        return Math.max(Math.max(
+            Math.abs(ax_cube - bx_cube),
+            Math.abs(ay_cube - by_cube)),
+            Math.abs(az_cube - bz_cube));
     }
 
     public static void run(Hexagon start, Hexagon end, GraphicsHandler gh)

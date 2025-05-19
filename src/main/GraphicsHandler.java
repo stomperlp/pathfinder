@@ -15,9 +15,9 @@ import tools.*;
 
 public class GraphicsHandler extends JFrame{
 
-    public final Color DARK_PRIMARY = new Color(0x0D1219);
-    public final Color DARK_SECONDARY = new Color(0x626972);
-    public final Color LIGHT_PRIMARY = new Color(0xD0D0D0);
+    public final Color DARK_PRIMARY    = new Color(0x0D1219);
+    public final Color DARK_SECONDARY  = new Color(0x626972);
+    public final Color LIGHT_PRIMARY   = new Color(0xD0D0D0);
     public final Color LIGHT_SECONDARY = new Color(0x000000);
 
     protected final IOHandler io;
