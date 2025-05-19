@@ -10,7 +10,7 @@ public class Hexagon {
     private Point2D center;
     private final Point gridCoords;
 
-    public Hexagon (Point2D center, int hexSize, Point gridCoords) {
+    public Hexagon (Point2D center, int hexSize, Point gridCoords, boolean isFlat) {
 
         this.center = center;
         this.shape  = new Path2D.Double();
@@ -19,8 +19,8 @@ public class Hexagon {
 
             double angle = 2 * Math.PI / 6 * i;
 
-            double x = center.getX() + hexSize * Math.cos(angle);
-            double y = center.getY() + hexSize * Math.sin(angle);
+            double x = center.getX() + hexSize * Math.cos(angle + (isFlat ? 0 : Math.PI / 6));
+            double y = center.getY() + hexSize * Math.sin(angle + (isFlat ? 0 : Math.PI / 6));
 
             if (i == 0) {
                 shape.moveTo(x, y);
@@ -49,5 +49,6 @@ public class Hexagon {
     }
     public void setCenter(Point2D center) {
         this.center = center;
+        shape.moveTo(center.getX(), center.getY());
     }
 }

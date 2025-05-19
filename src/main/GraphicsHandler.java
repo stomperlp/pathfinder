@@ -1,4 +1,5 @@
 package main;
+
 import entities.Character;
 import entities.Entity;
 import entities.Wall;
@@ -10,7 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import tools.AnswerWaiter;
+import tools.*;
 
 public class GraphicsHandler extends JFrame{
 
@@ -31,6 +32,7 @@ public class GraphicsHandler extends JFrame{
     protected Consol consol;
     protected Image  backgroundImage;
 
+    
     protected int hexSize        = 40; // Initial zoom
     protected int thickness      = 2;  // Hexagon Line thickness
     protected int backgroundRows = 20; // Number of rows the image takes up
@@ -42,7 +44,8 @@ public class GraphicsHandler extends JFrame{
     protected Point dragStart = null;
     Point gridOffset = new Point(0, 0);
 
-    protected ArrayList<Hexagon> hexlist             = new ArrayList<>();
+    protected TwoKeyMap<Integer, Integer, Hexagon> hexlist = new TwoKeyMap<>();
+
     protected ArrayList<Marker>  markers             = new ArrayList<>();
     protected ArrayList<Entity>  entities            = new ArrayList<>();
     protected ArrayList<Hexagon> selectedTiles       = new ArrayList<>();
@@ -50,10 +53,11 @@ public class GraphicsHandler extends JFrame{
     protected ArrayList<Hexagon> entityRangeTiles    = new ArrayList<>();
 
     protected Hexagon tileUnderMouse;
-
+    
     protected int zoomFactor = 1;
     protected boolean debugMode = false; // :d or debug to change
     protected boolean darkMode = true; //Starts on Light :dm or darkmode to change
+    public static boolean isFlat = true;
 
     
     private void inputListener()
@@ -176,19 +180,12 @@ public class GraphicsHandler extends JFrame{
                     e.debugUpdate();
 
                     Hexagon h = e.getTile();
-
-                    boolean gridPointFound = false;
-                    for(Hexagon hex : hexlist) {
-                        if (h.getGridPoint().equals(hex.getGridPoint())) {
-
-                            e.setTile(hex);
-                            h = hex;
-
-                            gridPointFound = true;
-                            break;
-                        }
-                    }
-                    if(!gridPointFound) continue;
+                    h = hexlist.get(h.getGridPoint().x, h.getGridPoint().y);
+                    
+                    if(h != null) {
+                        e.setTile(h);
+                    } else continue;
+                    
 
                     if (e instanceof Character c){
                         double x = switch (c.getSize()) {
@@ -238,55 +235,58 @@ public class GraphicsHandler extends JFrame{
                 // Grid Transparency
                 g2d.setComposite(AlphaComposite.SrcOver.derive(0.5f));
                 g2d.setStroke(new BasicStroke(thickness));
-                hexlist.clear();
                 
+                hexlist.clear();
                 // Calculate hexagon geometry
                 double hexWidth = Math.sqrt(3) * hexSize;
                 double hexHeight = 2 * hexSize;
+                double ColDistance = (isFlat ? hexWidth  : hexHeight);
+                double RowDistance = (isFlat ? hexHeight : hexWidth);
 
-                int firstVisibleCol = (int) Math.floor((           - gridOffset.x - hexWidth) * 2 / (Math.sqrt(3) * hexWidth))-2;
-                int lastVisibleCol  = (int) Math.ceil((getWidth()  - gridOffset.x + hexWidth) * 2 / (Math.sqrt(3) * hexWidth))+2;
-                
-                int firstVisibleRow = (int) Math.floor((           - gridOffset.y - hexHeight) * 1.16 / hexHeight);
-                int lastVisibleRow  = (int) Math.ceil((getHeight() - gridOffset.y + hexHeight) * 1.16 / hexHeight)+2;
+                int firstVisibleCol = -2 + (int) Math.floor((           - gridOffset.x - ColDistance) * 2 / Math.sqrt(3) / ColDistance);
+                int lastVisibleCol  =  2 + (int) Math.ceil((getWidth()  - gridOffset.x - ColDistance) * 2 / Math.sqrt(3) / ColDistance);
+                int firstVisibleRow = -2 + (int) Math.floor((           - gridOffset.y - RowDistance) * 1.16 / RowDistance);
+                int lastVisibleRow  =  2 + (int) Math.ceil((getHeight() - gridOffset.y - RowDistance) * 1.16 / RowDistance);
                 
                 // Draw the grid
                 for (    int row = firstVisibleRow; row <= lastVisibleRow; row++) {
                     for (int col = firstVisibleCol; col <= lastVisibleCol; col++) {
-                        
-                        double centerX = gridOffset.x + col * hexWidth  * Math.sqrt(3)/2;
-                        double centerY = gridOffset.y + row * hexHeight * 0.865; // No clue why 0.86 but don't touch it
-                        
-                        // Offset every other row
-                        if (col % 2 != 0) {
-                            centerY += hexHeight/2.336; // No clue why 2.336 but don't touch it
+                        double centerX;
+                        double centerY;
+
+
+                        if(isFlat){
+                            centerX = gridOffset.x + col * hexWidth  * Math.sqrt(3)/2;
+                            centerY = gridOffset.y + row * hexHeight * Math.sqrt(3)/2;
+                            // Offset every other row
+                            if (col % 2 != 0) {
+                                centerY += hexWidth/2;
+                            }
+                        } else {
+                            centerX = gridOffset.x + col * hexHeight * Math.sqrt(3)/2;
+                            centerY = gridOffset.y + row * hexWidth  * Math.sqrt(3)/2;
+                            // Offset every other row
+                            if (row % 2 != 0) {
+                                centerX += hexWidth/2;
+                            }
                         }
+
                         Point2D p   = new Point2D.Double(centerX, centerY);
-                        Hexagon hex = new Hexagon(p, hexSize, new Point(row, col));
+                        Hexagon hex = new Hexagon(p, hexSize, new Point(row, col), isFlat);
                         
                         g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
                         g2d.draw(hex.getShape());
-                        hexlist.add(hex);
+                        hexlist.put(row,col,hex);
                     }
                 }
-                for(Hexagon hex : hexlist) {
-                    if (selectedTiles.isEmpty()) break;
-                    for (Hexagon seltile : selectedTiles){
-                        if (seltile.getGridPoint().equals(hex.getGridPoint())) {
-                            selectedTiles.set(selectedTiles.indexOf(seltile), hex);
-                            break;
-                        }
-                    }
+                
+
+                
+                for (Hexagon h : selectedTiles){
+                    selectedTiles.set(selectedTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y));
                 }
-                for(Hexagon hex : hexlist) {
-                    int i = 0;
-                    for (Hexagon seltile : selectedEntityTiles){
-                        if (seltile.getGridPoint().equals(hex.getGridPoint())) {
-                            selectedEntityTiles.set(i, hex);
-                            break;
-                        }
-                        i++;
-                    }
+                for (Hexagon h : selectedEntityTiles){
+                    selectedEntityTiles.set(selectedEntityTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y));
                 }
                 if (tileUnderMouse != null && dragStart == null) {
 
@@ -360,7 +360,7 @@ public class GraphicsHandler extends JFrame{
                         }
                     }
                 }
-                for (Hexagon h : hexlist) {
+                for (Hexagon h : hexlist.values()) {
                     if (!debugMode) break;
 
                     g2d.setColor(Color.RED);
@@ -543,7 +543,7 @@ public class GraphicsHandler extends JFrame{
         this.thickness = thickness;
         repaint();
     }
-    public ArrayList<Hexagon> getHexlist() {
+    public TwoKeyMap<Integer,Integer,Hexagon> getHexlist() {
         return hexlist;
     }
     public void spawnCharacter(int size, int maxhealth, int AC, int speed, int initiative) {
@@ -677,5 +677,12 @@ public class GraphicsHandler extends JFrame{
                 System.err.println("Wall summon cancled");
             }*/
         }
+    }
+
+    public void toggleGridOrientation() {
+        isFlat = !isFlat;
+        gridOffset = new Point((int) (gridOffset.x),
+                               (int) (gridOffset.y));
+        repaint();
     }
 }

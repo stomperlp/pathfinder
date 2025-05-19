@@ -41,7 +41,7 @@ public class AStar
         // Return cached result if available
         if (neighborCache.containsKey(key)) {
             for(Point p : neighborCache.get(key)) {
-                for (Hexagon h : gh.getHexlist()) {
+                for (Hexagon h : gh.getHexlist().values()) {
                     if (h.getGridPoint().equals(p)) {
                         neighbors[Arrays.asList(neighborCache.get(key)).indexOf(p)] = h;
                     }
@@ -55,7 +55,7 @@ public class AStar
         
         // Create a temporary map for quick lookup
         HashMap<Point, Hexagon> hexMap = new HashMap<>();
-        for (Hexagon h : gh.getHexlist()) {
+        for (Hexagon h : gh.getHexlist().values()) {
             hexMap.put(h.getGridPoint(), h);
         }
         

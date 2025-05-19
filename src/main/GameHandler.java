@@ -2,7 +2,7 @@ package main;
 
 import fx.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
+import java.util.Collection;
 
 public class GameHandler implements Runnable{
 
@@ -22,7 +22,7 @@ public class GameHandler implements Runnable{
 				return currentHexagon;
 			}
 		}
-		ArrayList<Hexagon> hexlist = gh.getHexlist();
+		Collection<Hexagon> hexlist = gh.getHexlist().values();
 
 		for(Hexagon hex : hexlist)
 		{
@@ -35,9 +35,8 @@ public class GameHandler implements Runnable{
 	}
 	public Hexagon findClosestHexagon(Point2D point) {
 		Hexagon closest = null;
-		double minDist = Double.MAX_VALUE;
-		
-		for (Hexagon hex : gh.hexlist) {
+		double minDist = Integer.MAX_VALUE;
+		for (Hexagon hex : gh.hexlist.values()) {
 			double dist = point.distance(hex.getCenter());
 			if (dist < minDist) {
 				minDist = dist;

@@ -111,8 +111,12 @@ public class IOHandler extends MouseAdapter {
 	public void mouseMoved(MouseEvent e) {
 		if (gh.debugMode) logMousePos(e);
 		mousePos = e.getPoint();
-		currentHexagon = gh.gm.findClosestHexagon(mousePos);
-		gh.drawTileUnderMouse(currentHexagon);
+		Hexagon h = gh.gm.findClosestHexagon(mousePos);
+		if(!h.equals(currentHexagon) || currentHexagon == null)
+		{
+			currentHexagon = h;
+			gh.drawTileUnderMouse(currentHexagon);
+		}
 	}
 	
 	@Override

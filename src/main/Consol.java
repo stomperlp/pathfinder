@@ -57,6 +57,7 @@ public class Consol extends JTextField {
                 case "help",       ":h"  -> help(args[1]);
                 case "roll",       ":r"  -> roll(args);
                 case "darkmode",   ":dm" -> gh.toggleDarkMode();
+                case "grid",       ":g"  -> gh.toggleGridOrientation();
                 default -> {}
             }
         }

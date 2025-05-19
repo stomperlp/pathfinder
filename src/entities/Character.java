@@ -72,7 +72,7 @@ public class Character extends Entity
                 occupiedTiles.add(neighbors3[3]);
             }
             default         -> {}
-        };
+        }
         return occupiedTiles;
     }
 
