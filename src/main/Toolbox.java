@@ -65,6 +65,11 @@ public class Toolbox extends JPanel{
             Tool.LENGTH_MODE,
             1
         ));
+        tools.add(new Tool(
+            ImageIO.read(new File("pathfinder/src/resources/images/toolIcons/move.png")),
+            Tool.HITBOX_MODE,
+            2
+        ));
     }
     public ArrayList<Tool> getTools() {
         return tools;

@@ -63,6 +63,7 @@ public class GraphicsHandler extends JFrame {
     public static boolean isFlat = true;
 
 
+
     private void inputListener()
     {
         addMouseListener(new MouseAdapter() { 
@@ -70,7 +71,9 @@ public class GraphicsHandler extends JFrame {
             @Override
 			public void mousePressed(MouseEvent e) 
 			{
+			{
 				io.mousePressed(e);
+			}
 			}
 
             @Override
@@ -385,20 +388,24 @@ public class GraphicsHandler extends JFrame {
                     );
                 }
 
-                g2d.setColor(Color.RED);
                 g2d.setStroke(new BasicStroke(thickness*5));
-
+                
                 for(Measure m : measure) {
+                    g2d.setColor(Color.RED);
                     Line2D line = m.getLine();
                     if(line == null) continue;
                     g2d.draw(line);
 
-                    g2d.setFont(new Font("Arial", Font.BOLD, hexSize/3));
+                    g2d.setColor(Color.BLACK);
+                    g2d.setFont(new Font("Arial", Font.BOLD, hexSize/2));
                     Point lineCenter = new Point(
                         (int) (line.getX1() + (line.getX2()-line.getX1())/2),
                         (int) (line.getY1() + (line.getY2()-line.getY1())/2)
                     );
-                    g2d.drawString(run() + "ft", lineCenter.x, lineCenter.y);
+                    g2d.drawString(
+                        m.length() + "ft",
+                        lineCenter.x, lineCenter.y
+                    );
                 }
             }
         };

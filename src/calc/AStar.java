@@ -235,6 +235,47 @@ public class AStar
             Math.abs(az_cube - bz_cube));
     }
 
+    private static boolean isOccupiedByEntity(Hexagon hex, GraphicsHandler gh) {
+
+        if (hex == null) return true;
+
+        for (Entity entity : gh.entities) {
+            for (Hexagon occupiedTile : entity.getOccupiedTiles()) {
+                if (occupiedTile != null && 
+                    occupiedTile.getGridPoint().equals(hex.getGridPoint())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static ArrayList<Hexagon> reconstructPath(Hexagon start, Hexagon end, 
+                                                      HashMap<Point, Point> cameFrom, 
+                                                      GraphicsHandler gh) {
+        ArrayList<Hexagon> path = new ArrayList<>();
+        Point current = end.getGridPoint();
+
+        while (!current.equals(start.getGridPoint())) {
+
+            Hexagon hex = gh.getHexlist().get(current.x, current.y);
+            if (hex != null) {
+                path.add(0, hex);
+            }
+
+            current = cameFrom.get(current);
+            if (current == null) {
+                break;
+            }
+        }
+
+        if (!path.isEmpty()) {
+            path.add(0, start);
+        }
+
+        return path;
+    }
+
     private static class HexNode {
 
         Hexagon hex;
