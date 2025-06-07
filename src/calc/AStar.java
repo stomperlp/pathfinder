@@ -131,17 +131,16 @@ public class AStar
         int bx = (int) b.getGridPoint().getX();
         int by = (int) b.getGridPoint().getY();
         
+        int[] aCube = Calc.toCubeCoordinate(ax,ay);
+        int[] bCube = Calc.toCubeCoordinate(bx,by);
         // Convert to cube coordinates
-        int a_offset = (ay >> 1); // Equivalent to ay/2 for offset adjustment
-        int ax_cube = ax - a_offset;
-        int az_cube = ay;
-        int ay_cube = -ax_cube - az_cube;
+        int ax_cube = aCube[0];
+        int ay_cube = aCube[1];
+        int az_cube = aCube[2];
         
-        int b_offset = (by >> 1); // Equivalent to by/2 for offset adjustment
-        int bx_cube = bx - b_offset;
-        int bz_cube = by;
-        int by_cube = -bx_cube - bz_cube;
-        
+        int bx_cube = bCube[0];
+        int by_cube = bCube[1];
+        int bz_cube = bCube[2];
         // Hex distance in cube coordinates is the maximum of the absolute differences
         return Math.max(Math.max(
             Math.abs(ax_cube - bx_cube),
@@ -181,6 +180,7 @@ public class AStar
                 // Path found - could reconstruct here if needed
                 System.out.println("Path found!");
                 System.out.println("Shortest path is " + current.gCost + " tiles long.");
+
                 return;
             }
 

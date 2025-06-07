@@ -8,6 +8,7 @@ public class Measure {
     private final GraphicsHandler gh;
     private final Point origin;
     private Point finishedPoint;
+    private Line2D line = new Line2D.Double();
 
     public Measure(GraphicsHandler gh) {
         this.gh = gh;
@@ -15,9 +16,13 @@ public class Measure {
     }
 
     public Line2D getLine() {
-        Line2D line = new Line2D.Double();
-        line.setLine(gh.hexlist.get(origin.x, origin.y).getCenter(), 
-                     finishedPoint == null ? gh.tileUnderMouse.getCenter() : gh.hexlist.get(finishedPoint.x, finishedPoint.y).getCenter());
+        try {
+            line.setLine(gh.hexlist.get(origin.x, origin.y).getCenter(), 
+                         finishedPoint == null ? gh.tileUnderMouse.getCenter() : gh.hexlist.get(finishedPoint.x, finishedPoint.y).getCenter());
+        } catch (Exception e) {
+            return null;
+        }
+        
         return line;
     }
     public boolean finish() {

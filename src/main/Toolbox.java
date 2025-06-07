@@ -36,7 +36,6 @@ public class Toolbox extends JPanel{
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
-        setBackground(Color.BLACK);
         g2d.setComposite(AlphaComposite.SrcOver.derive(1f));
         g2d.setColor(Color.BLUE);
         g2d.setStroke(new BasicStroke(2));
