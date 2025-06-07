@@ -54,7 +54,7 @@ public class AStar
                 if (neighbor == null) continue;
 
                 // Skip tiles that are occupied by entities
-                if (isOccupiedByEntity(neighbor, gh)) continue;
+                if (isOccupiedByEntity(neighbor, gh, start)) continue;
 
                 Point neighborPoint = neighbor.getGridPoint();
 
@@ -109,7 +109,7 @@ public class AStar
                 for (Hexagon hex : getNeighbors(h, gh)) {
                     if (hex != null   && !available.contains(hex) && 
                         hex != center && !nextHexagons.contains(hex) &&
-                        !isOccupiedByEntity(hex, gh)) {
+                        !isOccupiedByEntity(hex, gh, center)) {
                         available.add(hex);
                         nextHexagons.add(hex);
                     }
@@ -237,10 +237,30 @@ public class AStar
     }
 
     private static boolean isOccupiedByEntity(Hexagon hex, GraphicsHandler gh) {
+        return isOccupiedByEntity(hex, gh, null);
+    }
+
+    private static boolean isOccupiedByEntity(Hexagon hex, GraphicsHandler gh, Hexagon sourceHex) {
 
         if (hex == null) return true;
 
+        Entity sourceEntity = null;
+        if (sourceHex != null) {
+            for (Entity entity : gh.entities) {
+                for (Hexagon occupiedTile : entity.getOccupiedTiles()) {
+                    if (occupiedTile != null && 
+                        occupiedTile.getGridPoint().equals(sourceHex.getGridPoint())) {
+                        sourceEntity = entity;
+                        break;
+                    }
+                }
+                if (sourceEntity != null) break;
+            }
+        }
         for (Entity entity : gh.entities) {
+            // Skip checking the source entity (the one we're moving)
+            if (entity == sourceEntity) continue;
+            
             for (Hexagon occupiedTile : entity.getOccupiedTiles()) {
                 if (occupiedTile != null && 
                     occupiedTile.getGridPoint().equals(hex.getGridPoint())) {

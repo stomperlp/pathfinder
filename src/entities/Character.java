@@ -11,20 +11,20 @@ import main.GraphicsHandler;
 
 public class Character extends Entity
 {
-    public static final int TINY        = -2;
-    public static final int SMALL       = -1;
-    public static final int NORMAL      =  0;
-    public static final int LARGE       =  1;
-    public static final int HUGE        =  2;
-    public static final int GARGANTUAN  =  3;
+    public static final int TINY       = -2;
+    public static final int SMALL      = -1;
+    public static final int NORMAL     =  0;
+    public static final int LARGE      =  1;
+    public static final int HUGE       =  2;
+    public static final int GARGANTUAN =  3;
 
-    private int maxHealth;
-    private int health;
-    private int attack;
-    private int AC;
-    private int speed;
     private int initiative;
+    private int maxHealth;
+    private int attack;
+    private int health;
+    private int speed;
     private int size;
+    private int AC;
 
     public Character(GraphicsHandler gh, Image image, Hexagon tile, Point2D location, int size, int maxhealth, int AC, int speed, int initiative)
     {

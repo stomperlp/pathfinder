@@ -31,8 +31,7 @@ public class IOHandler extends MouseAdapter {
 	public Point mousePos;
 	private boolean LMBDown;
 
-
-	public IOHandler(GraphicsHandler gh){
+	public IOHandler(GraphicsHandler gh) {
 		this.gh = gh;
 	}
 
@@ -304,7 +303,8 @@ public class IOHandler extends MouseAdapter {
 		}
 	}
 	public void selectTile() {
-		/*if (!gh.selectedEntityTiles.isEmpty() && !hasSelectedEntity) {
+	/*
+		if (!gh.selectedEntityTiles.isEmpty() && !hasSelectedEntity) {
 
 			for(Hexagon h : gh.selectedTiles){
 				if (currentHexagon.getGridPoint().equals(
@@ -320,7 +320,8 @@ public class IOHandler extends MouseAdapter {
 				gh.drawSelectedTile(null);
 				return;
 			}
-		}*/
+		}
+	*/
 		if (!gh.selectedTiles.isEmpty()) {
 			for(Hexagon h : gh.selectedTiles){
 				if (currentHexagon.getGridPoint().equals(

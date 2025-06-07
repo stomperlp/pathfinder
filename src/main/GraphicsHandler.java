@@ -28,7 +28,7 @@ public class GraphicsHandler extends JFrame {
     protected JPanel gridPanel;
     protected JPanel contentPanel;
     protected JPanel fxPanel;
-    
+
     protected Toolbox toolbox;
     protected Consol consol;
     protected Image  backgroundImage;
@@ -43,9 +43,9 @@ public class GraphicsHandler extends JFrame {
 
     protected Point dragStart = null;
     Point gridOffset = new Point(0, 0);
-    
+
     public TwoKeyMap<Integer, Integer, Hexagon> hexlist = new TwoKeyMap<>();
-    
+
     public ArrayList<Measure> measure             = new ArrayList<>();
     public ArrayList<Marker>  markers             = new ArrayList<>();
     public ArrayList<Entity>  entities            = new ArrayList<>();
@@ -54,12 +54,11 @@ public class GraphicsHandler extends JFrame {
     public ArrayList<Hexagon> entityRangeTiles    = new ArrayList<>();
 
     public Hexagon tileUnderMouse;
-    
+
     protected int zoomFactor = 1;
     protected boolean debugMode = false; // :d or debug to change
     protected boolean darkMode = true; //Starts on Light :dm or darkmode to change
     public static boolean isFlat = true;
-
 
     private void inputListener()
     {
@@ -157,7 +156,7 @@ public class GraphicsHandler extends JFrame {
         io = new IOHandler(this);
         gm = new GameHandler(this);
         gm.run();
-        setTitle("Bitti bitti 15 punkte");
+        setTitle("Bitti bitti 15 Punkte");
         setDefaultCloseOperation(0);
         setSize(600, 400); // Initial size
         setBackground(Color.GRAY);
@@ -220,9 +219,7 @@ public class GraphicsHandler extends JFrame {
                             (int) (e.getDrawSize() * hexSize), this
                         );
                     }
-
                 }
-
             }
         };
         contentPanel.setOpaque(false);
@@ -237,7 +234,7 @@ public class GraphicsHandler extends JFrame {
                 // Grid Transparency
                 g2d.setComposite(AlphaComposite.SrcOver.derive(0.5f));
                 g2d.setStroke(new BasicStroke(thickness));
-                
+
                 hexlist.clear();
                 // Calculate hexagon geometry
                 double hexWidth = Math.sqrt(3) * hexSize;
