@@ -22,7 +22,7 @@ public class AStar
             for (Hexagon h : currentHexagons) {
                 for (Hexagon hex : getNeighbors(h, gh)) {
                     if (hex != null   && !available.contains(hex) && 
-                    hex != center && !nextHexagons.contains(hex)) {
+                        hex != center && !nextHexagons.contains(hex)) {
                         available.add(hex);
                         nextHexagons.add(hex);
                     }
@@ -34,8 +34,9 @@ public class AStar
     }
 
     public static Hexagon[] getNeighbors(Hexagon hex, GraphicsHandler gh) {
+
         Point key = hex.getGridPoint();
-        
+
         Hexagon[] neighbors = new Hexagon[6];
 
         // Return cached result if available

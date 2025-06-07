@@ -526,8 +526,7 @@ public class GraphicsHandler extends JFrame{
             gridOffset.x = mousePoint.x - (int)(worldX * newZoom);
             gridOffset.y = mousePoint.y - (int)(worldY * newZoom);
         }
-              
-        
+
 
         thickness = Math.max(1, hexSize / 30);
         tileUnderMouse = null;
@@ -594,7 +593,7 @@ public class GraphicsHandler extends JFrame{
                 );
                 entities.add(c);
             } catch (Exception e) {
-                System.err.println("Character summon cancled");
+                System.err.println("Character summon canceled");
             }
         }
     }
@@ -632,14 +631,14 @@ public class GraphicsHandler extends JFrame{
     public void toggleDarkMode() {
         darkMode = !darkMode;
         
-        setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
-        contentPanel.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
-        gridPanel.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
-        consol.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
-        backgroundPanel.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
-        consol.setForeground(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
-        consol.setSelectedTextColor(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
-        consol.setSelectionColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+        setBackground                  (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY);
+        contentPanel.setBackground     (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY);
+        gridPanel.setBackground        (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY);
+        consol.setBackground           (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY);
+        backgroundPanel.setBackground  (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY);
+        consol.setSelectedTextColor    (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY);
+        consol.setForeground           (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+        consol.setSelectionColor       (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
         consol.setBorder(new LineBorder(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
     }
 
@@ -656,7 +655,7 @@ public class GraphicsHandler extends JFrame{
                 );
                 entities.add(w);
             /* } catch (Exception e) {
-                System.err.println("Wall summon cancled");
+                System.err.println("Wall summon canceled");
             }*/
         }
     }
@@ -674,7 +673,7 @@ public class GraphicsHandler extends JFrame{
                 );
                 entities.add(w);
             /*} catch (Exception e) {
-                System.err.println("Wall summon cancled");
+                System.err.println("Wall summon canceled");
             }*/
         }
     }
