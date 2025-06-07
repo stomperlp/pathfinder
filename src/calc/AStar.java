@@ -1,13 +1,99 @@
 package calc;
 
+import entities.Entity;
 import fx.Hexagon;
 import java.awt.Point;
 import java.util.*;
 import main.GraphicsHandler;
 
-public class AStar 
+public class AStar
 {
     private static final HashMap<Point, Point[]> neighborCache = new HashMap<>();
+
+    public static ArrayList<Hexagon> run(Hexagon start, Hexagon end, GraphicsHandler gh) {
+
+        if (start == null || end == null) return null;
+
+        // Open list (hexagons to be evaluated)
+        PriorityQueue<HexNode> openList = new PriorityQueue<>((a, b) ->
+            Double.compare(a.fCost, b.fCost));
+
+        // Closed list (already evaluated hexagons)
+        HashSet<Point> closedList = new HashSet<>();
+
+        // Map to track the best path
+        HashMap<Point, Point> cameFrom = new HashMap<>();
+
+        // Map to store g costs
+        HashMap<Point, Double> gCost = new HashMap<>();
+
+        // Initial node
+        HexNode startNode = new HexNode(start, 0, heuristic(start, end));
+        openList.add(startNode);
+        gCost.put(start.getGridPoint(), 0.0);
+
+        while (!openList.isEmpty()) {
+            HexNode current = openList.poll();
+            Hexagon currentHex = current.hex;
+            Point currentPoint = currentHex.getGridPoint();
+
+            // If we reached the end, reconstruct and return the path
+            if (currentPoint.equals(end.getGridPoint())) {
+                // Path found - could reconstruct here if needed
+                System.out.println("Path found!");
+                System.out.println("Shortest path is " + current.gCost + " tiles long.");
+
+                return reconstructPath(start, end, cameFrom, gh);
+            }
+
+            closedList.add(currentPoint);
+
+            // Check all neighbors
+            Hexagon[] neighbors = getNeighbors(currentHex, gh);
+            for (Hexagon neighbor : neighbors) {
+                if (neighbor == null) continue;
+
+                // Skip tiles that are occupied by entities
+                if (isOccupiedByEntity(neighbor, gh)) continue;
+
+                Point neighborPoint = neighbor.getGridPoint();
+
+                // Skip already evaluated hexagons
+                if (closedList.contains(neighborPoint)) continue;
+
+                // Calculate tentative g cost
+                double tentativeGCost = gCost.get(currentPoint) + 1; // Assuming uniform cost
+
+                // If neighbor not in open list or new path is better
+                Double neighborGCost = gCost.get(neighborPoint);
+                if (neighborGCost == null || tentativeGCost < neighborGCost) {
+                    // Update this path as the best path to neighbor
+                    cameFrom.put(neighborPoint, currentPoint);
+                    gCost.put(neighborPoint, tentativeGCost);
+
+                    double fCost = tentativeGCost + heuristic(neighbor, end);
+
+                    // Add to open list if not already there
+                    boolean found = false;
+                    for (HexNode node : openList) {
+                        if (node.hex.getGridPoint().equals(neighborPoint)) {
+                            found = true;
+                            node.fCost = fCost;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        openList.add(new HexNode(neighbor, tentativeGCost, fCost));
+                    }
+                }
+            }
+        }
+
+        // No path found
+        System.out.println("No path found");
+        return null;
+    }
 
     public static ArrayList<Hexagon> range(Hexagon center, int speed, GraphicsHandler gh) {
 
@@ -22,7 +108,8 @@ public class AStar
             for (Hexagon h : currentHexagons) {
                 for (Hexagon hex : getNeighbors(h, gh)) {
                     if (hex != null   && !available.contains(hex) && 
-                        hex != center && !nextHexagons.contains(hex)) {
+                        hex != center && !nextHexagons.contains(hex) &&
+                        !isOccupiedByEntity(hex, gh)) {
                         available.add(hex);
                         nextHexagons.add(hex);
                     }
@@ -148,88 +235,8 @@ public class AStar
             Math.abs(az_cube - bz_cube));
     }
 
-    public static void run(Hexagon start, Hexagon end, GraphicsHandler gh)
-    {
-        if (start == null || end == null) return;
-
-        // Open list (hexagons to be evaluated)
-        PriorityQueue<HexNode> openList = new PriorityQueue<>((a, b) ->
-            Double.compare(a.fCost, b.fCost));
-
-        // Closed list (already evaluated hexagons)
-        HashSet<Point> closedList = new HashSet<>();
-
-        // Map to track the best path
-        HashMap<Point, Point> cameFrom = new HashMap<>();
-
-        // Map to store g costs
-        HashMap<Point, Double> gCost = new HashMap<>();
-
-        // Initial node
-        HexNode startNode = new HexNode(start, 0, heuristic(start, end));
-        openList.add(startNode);
-        gCost.put(start.getGridPoint(), 0.0);
-
-        while (!openList.isEmpty()) {
-            HexNode current = openList.poll();
-            Hexagon currentHex = current.hex;
-            Point currentPoint = currentHex.getGridPoint();
-
-            // If we reached the end, reconstruct and return the path
-            if (currentPoint.equals(end.getGridPoint())) {
-                // Path found - could reconstruct here if needed
-                System.out.println("Path found!");
-                System.out.println("Shortest path is " + current.gCost + " tiles long.");
-
-                return;
-            }
-
-            closedList.add(currentPoint);
-
-            // Check all neighbors
-            Hexagon[] neighbors = getNeighbors(currentHex, gh);
-            for (Hexagon neighbor : neighbors) {
-                if (neighbor == null) continue;
-
-                Point neighborPoint = neighbor.getGridPoint();
-
-                // Skip already evaluated hexagons
-                if (closedList.contains(neighborPoint)) continue;
-
-                // Calculate tentative g cost
-                double tentativeGCost = gCost.get(currentPoint) + 1; // Assuming uniform cost
-
-                // If neighbor not in open list or new path is better
-                Double neighborGCost = gCost.get(neighborPoint);
-                if (neighborGCost == null || tentativeGCost < neighborGCost) {
-                    // Update this path as the best path to neighbor
-                    cameFrom.put(neighborPoint, currentPoint);
-                    gCost.put(neighborPoint, tentativeGCost);
-
-                    double fCost = tentativeGCost + heuristic(neighbor, end);
-
-                    // Add to open list if not already there
-                    boolean found = false;
-                    for (HexNode node : openList) {
-                        if (node.hex.getGridPoint().equals(neighborPoint)) {
-                            found = true;
-                            node.fCost = fCost;
-                            break;
-                        }
-                    }
-
-                    if (!found) {
-                        openList.add(new HexNode(neighbor, tentativeGCost, fCost));
-                    }
-                }
-            }
-        }
-
-        // No path found
-        System.out.println("No path found");
-    }
-
     private static class HexNode {
+
         Hexagon hex;
         double gCost;
         double fCost;
