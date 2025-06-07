@@ -1,5 +1,6 @@
 package main;
 
+import calc.*;
 import entities.Character;
 import entities.Entity;
 import entities.Wall;
@@ -11,7 +12,6 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import tools.*;
 
 public class GraphicsHandler extends JFrame{
 
@@ -28,7 +28,8 @@ public class GraphicsHandler extends JFrame{
     protected JPanel gridPanel;
     protected JPanel contentPanel; 
     protected JPanel fxPanel;
-
+    
+    protected Toolbox toolbox;
     protected Consol consol;
     protected Image  backgroundImage;
 
@@ -83,7 +84,7 @@ public class GraphicsHandler extends JFrame{
                 Point translatedPoint = SwingUtilities.convertPoint(
                     e.getComponent(), 
                     e.getPoint(), 
-                    backgroundPanel 
+                    contentPanel 
                 );
                 io.mouseMoved(new MouseEvent(
                     backgroundPanel, 
@@ -170,6 +171,7 @@ public class GraphicsHandler extends JFrame{
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+                g.drawImage(new ImageIcon("./assets/UI/toolIcons/move.png").getImage(), 200, 200, 100, 100, this);
                 for (Entity e : entities) {
 
                     if(e.getTile() == null) {
@@ -281,12 +283,17 @@ public class GraphicsHandler extends JFrame{
                 }
                 
 
-                
                 for (Hexagon h : selectedTiles){
+                    if (h == null) continue;
                     selectedTiles.set(selectedTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y));
                 }
                 for (Hexagon h : selectedEntityTiles){
-                    selectedEntityTiles.set(selectedEntityTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y));
+                    if (h == null) continue;
+                    selectedEntityTiles.set(selectedEntityTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y)); 
+                }
+                for (Hexagon h : entityRangeTiles){
+                    if (h == null) continue;
+                    entityRangeTiles.set(entityRangeTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y)); 
                 }
                 if (tileUnderMouse != null && dragStart == null) {
 
@@ -294,32 +301,31 @@ public class GraphicsHandler extends JFrame{
                     g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
                     g2d.draw(tileUnderMouse.getShape());
                 }
-                if (!selectedTiles.isEmpty()) {
-                    for (Hexagon h : selectedTiles){
-                        g2d.setStroke(new BasicStroke(thickness+2));
-                        g2d.setColor(Color.RED);
-                        g2d.draw(h.getShape());
-                    }
+                for (Hexagon h : selectedTiles){
+                    if (h == null) continue;
+                    g2d.setStroke(new BasicStroke(thickness+2));
+                    g2d.setColor(Color.RED);
+                    g2d.draw(h.getShape());
+                    
                 }
-                if (!selectedEntityTiles.isEmpty()) {
-                    for (Hexagon h : selectedEntityTiles){
-                        g2d.setStroke(new BasicStroke(thickness+2));
-                        g2d.setColor(Color.BLUE);
-                        try {
-                            for (Hexagon tile : selectEntity(h).getOccupiedTiles()) {
-                                g2d.draw(tile.getShape());
-                            }
-                        } catch (Exception e) {
+                for (Hexagon h : selectedEntityTiles){
+                    if (h == null) continue;
+                    g2d.setStroke(new BasicStroke(thickness+2));
+                    g2d.setColor(Color.BLUE);
+                    try {
+                        for (Hexagon tile : selectEntity(h).getOccupiedTiles()) {
+                            g2d.draw(tile.getShape());
                         }
+                    } catch (Exception e) {
                     }
                 }
-                if (!entityRangeTiles.isEmpty()) {
-                    for (Hexagon h : entityRangeTiles){
-                        g2d.setStroke(new BasicStroke(thickness+2));
-                        g2d.setColor(Color.GREEN);
-                        g2d.draw(h.getShape());
-                    }
+                for (Hexagon h : entityRangeTiles){
+                    if (h == null) continue;
+                    g2d.setStroke(new BasicStroke(thickness+2));
+                    g2d.setColor(Color.GREEN);
+                    g2d.draw(h.getShape());
                 }
+                
             }
         };
         gridPanel.setOpaque(false);
@@ -377,44 +383,51 @@ public class GraphicsHandler extends JFrame{
                         (int) h.getCenter().getX() - hexSize/3 - 2*digits, 
                         (int) h.getCenter().getY() + hexSize/5
                     );
-
                 }
             }
         };
         fxPanel.setOpaque(false);
         backgroundPanel = new JPanel(new BorderLayout()) {
-
+            
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-
+                
                 if (backgroundImage != null) {
-
+                    
                     double imageRatio  = (double) backgroundImage.getWidth(null) / backgroundImage.getHeight(null);
                     double formatRatio = (double) backgroundCols / backgroundRows;
                     
                     drawHeight = (int) (hexSize * backgroundCols * 2);
                     drawWidth  = (int) (drawHeight * imageRatio * formatRatio);
-
+                    
                     int x = (int) gridOffset.getX();
                     int y = (int) gridOffset.getY();
-
+                    
                     int centerX = backgroundImage.getWidth(this)/2;
                     int centerY = backgroundImage.getHeight(this)/2;
-
+                    
                     backgroundCenter = new Point(centerX, centerY);
-
+                    
                     g.drawImage(backgroundImage, x, y, drawWidth, drawHeight, this);
                 }
             }
         };
+        toolbox = new Toolbox();
+        toolbox.setOpaque(false);
+        
         consol = new Consol(this);
+        
+        
         
         backgroundPanel.add(contentPanel);
         contentPanel.add(gridPanel);
-        backgroundPanel.add(consol, BorderLayout.SOUTH);
         gridPanel.add(fxPanel);
+        add(consol, BorderLayout.SOUTH);
+        contentPanel.add(toolbox, BorderLayout.WEST);
         add(backgroundPanel);
+
+
         toggleDarkMode();
         
         // Center the window on screen
@@ -635,19 +648,21 @@ public class GraphicsHandler extends JFrame{
         setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
         contentPanel.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
         gridPanel.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
-        consol.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
         backgroundPanel.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
+        consol.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
         consol.setForeground(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
         consol.setSelectedTextColor(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
         consol.setSelectionColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
         consol.setBorder(new LineBorder(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
+        toolbox.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
+        toolbox.setBorder(new LineBorder(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
     }
 
     public void summonWall() {
         Image image = new ImageIcon(io.openFileBrowser().getPath()).getImage();
          
         for(Hexagon tile : selectedTiles) {
-            //try {
+            try {
                 Wall w = new Wall(
                     this,
                     image,
@@ -655,9 +670,9 @@ public class GraphicsHandler extends JFrame{
                     tile.getCenter()
                 );
                 entities.add(w);
-            /* } catch (Exception e) {
+            } catch (Exception e) {
                 System.err.println("Wall summon cancled");
-            }*/
+            }
         }
     }
 
@@ -665,7 +680,7 @@ public class GraphicsHandler extends JFrame{
         Image image = new ImageIcon(io.openFileBrowser().getPath()).getImage();
          
         for(Hexagon tile : selectedTiles) {
-            //try {
+            try {
                 Entity w = new Entity(
                     this,
                     image,
@@ -673,9 +688,9 @@ public class GraphicsHandler extends JFrame{
                     tile.getCenter()
                 );
                 entities.add(w);
-            /*} catch (Exception e) {
-                System.err.println("Wall summon cancled");
-            }*/
+            } catch (Exception e) {
+                System.err.println("Entity summon cancled");
+            }
         }
     }
 

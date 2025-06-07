@@ -1,4 +1,4 @@
-package tools;
+package calc;
 
 public class AnswerWaiter {
     private boolean answerReceived = false;

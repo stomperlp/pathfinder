@@ -1,11 +1,11 @@
 package entities;
 
+import calc.Calc;
 import fx.Hexagon;
 import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import main.GraphicsHandler;
-import tools.Calc;
 
 public class Wall extends Entity {
 
