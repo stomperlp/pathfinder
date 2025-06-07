@@ -28,7 +28,7 @@ public class IOHandler extends MouseAdapter {
 	protected boolean WDown;
 
 	private boolean hasSelectedEntity;
-	private Point mousePos;
+	public Point mousePos;
 	private boolean LMBDown;
 
 
@@ -68,6 +68,11 @@ public class IOHandler extends MouseAdapter {
 					if(t.getHitbox().contains(mousePos)) {
 						gh.toolbox.selectedTool = t;
 						mode = t.getToolMode();
+						if (mode != Tool.LENGTH_MODE) {
+							if(gh.measure.getLast().getFinishedPoint() == null){
+								gh.measure.remove(gh.measure.size()-1);
+							}
+						}
 						gh.repaint();
 						return;
 					}
@@ -86,14 +91,24 @@ public class IOHandler extends MouseAdapter {
 				
 				switch (mode) 
 				{
-					case Tool.DRAG_MODE -> gh.dragStart = mousePos;
+					case Tool.DRAG_MODE 	-> gh.dragStart = mousePos;
+					case Tool.LENGTH_MODE 	-> {
+						if(!gh.measure.isEmpty()) {
+                        	if(gh.measure.getLast().finish()) {
+								//stops creation of new measure if double clicked.
+								return;
+							}
+						}
+						gh.measure.add(new Measure(gh));
+                    }
 				}
 			}
 			default -> {}
 		}
 	}
 
-    @Override
+	
+	@Override
 	public void mouseReleased(MouseEvent e) 
 	{
 		switch (e.getButton()) 
@@ -164,11 +179,11 @@ public class IOHandler extends MouseAdapter {
 	}
 	void keyPressed(KeyEvent e) {
 		if (gh.consol.isActive())
-			//Any only active in consol
-			switch(e.getKeyCode()) {
-				case KeyEvent.VK_UP -> gh.consol.arrowUp();
-				case KeyEvent.VK_DOWN -> gh.consol.arrowDown();
-			}
+		//Any only active in consol
+		switch(e.getKeyCode()) {
+			case KeyEvent.VK_UP -> gh.consol.arrowUp();
+			case KeyEvent.VK_DOWN -> gh.consol.arrowDown();
+		}
 		else switch(e.getKeyCode()) {
 			//Any only active out of consol
 			case 'W' -> {
@@ -214,10 +229,10 @@ public class IOHandler extends MouseAdapter {
 	}
 	void keyReleased(KeyEvent e) {
 		if (gh.consol.isActive())
-			//Any only active in consol
-			switch(e.getKeyCode()) {
-				
-			}
+		//Any only active in consol
+		switch(e.getKeyCode()) {
+			
+		}
 		else switch(e.getKeyCode()) {
 			//Any only active out of consol
 			case 'W' -> {
@@ -240,7 +255,7 @@ public class IOHandler extends MouseAdapter {
 		}
     }
 	//Other Methods ----------------------------------------------
-
+	
 	public void logMousePos(MouseEvent e) {
 		if (mouseLog == null) {
 			mouseLog = new Marker(new Point(0,0), Marker.COORDINATES, true);
@@ -256,11 +271,11 @@ public class IOHandler extends MouseAdapter {
 			for(Hexagon h : gh.selectedEntityTiles){
 				if (currentHexagon.getGridPoint().equals(
 					h.getGridPoint()
-				)) {
-					gh.selectedEntityTiles.remove(h);
-					return;
+					)) {
+						gh.selectedEntityTiles.remove(h);
+						return;
+					}
 				}
-			}
 		}
 		for(Entity en : gh.entities) {
 			for (Hexagon occTile : en.getOccupiedTiles()){

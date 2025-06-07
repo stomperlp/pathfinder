@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -33,7 +34,10 @@ public class Toolbox extends JPanel{
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
         Graphics2D g2d = (Graphics2D) g;
+        setBackground(Color.BLACK);
+        g2d.setComposite(AlphaComposite.SrcOver.derive(1f));
         g2d.setColor(Color.BLUE);
         g2d.setStroke(new BasicStroke(2));
         int height = 0;

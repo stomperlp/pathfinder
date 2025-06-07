@@ -44,16 +44,17 @@ public class GraphicsHandler extends JFrame{
 
     protected Point dragStart = null;
     Point gridOffset = new Point(0, 0);
+    
+    public TwoKeyMap<Integer, Integer, Hexagon> hexlist = new TwoKeyMap<>();
+    
+    public ArrayList<Measure> measure             = new ArrayList<>();
+    public ArrayList<Marker>  markers             = new ArrayList<>();
+    public ArrayList<Entity>  entities            = new ArrayList<>();
+    public ArrayList<Hexagon> selectedTiles       = new ArrayList<>();
+    public ArrayList<Hexagon> selectedEntityTiles = new ArrayList<>();
+    public ArrayList<Hexagon> entityRangeTiles    = new ArrayList<>();
 
-    protected TwoKeyMap<Integer, Integer, Hexagon> hexlist = new TwoKeyMap<>();
-
-    protected ArrayList<Marker>  markers             = new ArrayList<>();
-    protected ArrayList<Entity>  entities            = new ArrayList<>();
-    protected ArrayList<Hexagon> selectedTiles       = new ArrayList<>();
-    protected ArrayList<Hexagon> selectedEntityTiles = new ArrayList<>();
-    protected ArrayList<Hexagon> entityRangeTiles    = new ArrayList<>();
-
-    protected Hexagon tileUnderMouse;
+    public Hexagon tileUnderMouse;
     
     protected int zoomFactor = 1;
     protected boolean debugMode = false; // :d or debug to change
@@ -384,6 +385,13 @@ public class GraphicsHandler extends JFrame{
                         (int) h.getCenter().getY() + hexSize/5
                     );
                 }
+
+                g2d.setColor(Color.RED);
+                g2d.setStroke(new BasicStroke(thickness*5));
+                
+                for(Measure m : measure) {
+                    g2d.draw(m.getLine());
+                }
             }
         };
         fxPanel.setOpaque(false);
@@ -414,7 +422,7 @@ public class GraphicsHandler extends JFrame{
             }
         };
         toolbox = new Toolbox();
-        toolbox.setOpaque(false);
+        toolbox.setOpaque(true);
         
         consol = new Consol(this);
         
@@ -424,7 +432,7 @@ public class GraphicsHandler extends JFrame{
         contentPanel.add(gridPanel);
         gridPanel.add(fxPanel);
         add(consol, BorderLayout.SOUTH);
-        contentPanel.add(toolbox, BorderLayout.WEST);
+        fxPanel.add(toolbox, BorderLayout.WEST);
         add(backgroundPanel);
 
 
