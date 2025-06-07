@@ -36,7 +36,6 @@ public class Toolbox extends JPanel{
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
-        setBackground(Color.BLACK);
         g2d.setComposite(AlphaComposite.SrcOver.derive(1f));
         g2d.setColor(Color.BLUE);
         g2d.setStroke(new BasicStroke(2));
@@ -65,6 +64,11 @@ public class Toolbox extends JPanel{
             ImageIO.read(new File("pathfinder/src/resources/images/toolIcons/move.png")),
             Tool.LENGTH_MODE,
             1
+        ));
+        tools.add(new Tool(
+            ImageIO.read(new File("pathfinder/src/resources/images/toolIcons/move.png")),
+            Tool.HITBOX_MODE,
+            2
         ));
     }
     public ArrayList<Tool> getTools() {

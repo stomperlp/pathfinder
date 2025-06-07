@@ -66,5 +66,12 @@ public class Calc {
         }
         return output;
     }
+    public static int[] toCubeCoordinate(int x, int y) {
+        int offset = (y >> 1); // Equivalent to ay/2 for offset adjustment
+        int x_cube = x - offset;
+        int z_cube = y;
+        int y_cube = -x_cube - z_cube;
+        return new int[]{x_cube, y_cube, z_cube};
+    }
 }
 

@@ -1,5 +1,6 @@
 package fx;
 
+import calc.AStar;
 import java.awt.Point;
 import java.awt.geom.Line2D;
 import main.GraphicsHandler;
@@ -8,6 +9,7 @@ public class Measure {
     private final GraphicsHandler gh;
     private final Point origin;
     private Point finishedPoint;
+    private Line2D line = new Line2D.Double();
 
     public Measure(GraphicsHandler gh) {
         this.gh = gh;
@@ -15,9 +17,15 @@ public class Measure {
     }
 
     public Line2D getLine() {
-        Line2D line = new Line2D.Double();
-        line.setLine(gh.hexlist.get(origin.x, origin.y).getCenter(), 
-                     finishedPoint == null ? gh.tileUnderMouse.getCenter() : gh.hexlist.get(finishedPoint.x, finishedPoint.y).getCenter());
+        try {
+            line.setLine(
+                gh.hexlist.get(origin.x, origin.y).getCenter(), 
+                finishedPoint == null ? gh.tileUnderMouse.getCenter() : gh.hexlist.get(finishedPoint.x, finishedPoint.y).getCenter()
+            );
+        } catch (Exception e) {
+            return null;
+        }
+        
         return line;
     }
     public boolean finish() {
@@ -31,7 +39,17 @@ public class Measure {
         }
         return false;
     }
+    public int length() {
+        return AStar.run(
+            gh.hexlist.get(origin.x,origin.y),
+            getFinishedPoint() == null ? gh.tileUnderMouse : gh.hexlist.get(finishedPoint.x, finishedPoint.y),
+            gh
+        ).size();
+    }
     public Point getFinishedPoint() {
         return finishedPoint;
+    }
+    public Point getOrigin() {
+        return origin;
     }
 }

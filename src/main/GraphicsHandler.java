@@ -7,6 +7,7 @@ import entities.Wall;
 import fx.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.ArrayList;
@@ -33,7 +34,8 @@ public class GraphicsHandler extends JFrame {
     protected Consol consol;
     protected Image  backgroundImage;
 
-    protected int hexSize        = 40; // Initial zoom
+    
+    public    int hexSize        = 40; // Initial size
     protected int thickness      = 2;  // Hexagon Line thickness
     protected int backgroundRows = 20; // Number of rows the image takes up
     protected int backgroundCols = 20; // Number of columns the image takes up
@@ -67,7 +69,9 @@ public class GraphicsHandler extends JFrame {
             @Override
 			public void mousePressed(MouseEvent e) 
 			{
+			{
 				io.mousePressed(e);
+			}
 			}
 
             @Override
@@ -242,10 +246,10 @@ public class GraphicsHandler extends JFrame {
                 double ColDistance = (isFlat ? hexWidth  : hexHeight);
                 double RowDistance = (isFlat ? hexHeight : hexWidth);
 
-                int firstVisibleCol = -2 + (int) Math.floor((           - gridOffset.x - ColDistance) * 2 / Math.sqrt(3) / ColDistance);
-                int lastVisibleCol  =  2 + (int) Math.ceil((getWidth()  - gridOffset.x - ColDistance) * 2 / Math.sqrt(3) / ColDistance);
-                int firstVisibleRow = -2 + (int) Math.floor((           - gridOffset.y - RowDistance) * 1.16 / RowDistance);
-                int lastVisibleRow  =  2 + (int) Math.ceil((getHeight() - gridOffset.y - RowDistance) * 1.16 / RowDistance);
+                int firstVisibleCol = -5 + (int) Math.floor((           - gridOffset.x - ColDistance) * 2 / Math.sqrt(3) / ColDistance);
+                int lastVisibleCol  =  5 + (int) Math.ceil((getWidth()  - gridOffset.x - ColDistance) * 2 / Math.sqrt(3) / ColDistance);
+                int firstVisibleRow = -5 + (int) Math.floor((           - gridOffset.y - RowDistance) * 1.16 / RowDistance);
+                int lastVisibleRow  =  5 + (int) Math.ceil((getHeight() - gridOffset.y - RowDistance) * 1.16 / RowDistance);
                 
                 // Draw the grid
                 for (    int row = firstVisibleRow; row <= lastVisibleRow; row++) {
@@ -380,11 +384,24 @@ public class GraphicsHandler extends JFrame {
                     );
                 }
 
-                g2d.setColor(Color.RED);
                 g2d.setStroke(new BasicStroke(thickness*5));
                 
                 for(Measure m : measure) {
-                    g2d.draw(m.getLine());
+                    g2d.setColor(Color.RED);
+                    Line2D line = m.getLine();
+                    if(line == null) continue;
+                    g2d.draw(line);
+
+                    g2d.setColor(Color.BLACK);
+                    g2d.setFont(new Font("Arial", Font.BOLD, hexSize/2));
+                    Point lineCenter = new Point(
+                        (int) (line.getX1() + (line.getX2()-line.getX1())/2),
+                        (int) (line.getY1() + (line.getY2()-line.getY1())/2)
+                    );
+                    g2d.drawString(
+                        m.length() + "ft",
+                        lineCenter.x, lineCenter.y
+                    );
                 }
             }
         };
@@ -659,7 +676,7 @@ public class GraphicsHandler extends JFrame {
         consol.setForeground           (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
         consol.setSelectionColor       (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
         consol.setBorder(new LineBorder(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
-        toolbox.setBackground(darkMode ? DARK_PRIMARY : LIGHT_PRIMARY);
+        toolbox.setBackground(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
         toolbox.setBorder(new LineBorder(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
     }
 
