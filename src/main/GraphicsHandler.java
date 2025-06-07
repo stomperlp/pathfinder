@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-public class GraphicsHandler extends JFrame{
+public class GraphicsHandler extends JFrame {
 
     public final Color DARK_PRIMARY    = new Color(0x0D1219);
     public final Color DARK_SECONDARY  = new Color(0x626972);
@@ -26,20 +26,19 @@ public class GraphicsHandler extends JFrame{
 
     protected JPanel backgroundPanel;
     protected JPanel gridPanel;
-    protected JPanel contentPanel; 
+    protected JPanel contentPanel;
     protected JPanel fxPanel;
     
     protected Toolbox toolbox;
     protected Consol consol;
     protected Image  backgroundImage;
 
-    
     protected int hexSize        = 40; // Initial zoom
     protected int thickness      = 2;  // Hexagon Line thickness
     protected int backgroundRows = 20; // Number of rows the image takes up
     protected int backgroundCols = 20; // Number of columns the image takes up
 
-    protected Point backgroundCenter; 
+    protected Point backgroundCenter;
     int drawWidth, drawHeight;
 
     protected Point dragStart = null;
@@ -47,29 +46,29 @@ public class GraphicsHandler extends JFrame{
 
     protected TwoKeyMap<Integer, Integer, Hexagon> hexlist = new TwoKeyMap<>();
 
+    public    ArrayList<Entity>  entities            = new ArrayList<>();
     protected ArrayList<Marker>  markers             = new ArrayList<>();
-    protected ArrayList<Entity>  entities            = new ArrayList<>();
     protected ArrayList<Hexagon> selectedTiles       = new ArrayList<>();
     protected ArrayList<Hexagon> selectedEntityTiles = new ArrayList<>();
     protected ArrayList<Hexagon> entityRangeTiles    = new ArrayList<>();
 
     protected Hexagon tileUnderMouse;
-    
+
     protected int zoomFactor = 1;
     protected boolean debugMode = false; // :d or debug to change
     protected boolean darkMode = true; //Starts on Light :dm or darkmode to change
     public static boolean isFlat = true;
 
-    
+
     private void inputListener()
     {
         addMouseListener(new MouseAdapter() { 
 
             @Override
 			public void mousePressed(MouseEvent e) 
-			{ 
+			{
 				io.mousePressed(e);
-			} 
+			}
 
             @Override
             public void mouseReleased(MouseEvent e) 
@@ -156,7 +155,7 @@ public class GraphicsHandler extends JFrame{
     {
         io = new IOHandler(this);
         gm = new GameHandler(this);
-		gm.run();
+        gm.run();
         setTitle("Bitti bitti 15 punkte");
         setDefaultCloseOperation(0);
         setSize(600, 400); // Initial size
@@ -256,7 +255,6 @@ public class GraphicsHandler extends JFrame{
                         double centerX;
                         double centerY;
 
-
                         if(isFlat){
                             centerX = gridOffset.x + col * hexWidth  * Math.sqrt(3)/2;
                             centerY = gridOffset.y + row * hexHeight * Math.sqrt(3)/2;
@@ -281,7 +279,6 @@ public class GraphicsHandler extends JFrame{
                         hexlist.put(row,col,hex);
                     }
                 }
-                
 
                 for (Hexagon h : selectedTiles){
                     if (h == null) continue;
@@ -473,6 +470,10 @@ public class GraphicsHandler extends JFrame{
     }
     public void addSelectedEntityTile(Hexagon hex) {
         selectedEntityTiles.add(hex);
+        repaint();
+    }
+    public void addEntityRangeTile(Hexagon hex) {
+        entityRangeTiles.add(hex);
         repaint();
     }
     public void drag(MouseEvent e) {

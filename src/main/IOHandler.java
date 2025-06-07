@@ -6,6 +6,7 @@ import fx.*;
 import java.awt.Point;
 import java.awt.event.*;
 import java.io.File;
+import java.util.*;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import tools.Tool;
@@ -13,7 +14,6 @@ import tools.Tool;
 
 public class IOHandler extends MouseAdapter {
 	
-
 	protected Hexagon currentHexagon;
 	protected final GraphicsHandler gh;
 	protected int count = 0;
@@ -250,7 +250,7 @@ public class IOHandler extends MouseAdapter {
 		mouseLog.moveTo(e.getPoint());
 		gh.repaint();
 	}
-	public void selectEntity(){
+	public void selectEntity() {
 		if(isShiftDown) return;
 		if (!gh.selectedEntityTiles.isEmpty()) {
 			for(Hexagon h : gh.selectedEntityTiles){
@@ -270,6 +270,20 @@ public class IOHandler extends MouseAdapter {
 				)) {
 					gh.addSelectedEntityTile(en.getTile());
 					hasSelectedEntity = true;
+				}
+			}
+		}
+		if (hasSelectedEntity && !gh.entityRangeTiles.isEmpty()) {
+			gh.entityRangeTiles.clear();
+		}
+
+		if (hasSelectedEntity && !gh.selectedEntityTiles.isEmpty()) {
+			Entity selectedEntity = gh.selectEntity(gh.selectedEntityTiles.getFirst());
+			if (selectedEntity instanceof Character) {
+				Character character = (Character) selectedEntity;
+				ArrayList<Hexagon> rangeTiles = AStar.range(character.getTile(), character.getSpeed(), gh);
+				for (Hexagon h : rangeTiles) {
+					gh.addEntityRangeTile(h);
 				}
 			}
 		}
@@ -312,8 +326,6 @@ public class IOHandler extends MouseAdapter {
 			&& isShiftDown
 		) {
 			gh.gm.moveCharacter(currentHexagon, (entities.Character)selectedEntity);
-			
-
 		}
 	}
 }
