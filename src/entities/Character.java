@@ -1,13 +1,13 @@
 package entities;
 
+import calc.AStar;
+import calc.Calc;
 import fx.*;
 import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import main.GraphicsHandler;
-import tools.AStar;
-import tools.Calc;
 
 public class Character extends Entity
 {

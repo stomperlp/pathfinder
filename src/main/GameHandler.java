@@ -1,8 +1,8 @@
 package main;
 
+import calc.AStar;
 import fx.*;
 import java.awt.geom.Point2D;
-import java.util.Collection;
 
 public class GameHandler implements Runnable{
 
@@ -14,28 +14,9 @@ public class GameHandler implements Runnable{
 		this.gh = gh;
 	}
 
-	public Hexagon checkCurrentHexagon(Point2D p, Hexagon currentHexagon) {
-
-		if (currentHexagon != null) {
-			if(currentHexagon.contains(p))
-			{
-				return currentHexagon;
-			}
-		}
-		Collection<Hexagon> hexlist = gh.getHexlist().values();
-
-		for(Hexagon hex : hexlist)
-		{
-			if(hex.contains(p))
-			{
-				return hex;
-			}
-		}
-        return null;
-	}
 	public Hexagon findClosestHexagon(Point2D point) {
 		Hexagon closest = null;
-		double minDist = Integer.MAX_VALUE;
+		double minDist = gh.hexSize;
 		for (Hexagon hex : gh.hexlist.values()) {
 			double dist = point.distance(hex.getCenter());
 			if (dist < minDist) {
@@ -82,6 +63,7 @@ public class GameHandler implements Runnable{
 
 	public void moveCharacter(Hexagon h, entities.Character c) {
 		// TODO: A* Implementation
+		AStar.run(c.getTile(), h, gh);
 		c.setTile(h);
 	}
 	

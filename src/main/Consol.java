@@ -10,7 +10,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTextField;
-import tools.Dice;
+
+import calc.Dice;
 
 public class Consol extends JTextField {
     private boolean Active = true;

@@ -15,6 +15,7 @@ public class Hexagon {
         this.center = center;
         this.shape  = new Path2D.Double();
 
+        //Draw regular n-gon but specified for hexagons
         for (int i = 0; i < 6; i++) {
 
             double angle = 2 * Math.PI / 6 * i;

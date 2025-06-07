@@ -1,4 +1,4 @@
-package tools;
+package calc;
 
 import java.util.Random;
 

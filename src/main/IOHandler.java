@@ -1,4 +1,5 @@
 package main;
+import calc.AStar;
 import entities.Character;
 import entities.Entity;
 import fx.*;
@@ -7,15 +8,11 @@ import java.awt.event.*;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import tools.AStar;
+import tools.Tool;
 
 
 public class IOHandler extends MouseAdapter {
 	
-	private static final int DRAG_MODE 	 = 0;
-	private static final int LENGTH_MODE = 1;
-	private static final int HITBOX_MODE = 2;
-	private static final int MARK_MODE   = 3;
 
 	protected Hexagon currentHexagon;
 	protected final GraphicsHandler gh;
@@ -67,6 +64,14 @@ public class IOHandler extends MouseAdapter {
 		{
 			case MouseEvent.BUTTON1 -> {
 				LMBDown = true;
+				for (Tool t : gh.toolbox.getTools()) {
+					if(t.getHitbox().contains(mousePos)) {
+						gh.toolbox.selectedTool = t;
+						mode = t.getToolMode();
+						gh.repaint();
+						return;
+					}
+				}
 				if (!isCtrlDown && !isShiftDown){
 					if (!isShiftDown)
 						gh.selectedEntityTiles.clear();
@@ -81,7 +86,7 @@ public class IOHandler extends MouseAdapter {
 				
 				switch (mode) 
 				{
-					case DRAG_MODE -> gh.dragStart = mousePos;
+					case Tool.DRAG_MODE -> gh.dragStart = mousePos;
 				}
 			}
 			default -> {}
@@ -100,7 +105,7 @@ public class IOHandler extends MouseAdapter {
 			case MouseEvent.BUTTON3 -> {
 				switch (mode) 
 				{
-					case DRAG_MODE -> gh.dragStart = null;
+					case Tool.DRAG_MODE -> gh.dragStart = null;
 				}
 			}
 			default -> {}
@@ -111,7 +116,10 @@ public class IOHandler extends MouseAdapter {
 	public void mouseMoved(MouseEvent e) {
 		if (gh.debugMode) logMousePos(e);
 		mousePos = e.getPoint();
+		
+		
 		Hexagon h = gh.gm.findClosestHexagon(mousePos);
+		if (h == null) return;
 		if(!h.equals(currentHexagon) || currentHexagon == null)
 		{
 			currentHexagon = h;
@@ -132,7 +140,7 @@ public class IOHandler extends MouseAdapter {
 		}
 		switch (mode) 
 		{
-			case DRAG_MODE -> gh.drag(e);
+			case Tool.DRAG_MODE -> gh.drag(e);
 		}
 		
 	}
@@ -238,6 +246,7 @@ public class IOHandler extends MouseAdapter {
 			mouseLog = new Marker(new Point(0,0), Marker.COORDINATES, true);
 			gh.markers.add(mouseLog);
 		}
+		System.out.println(mousePos);
 		mouseLog.moveTo(e.getPoint());
 		gh.repaint();
 	}
@@ -299,13 +308,11 @@ public class IOHandler extends MouseAdapter {
 
 		Entity selectedEntity = gh.selectEntity(gh.selectedEntityTiles.getFirst());
 
-		if (!currentHexagon.getGridPoint().equals(gh.selectedEntityTiles.getFirst().getGridPoint()) 
-			&& selectedEntity instanceof Character
+		if (selectedEntity instanceof Character
 			&& isShiftDown
 		) {
 			gh.gm.moveCharacter(currentHexagon, (entities.Character)selectedEntity);
 			
-			AStar.run(gh.selectedEntityTiles.getFirst(), currentHexagon, gh);
 
 		}
 	}

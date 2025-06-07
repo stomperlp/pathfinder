@@ -1,4 +1,4 @@
-package tools;
+package calc;
 
 import fx.Hexagon;
 import java.awt.Point;
