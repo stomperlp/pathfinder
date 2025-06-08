@@ -279,19 +279,19 @@ public class GraphicsHandler extends JFrame {
                     }
                 }
                 //Updating postition of hexagons
-                for (Hexagon h : selectedTiles){
+                for (Hexagon h : selectedTiles) {
                     if (h == null) continue;
                     selectedTiles.set(selectedTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y));
                 }
-                for (Hexagon h : selectedEntityTiles){
+                for (Hexagon h : selectedEntityTiles) {
                     if (h == null) continue;
                     selectedEntityTiles.set(selectedEntityTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y)); 
                 }
-                for (Hexagon h : entityRangeTiles){
+                for (Hexagon h : entityRangeTiles) {
                     if (h == null) continue;
                     entityRangeTiles.set(entityRangeTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y)); 
                 }
-                for (Hexagon h : entityPreviewTiles){
+                for (Hexagon h : entityPreviewTiles) {
                     if (h == null) continue;
                     entityPreviewTiles.set(entityPreviewTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y)); 
                 }
@@ -354,6 +354,7 @@ public class GraphicsHandler extends JFrame {
 
                 for (Marker m: markers) {
                     if (m.isDebugMarker() != debugMode) continue;
+                    if (!m.isVisible()) continue;
                     
                     switch (m.getPurpose()) {
                         case Marker.COORDINATES -> {
@@ -362,13 +363,13 @@ public class GraphicsHandler extends JFrame {
                             g2d.setFont(new Font("Arial", Font.BOLD, 18));
                             g2d.drawString(m.getText(), (int) m.getPoint().getX(), (int) m.getPoint().getY());
                         }
-                        case Marker.STAT -> {
+                        case Marker.STAT        -> {
 
                             g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
                             g2d.setFont(new Font("Arial", Font.BOLD, 18));
                             g2d.drawString(m.getText(), (int) m.getPoint().getX(), (int) m.getPoint().getY());
                         }
-                        case Marker.DICE -> {
+                        case Marker.DICE        -> {
 
                             int digits = m.getText().length();
                             g2d.setColor(Color.RED);
@@ -379,7 +380,7 @@ public class GraphicsHandler extends JFrame {
                             g2d.setFont(new Font("Arial", Font.BOLD, 32));
                             g2d.drawString(m.getText(), (int) m.getPoint().getX() + 8, (int) m.getPoint().getY() + 20 + 8*digits);
                         }
-                        case Marker.DICERESULT -> {
+                        case Marker.DICERESULT  -> {
                             g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
                             g2d.setFont(new Font("Arial", Font.BOLD, 50));
                             g2d.drawString(m.getText(), getWidth()/2, getHeight()/2);
@@ -643,7 +644,6 @@ public class GraphicsHandler extends JFrame {
             return;
         }
         else if (tileUnderMouse != null) {
-
             tiles.add(tileUnderMouse);
         }
         else {

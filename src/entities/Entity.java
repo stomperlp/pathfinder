@@ -62,10 +62,16 @@ public class Entity {
     public void setLocation(Point2D p) {
         this.location = p;
     }
+
+    // Placeholder methods for character attributes -------------------
+
     public int getSize() {
         return 0;
     }
     public int getSpeed() {
+        return 0;
+    }
+    public int getInitiative() {
         return 0;
     }
 }

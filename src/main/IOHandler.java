@@ -213,7 +213,7 @@ public class IOHandler extends MouseAdapter {
 				DDown = true;
 			}
 			case 'H' -> {
-				if (gh.selectedTiles.get(0) != null) {
+				if (gh.selectedTiles.get(0) != null && !gh.selectedTiles.isEmpty()) {
 					Hexagon[] neighbors = AStar.getNeighbors(gh.selectedTiles.get(0), gh);
 					if (neighbors != null) {
 						for (Hexagon h : neighbors) {
@@ -237,7 +237,7 @@ public class IOHandler extends MouseAdapter {
 				}
 			}
 			case KeyEvent.VK_CONTROL -> isCtrlDown = true;
-			case KeyEvent.VK_ALT -> isAltDown = true;
+			case KeyEvent.VK_ALT 	 -> isAltDown  = true;
 			case KeyEvent.VK_ENTER   -> {
 				e.consume();
 				if (isCtrlDown) { 
@@ -295,9 +295,7 @@ public class IOHandler extends MouseAdapter {
 		
 		if (!gh.selectedEntityTiles.isEmpty()) {
 			for(Hexagon h : gh.selectedEntityTiles) {
-				if (currentHexagon.getGridPoint().equals(
-					h.getGridPoint()
-				)) {
+				if (currentHexagon.getGridPoint().equals(h.getGridPoint())) {
 					gh.selectedEntityTiles.remove(h);
 					return;
 				}
@@ -375,10 +373,10 @@ public class IOHandler extends MouseAdapter {
 				} 
 			}
 		}
-		if(gh.selectedEntityTiles != null && !isShiftDown)
+		if(gh.selectedEntityTiles != null && !gh.selectedEntityTiles.isEmpty() && !isShiftDown)
 			gh.addSelectedTile(currentHexagon);
 
-		if (gh.selectedEntityTiles.isEmpty()) return;
+		if (gh.selectedEntityTiles.isEmpty() || gh.selectedEntityTiles == null) return;
 
 		Entity selectedEntity = gh.selectEntity(gh.selectedEntityTiles.getFirst());
 
