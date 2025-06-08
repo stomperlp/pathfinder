@@ -328,13 +328,16 @@ public class GraphicsHandler extends JFrame {
                         g2d.draw(h.getShape());
                     }
                 }
+                if (entityRangeTiles.contains(tileUnderMouse)) {
+                    g2d.setColor(new Color(0x48CAE4));
+                } else {
+                    g2d.setColor(new Color(0xFB5607));
+                }
                 for (Hexagon h : entityPreviewTiles) {
                     if (h == null) continue;
                     g2d.setStroke(new BasicStroke(thickness+2));
-                    g2d.setColor(new Color(0x48CAE4));
                     g2d.draw(h.getShape());
                 }
-                
             }
         };
         gridPanel.setOpaque(false);
