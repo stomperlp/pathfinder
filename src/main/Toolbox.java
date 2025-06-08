@@ -51,8 +51,9 @@ public class Toolbox extends JPanel{
         }
 
     }
+    //generate all tools
     public void initializeTools() throws IOException {
-        //generate all tools
+
         //drag tool
         tools.add(new Tool(
             ImageIO.read(new File("src/resources/images/toolIcons/move.png")),

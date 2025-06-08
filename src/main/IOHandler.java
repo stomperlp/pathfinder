@@ -133,14 +133,18 @@ public class IOHandler extends MouseAdapter {
 	public void mouseMoved(MouseEvent e) {
 		if (gh.debugMode) logMousePos(e);
 		mousePos = e.getPoint();
-		
-		
+
 		Hexagon h = gh.gm.findClosestHexagon(mousePos);
 		if (h == null) return;
 		if(!h.equals(currentHexagon) || currentHexagon == null)
 		{
 			currentHexagon = h;
 			gh.drawTileUnderMouse(currentHexagon);
+
+			if(isShiftDown && gh.selectedEntityTiles != null) {
+				gh.entityPreviewTiles.clear();
+				gh.addEntityPreviewTiles(this);
+			}
 		}
 	}
 	
@@ -155,7 +159,7 @@ public class IOHandler extends MouseAdapter {
 			gh.addSelectedTile(currentHexagon);
 			selectEntity();
 		}
-		switch (mode) 
+		switch (mode)
 		{
 			case Tool.DRAG_MODE -> gh.drag(e);
 		}
@@ -183,7 +187,7 @@ public class IOHandler extends MouseAdapter {
 		if (gh.consol.isActive())
 		//Any only active in consol
 		switch(e.getKeyCode()) {
-			case KeyEvent.VK_UP -> gh.consol.arrowUp();
+			case KeyEvent.VK_UP   -> gh.consol.arrowUp();
 			case KeyEvent.VK_DOWN -> gh.consol.arrowDown();
 		}
 		else switch(e.getKeyCode()) {
@@ -217,7 +221,13 @@ public class IOHandler extends MouseAdapter {
 		}
 		//Any always active
 		switch(e.getKeyCode()) {
-			case KeyEvent.VK_SHIFT 	 -> isShiftDown = true;
+			case KeyEvent.VK_SHIFT   -> {
+				isShiftDown = true;
+				if(gh.selectedEntityTiles != null) {
+					gh.entityPreviewTiles.clear();
+					gh.addEntityPreviewTiles(this);
+				}
+			}
 			case KeyEvent.VK_CONTROL -> isCtrlDown = true;
 			case KeyEvent.VK_ENTER   -> {
 				e.consume();
@@ -233,7 +243,7 @@ public class IOHandler extends MouseAdapter {
 		if (gh.consol.isActive())
 		//Any only active in consol
 		switch(e.getKeyCode()) {
-			
+
 		}
 		else switch(e.getKeyCode()) {
 			//Any only active out of consol
@@ -247,17 +257,22 @@ public class IOHandler extends MouseAdapter {
 				SDown = false;
 			}
 			case 'D' -> {
-				DDown = false;       
+				DDown = false;
 			}
 		}
 		//Any Always active
 		switch(e.getKeyCode()) {
-			case KeyEvent.VK_SHIFT   -> isShiftDown = false;
-			case KeyEvent.VK_CONTROL -> isCtrlDown  = false;
+			case KeyEvent.VK_SHIFT   -> {
+				isShiftDown = false;
+				gh.entityPreviewTiles.clear();
+				gh.repaint();
+			}
+			case KeyEvent.VK_CONTROL -> isCtrlDown = false;
 		}
-    }
+	}
+
 	//Other Methods ----------------------------------------------
-	
+
 	public void logMousePos(MouseEvent e) {
 		if (mouseLog == null) {
 			mouseLog = new Marker(new Point(0,0), Marker.COORDINATES, true);
@@ -305,6 +320,7 @@ public class IOHandler extends MouseAdapter {
 			}
 		}
 	}
+	
 	public void selectTile() {
 	/*
 		if (!gh.selectedEntityTiles.isEmpty() && !hasSelectedEntity) {

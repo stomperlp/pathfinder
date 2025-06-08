@@ -21,9 +21,9 @@ public class Entity {
 
     public Entity(GraphicsHandler gh, Image image, Hexagon tile, Point2D location)
     {
-        this.image       = image;
-        this.tile        = tile;
-        this.location    = location;
+        this.image    = image;
+        this.tile     = tile;
+        this.location = location;
         this.gh = gh;
         this.debugMarker = new Marker(tile.getGridPoint(), Marker.COORDINATES, true);
         gh.addMarker(debugMarker);
@@ -61,5 +61,8 @@ public class Entity {
     }
     public void setLocation(Point2D p) {
         this.location = p;
+    }
+    public int getSize() {
+        return 0;
     }
 }
