@@ -8,7 +8,6 @@ import main.GraphicsHandler;
 
 public class AStar
 {
-    private static final HashMap<Point, Point[]> neighborCache = new HashMap<>();
 
     public static ArrayList<Hexagon> run(Hexagon start, Hexagon end, GraphicsHandler gh, boolean ignoreObstacles) {
 
@@ -126,18 +125,6 @@ public class AStar
 
         Hexagon[] neighbors = new Hexagon[6];
 
-        // Return cached result if available
-        if (neighborCache.containsKey(key)) {
-            for(Point p : neighborCache.get(key)) {
-                for (Hexagon h : gh.getHexlist().values()) {
-                    if (h.getGridPoint().equals(p)) {
-                        neighbors[Arrays.asList(neighborCache.get(key)).indexOf(p)] = h;
-                    }
-                }
-            }
-            return neighbors;
-        }
-        
         int hexX = (int) key.getX();
         int hexY = (int) key.getY();
         
@@ -168,14 +155,11 @@ public class AStar
                 new Point(hexX  , hexY-1)
             };
         }
-        
+
         // Look up each position
         for (int i = 0; i < 6; i++) {
             neighbors[i] = hexMap.get(neighborPositions[i]);
         }
-        
-        // Cache the result
-        neighborCache.put(key, neighborPositions);
         return neighbors;
     }
 

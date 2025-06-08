@@ -331,6 +331,7 @@ public class IOHandler extends MouseAdapter {
 				Character character = (Character) selectedEntity;
 				ArrayList<Hexagon> rangeTiles = AStar.range(character.getTile(), character.getSpeed(), gh);
 				for (Hexagon h : rangeTiles) {
+					if (h == null) continue;
 					gh.addEntityRangeTile(h);
 				}
 			}
