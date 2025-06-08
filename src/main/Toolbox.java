@@ -51,22 +51,23 @@ public class Toolbox extends JPanel{
         }
 
     }
+    //generate all tools
     public void initializeTools() throws IOException {
-        //generate all tools
+
         //drag tool
         tools.add(new Tool(
-            ImageIO.read(new File("pathfinder/src/resources/images/toolIcons/move.png")),
+            ImageIO.read(new File("src/resources/images/toolIcons/move.png")),
             Tool.DRAG_MODE,
             0
         ));
         //length tool
         tools.add(new Tool(
-            ImageIO.read(new File("pathfinder/src/resources/images/toolIcons/move.png")),
+            ImageIO.read(new File("src/resources/images/toolIcons/move.png")),
             Tool.LENGTH_MODE,
             1
         ));
         tools.add(new Tool(
-            ImageIO.read(new File("pathfinder/src/resources/images/toolIcons/move.png")),
+            ImageIO.read(new File("src/resources/images/toolIcons/move.png")),
             Tool.HITBOX_MODE,
             2
         ));

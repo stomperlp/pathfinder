@@ -37,7 +37,8 @@ public class Character extends Entity
         this.speed      = speed;
         this.initiative = initiative;
     }
-    
+
+    @Override
     public int getSize() {
         return size;
     }
@@ -48,8 +49,13 @@ public class Character extends Entity
     @Override
     public ArrayList<Hexagon> getOccupiedTiles() {
         occupiedTiles.clear();
-        Hexagon[] neighbors = AStar.getNeighbors(tile, gh);
-        occupiedTiles.add(tile);
+        return getOccupiedTiles(tile ,size, gh);
+    }
+
+    public static ArrayList<Hexagon> getOccupiedTiles(Hexagon h, int size, GraphicsHandler gh) {
+        ArrayList<Hexagon> occupiedTiles = new ArrayList<>();
+        Hexagon[] neighbors = AStar.getNeighbors(h, gh);
+        occupiedTiles.add(h);
         switch (size) {
             case TINY       -> {}
             case SMALL      -> {}
