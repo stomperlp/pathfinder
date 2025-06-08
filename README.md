@@ -9,7 +9,7 @@ A Java application for managing and visualizing hexagonal grids for tabletop RPG
 - [Controls](#Controls)
   - [Mouse Controls](#mouse-controls)
   - [Keyboard Controls](#keyboard-controls)
-    - [Console Commands](#console-commands)
+  - [Console Commands](#console-commands)
 - [Notes](#notes)
 - [Chemie und STALINdustrie](#chemie-und-stalindustrie)
 
@@ -37,10 +37,6 @@ Pathfinder/
   - Support for different sizes (Tiny, Small, Medium, Large, Huge, Gargantuan).
   - Track initiative, hit points, armor class, speed, and more.
 
-- **Measurement Tools:**  
-  - Measure distances, draw lines, cones, and areas directly on the grid.
-  - Visual feedback for range and area-of-effect spells.
-
 - **Dice Roller:**  
   - Built-in dice roller supporting standard RPG notation (e.g., `2d6+3`).
   - Displays results visually on the map.
@@ -56,11 +52,12 @@ Pathfinder/
   - Switch between dark and light color schemes for better visibility.
 
 - **Toolbox:**  
-  - Select different tools for measuring, drawing, and entity management.
+  - Select different tools for measuring, drawing, and visualising attack patterns.
+    - Measure distances, draw lines, cones, and areas directly on the grid.
+    - Visual feedback for range and area-of-effect spells.
 
 - **Debug & Gamemaster Modes:**  
-  - Additional controls and overlays for game masters.
-
+  - Additional controls and overlays for game masters and developers.
 
 ## Controls
 
@@ -78,22 +75,43 @@ Pathfinder/
 - **Arrow up / down:**  cycle through console history
 - **Ctrl / Shift:**     Multi-select (where supported)
 
-#### Console Commands:
+### Console Commands:
 
-Command	      Description
+Command	          Description 
 
-:q or quit	  # Quit the application
-:b	          # Set a background image
-:d	          # Toggle debug mode
-:dm	          # Toggle dark/light mode
-:c	          # Create or edit a character
-:w	          # Place a wall
-:e	          # Place a generic entity
-:r or roll	  # Roll dice (e.g., roll 2d6+1)
-:g	          # Change grid orientation
-:gm	          # Toggle gamemaster mode
-:i or init	  # Manage initiative order
-help	      # Show help and available commands
+:q  or quit	      # Quit the application              
+:b  or background # Set a background image            
+:d  or debug      # Toggle debug mode                 
+:dm	or darkmode   # Toggle dark/light mode            
+:c	or creature   # Create or edit a character         
+:w	or wall       # Place a wall
+:e	or entity     # Place a generic entity (Please use :c or :w)
+:r  or roll	      # Roll dice (e.g., roll 2d6+1)
+:g	or grid       # Change grid orientation (Instable)
+:gm or gamemaster # Toggle gamemaster mode
+:i  or init	      # Manage initiative order
+:h  or help	      # Show help and available commands
+
+**Arguments**
+:c
+- delete            # deletes the selected Characters
+- size <int>        # set the size of selected Characters
+- speed <int>       # set the speed of selected Characters
+- armorclass <int>  # set the Armor Class of selected Characters
+- maxHealth <int>   # set the Max Health of selected Characters
+- ~~initative <int>   # set the initiative of selected Characters~~ (depricated)
+
+:h
+- <command>
+
+:i
+- add     # add the selected Characters from the initiative order
+- remove  # remove the selected Characters from the initiative order
+- clear   # clear the initiative order
+- show    # toggles wether or not the initiative placing is shown at the Characters
+
+:r 
+- <dice>
 
 For a full list of commands and options, see the source code in main/Consol.java.
 
@@ -101,9 +119,7 @@ For a full list of commands and options, see the source code in main/Consol.java
 
 Tool icons must be present as PNG files in the folder src/resources/images/toolIcons/.
 
-The program does not save data permanently—all changes are lost upon closing.
-
-For custom extensions, refer to the class structure in the UML diagrams located in the diagramme/ folder.
+The program does not save data permanently—all changes are lost upon closing although this might change in futur versions.
 
 ## Chemie und STALINdustrie
 

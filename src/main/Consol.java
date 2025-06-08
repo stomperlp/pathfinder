@@ -60,7 +60,7 @@ public class Consol extends JTextField {
                 case "grid",       ":g"  -> gh.toggleGridOrientation();
                 case "gamemaster", ":gm" -> gh.io.toggleGameMaster();
                 case "init",       ":i"  -> initiative(args);
-                default -> {}
+                default                  -> {}
             }
         }
     }

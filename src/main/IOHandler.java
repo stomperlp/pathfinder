@@ -81,6 +81,9 @@ public class IOHandler extends MouseAdapter {
 						if (mode != Tool.AREA_MODE) {
 							gh.areaAttack = null;
 						}
+						if (mode != Tool.CONE_MODE) {
+							gh.coneAttack = null;
+						}
 						gh.attackTiles.clear();
 						gh.repaint();
 						return;
@@ -393,10 +396,10 @@ public class IOHandler extends MouseAdapter {
 				} 
 			}
 		}
-		if(gh.selectedEntityTiles != null && !gh.selectedEntityTiles.isEmpty() && !isShiftDown)
+		if(gh.selectedEntityTiles != null && !isShiftDown)
 			gh.addSelectedTile(currentHexagon);
 
-		if (gh.selectedEntityTiles.isEmpty() || gh.selectedEntityTiles == null) return;
+		if (gh.selectedEntityTiles.isEmpty()) return;
 
 		Entity selectedEntity = gh.selectEntity(gh.selectedEntityTiles.getFirst());
 
