@@ -33,8 +33,8 @@ public class Hexagon {
         this.gridCoords = gridCoords;
     }
     public boolean equals(Hexagon h) {
-        if(h.getGridPoint().equals(this.getGridPoint())) return true;
-        else return false;
+        if (h == null) return false;
+        return h.getGridPoint().equals(this.getGridPoint());
     }
     public boolean contains(Point2D p) {
         return shape.contains(p);
