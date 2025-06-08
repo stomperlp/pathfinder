@@ -100,10 +100,8 @@ public class IOHandler extends MouseAdapter {
 						}
 						gh.measure.add(new Measure(gh));
                     }
-					case Tool.HITBOX_MODE	-> {
-						if(isShiftDown) {
-							
-						}
+					case Tool.LINE_MODE	-> {
+
 					}
 				}
 			}

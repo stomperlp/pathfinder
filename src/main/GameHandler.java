@@ -63,7 +63,7 @@ public class GameHandler implements Runnable{
 
 	public void moveCharacter(Hexagon h, entities.Character c) {
 		// TODO: A* Implementation
-		AStar.run(c.getTile(), h, gh);
+		AStar.run(c.getTile(), h, gh, false);
 		c.setTile(h);
 	}
 	

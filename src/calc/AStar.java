@@ -10,7 +10,7 @@ public class AStar
 {
     private static final HashMap<Point, Point[]> neighborCache = new HashMap<>();
 
-    public static ArrayList<Hexagon> run(Hexagon start, Hexagon end, GraphicsHandler gh) {
+    public static ArrayList<Hexagon> run(Hexagon start, Hexagon end, GraphicsHandler gh, boolean ignoreObstacles) {
 
         if (start == null || end == null) return null;
 
@@ -54,7 +54,7 @@ public class AStar
                 if (neighbor == null) continue;
 
                 // Skip tiles that are occupied by entities
-                if (isOccupiedByEntity(neighbor, gh, start)) continue;
+                if (isOccupiedByEntity(neighbor, gh, start) && !ignoreObstacles) continue;
 
                 Point neighborPoint = neighbor.getGridPoint();
 
