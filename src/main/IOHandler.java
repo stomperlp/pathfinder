@@ -93,7 +93,7 @@ public class IOHandler extends MouseAdapter {
 					case Tool.DRAG_MODE 	-> gh.dragStart = mousePos;
 					case Tool.LENGTH_MODE 	-> {
 						if(!gh.measure.isEmpty()) {
-                        	if(gh.measure.getLast().finish()) {
+							if(gh.measure.getLast().finish()) {
 								//stops creation of new measure if double clicked.
 								return;
 							}
@@ -359,9 +359,8 @@ public class IOHandler extends MouseAdapter {
 
 		Entity selectedEntity = gh.selectEntity(gh.selectedEntityTiles.getFirst());
 
-		if (selectedEntity instanceof Character
-			&& isShiftDown
-		) {
+		if (selectedEntity instanceof Character && isShiftDown
+			&& gh.entityRangeTiles.contains(currentHexagon)) {
 			gh.gm.moveCharacter(currentHexagon, (entities.Character)selectedEntity);
 		}
 	}
