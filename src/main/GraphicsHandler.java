@@ -21,8 +21,8 @@ public class GraphicsHandler extends JFrame {
     public final Color LIGHT_PRIMARY   = new Color(0xD0D0D0);
     public final Color LIGHT_SECONDARY = new Color(0x000000);
 
-    protected final IOHandler io;
-    protected GameHandler gm;
+    public final IOHandler io;
+    public GameHandler gm;
     protected AnswerWaiter waiter = new AnswerWaiter();
 
     protected JPanel backgroundPanel;
@@ -54,13 +54,16 @@ public class GraphicsHandler extends JFrame {
     public ArrayList<Hexagon> selectedEntityTiles = new ArrayList<>();
     public ArrayList<Hexagon> entityRangeTiles    = new ArrayList<>();
     public ArrayList<Hexagon> entityPreviewTiles  = new ArrayList<>();
+    public ArrayList<Hexagon> attackTiles         = new ArrayList<>();
     
     public Hexagon tileUnderMouse;
-    public Line lineAttack;
-    public Marker totalLength;
+    public Line    lineAttack;
+    public Marker  totalLength;
+    public Area    areaAttack;
+    public Cone    coneAttack;
 
     protected int zoomFactor = 1;
-    protected boolean debugMode = false; // :d or debug to change
+    public boolean debugMode = false; // :d or debug to change
     protected boolean darkMode = true; //Starts on Light :dm or darkmode to change
     public static boolean isFlat = true;
 
@@ -295,6 +298,10 @@ public class GraphicsHandler extends JFrame {
                     if (h == null) continue;
                     entityPreviewTiles.set(entityPreviewTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y)); 
                 }
+                for (Hexagon h : attackTiles){
+                    if (h == null) continue;
+                    attackTiles.set(attackTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y)); 
+                }
 
                 if (tileUnderMouse != null && dragStart == null) {
 
@@ -325,6 +332,14 @@ public class GraphicsHandler extends JFrame {
                     if (!entityPreviewTiles.contains(h)) {
                         g2d.setStroke(new BasicStroke(thickness+2));
                         g2d.setColor(Color.GREEN);
+                        g2d.draw(h.getShape());
+                    }
+                }
+                for (Hexagon h : attackTiles) {
+                    if (h == null) continue;
+                    if (!entityPreviewTiles.contains(h)) {
+                        g2d.setStroke(new BasicStroke(thickness+2));
+                        g2d.setColor(Color.MAGENTA);
                         g2d.draw(h.getShape());
                     }
                 }
@@ -437,11 +452,67 @@ public class GraphicsHandler extends JFrame {
                             (int) (line.getX1() + (line.getX2()-line.getX1())/2),
                             (int) (line.getY1() + (line.getY2()-line.getY1())/2)
                         );
+                        lineAttack.getAttackedCharacters();
                         g2d.drawString(
                             lineAttack.length() + "ft",
                             lineCenter.x, lineCenter.y
                         );
                     }
+                }
+                if (areaAttack != null) {
+                    g2d.setColor(Color.RED);
+
+                    Point2D origin = hexlist.get(areaAttack.getOrigin().x, areaAttack.getOrigin().y).getCenter();
+
+                    areaAttack.getAttackedCharacters();
+
+                    g2d.setStroke(new BasicStroke(thickness*2));
+
+                    g2d.drawOval((int)(origin.getX() - areaAttack.getRadius()), 
+                                 (int)(origin.getY() - areaAttack.getRadius()), 
+                                 (int) areaAttack.getRadius() * 2, 
+                                 (int) areaAttack.getRadius() * 2);
+
+                    g2d.setColor(Color.BLACK);
+                    g2d.setFont(new Font("Arial", Font.BOLD, hexSize/2));
+                    g2d.drawString(
+                        (int)(areaAttack.getRadiusInTiles()*5) + "ft",
+                        (int)(origin.getX()),
+                        (int)(origin.getY())
+                    );
+                }
+                if (coneAttack != null) {
+                    g2d.setColor(Color.RED);
+
+                    Point2D origin = hexlist.get(coneAttack.getOrigin().x, coneAttack.getOrigin().y).getCenter();
+
+                    coneAttack.getAttackedCharacters();
+
+                    g2d.setStroke(new BasicStroke(thickness*2));
+
+                    g2d.drawArc( (int)(origin.getX() - coneAttack.getRadius()), 
+                                 (int)(origin.getY() - coneAttack.getRadius()), 
+                                 (int) coneAttack.getRadius() * 2, 
+                                 (int) coneAttack.getRadius() * 2,
+                                 (int) coneAttack.getStartAngle(),
+                                 (int) coneAttack.getAngle());
+
+                    g2d.drawLine((int) origin.getX(), 
+                                 (int) origin.getY(), 
+                                 (int)(origin.getX() + Math.cos(coneAttack.getStartAngle() * -Math.PI/180) * coneAttack.getRadius()), 
+                                 (int)(origin.getY() + Math.sin(coneAttack.getStartAngle() * -Math.PI/180) * coneAttack.getRadius()));
+
+                    g2d.drawLine((int) origin.getX(), 
+                                 (int) origin.getY(), 
+                                 (int)(origin.getX() + Math.cos((coneAttack.getAngle() + coneAttack.getStartAngle()) * -Math.PI/180) * coneAttack.getRadius()), 
+                                 (int)(origin.getY() + Math.sin((coneAttack.getAngle() + coneAttack.getStartAngle()) * -Math.PI/180) * coneAttack.getRadius()));
+                    g2d.setColor(Color.BLACK);
+                    g2d.setFont(new Font("Arial", Font.BOLD, hexSize/2));
+                    g2d.drawString(
+                        (int)(coneAttack.getRadiusInTiles()*5) + "ft",
+                        (int)(origin.getX()),
+                        (int)(origin.getY())
+                    );
                 }
             }
         };
@@ -553,7 +624,7 @@ public class GraphicsHandler extends JFrame {
             repaint();
         }
     }
-    private void outOfBoundsCorrection(){
+    void outOfBoundsCorrection(){
         // Bound to the left
         if(backgroundImage == null) return;
 
@@ -605,7 +676,9 @@ public class GraphicsHandler extends JFrame {
         }
 
         thickness = Math.max(1, hexSize / 30);
-        tileUnderMouse = null;
+        tileUnderMouse = hexlist.get(tileUnderMouse.getGridPoint().x, tileUnderMouse.getGridPoint().y); 
+        
+        
         outOfBoundsCorrection();
         repaint();
     }

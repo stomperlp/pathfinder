@@ -20,7 +20,7 @@ public class GameHandler implements Runnable{
 
 	public Hexagon findClosestHexagon(Point2D point) {
 		Hexagon closest = null;
-		double minDist = gh.hexSize;
+		double minDist = gh.hexSize-1;
 		for (Hexagon hex : gh.hexlist.values()) {
 			double dist = point.distance(hex.getCenter());
 			if (dist < minDist) {
@@ -30,28 +30,29 @@ public class GameHandler implements Runnable{
 		}
 		return closest;
 	}
-	public void tick(){
-		if(gh.io.isAltDown) 	   moveSpeed = 1000;
-		if(gh.io.isShiftDown) 	   moveSpeed = 12;
+    public void tick(){
+		if(gh.io.isAltDown) 	   moveSpeed = 200;
+		else if(gh.io.isShiftDown) moveSpeed = 12;
 		else if (gh.io.isCtrlDown) moveSpeed = 6;
 		else 				 	   moveSpeed = 3;
 
-		if(gh.io.ADown) {
-			gh.gridOffset(moveSpeed, 0);
-			gh.repaint();
-		}
-		if(gh.io.DDown) {
-			gh.gridOffset(-moveSpeed, 0);
-			gh.repaint();
-		}
-		if(gh.io.SDown) {
-			gh.gridOffset(0, -moveSpeed);
-			gh.repaint();
-		}
-		if(gh.io.WDown) {
-			gh.gridOffset(0, moveSpeed);
-			gh.repaint();
-		}
+        if(gh.io.ADown) {
+            gh.gridOffset(moveSpeed, 0);
+            gh.repaint();
+        }
+        if(gh.io.DDown) {
+            gh.gridOffset(-moveSpeed, 0);
+            gh.repaint();
+        }
+        if(gh.io.SDown) {
+            gh.gridOffset(0, -moveSpeed);
+            gh.repaint();
+        }
+        if(gh.io.WDown) {
+            gh.gridOffset(0, moveSpeed);
+            gh.repaint();
+        }
+		gh.outOfBoundsCorrection();
 	}
 
 	@Override

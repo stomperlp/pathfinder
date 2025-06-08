@@ -38,8 +38,10 @@ public class AStar
 
             // If we reached the end, reconstruct and return the path
             if (currentPoint.equals(end.getGridPoint())) {
-                
-                System.out.println("Shortest path is " + current.gCost + " tiles long.");
+                // Path found - could reconstruct here if needed
+                if(gh.debugMode) {
+                    System.out.println("Shortest path is " + current.gCost + " tiles long.");
+                }
 
                 return reconstructPath(start, end, cameFrom, gh);
             }
