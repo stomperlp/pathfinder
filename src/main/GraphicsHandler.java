@@ -763,7 +763,7 @@ public class GraphicsHandler extends JFrame {
     }
     public void addEntityPreviewTiles(IOHandler IO) {
         if (selectEntity(selectedEntityTiles.get(0)) instanceof Character) {
-            for (Hexagon hex : Character.getOccupiedTiles(IO.currentHexagon, selectEntity(selectedEntityTiles.get(0)).getSize(), this)) {
+            for (Hexagon hex : Character.getOccupiedTiles(tileUnderMouse, selectEntity(selectedEntityTiles.get(0)).getSize(), this)) {
                 if (!entityPreviewTiles.contains(hex)) {
                     addEntityPreviewTile(hex);
                 }

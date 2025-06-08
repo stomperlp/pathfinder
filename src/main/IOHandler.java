@@ -139,18 +139,8 @@ public class IOHandler extends MouseAdapter {
 		if (gh.debugMode) logMousePos(e);
 		mousePos = e.getPoint();
 
-		Hexagon h = gh.gm.findClosestHexagon(mousePos);
-		if (h == null) return;
-		if(!h.equals(currentHexagon) || currentHexagon == null)
-		{
-			currentHexagon = h;
-			gh.drawTileUnderMouse(currentHexagon);
+		updateMouseTile();
 
-			if(isShiftDown && gh.selectedEntityTiles != null) {
-				gh.entityPreviewTiles.clear();
-				gh.addEntityPreviewTiles(this);
-			}
-		}
 		if(mode == Tool.LENGTH_MODE) {
 			int length = 0;
 			for(Measure m : gh.measure) {
@@ -330,37 +320,51 @@ public class IOHandler extends MouseAdapter {
 
 		if (hasSelectedEntity && !gh.selectedEntityTiles.isEmpty()) {
 			Entity selectedEntity = gh.selectEntity(gh.selectedEntityTiles.getFirst());
-			if (selectedEntity instanceof Character) {
-				Character character = (Character) selectedEntity;
+			if (selectedEntity instanceof Character character) {
 				ArrayList<Hexagon> rangeTiles = AStar.range(character.getTile(), character.getSpeed(), gh);
-				for (Hexagon h : rangeTiles) {
-					if (h == null) continue;
-					gh.addEntityRangeTile(h);
+				for (Hexagon centerTile : rangeTiles) {
+					if (centerTile == null) continue;
+					if(character.getSize() > 0) {
+						ArrayList<Hexagon> wouldOccupyTiles = Character.getOccupiedTiles(centerTile, character.getSize(), gh);
+						boolean positionIsValid = true;
+						
+						// Check every single tile the character would occupy
+						for(Hexagon occupiedTile : wouldOccupyTiles) {
+							if (occupiedTile == null) {
+								positionIsValid = false;
+								break;
+							}
+							
+							// Check if there's any entity at this tile
+							Entity blockingEntity = gh.selectEntity(occupiedTile);
+							if (blockingEntity != null && !blockingEntity.equals(character)) {
+								// This tile is blocked by another entity (wall, character, etc.)
+								positionIsValid = false;
+								break;
+							}
+						}
+						
+						// Only add this center position to range if ALL occupied tiles are free
+						if (positionIsValid) {
+							// Add only the center tile to the range display
+							// (The character occupies multiple tiles, but we show range based on center)
+							gh.addEntityRangeTile(centerTile);
+						}
+						
+					} else {
+						// For small characters (size 0): simple check
+						Entity blockingEntity = gh.selectEntity(centerTile);
+						if (blockingEntity == null || blockingEntity.equals(character)) {
+							gh.addEntityRangeTile(centerTile);
+						}
+					}
 				}
 			}
 		}
 	}
 	
 	public void selectTile() {
-	/*
-		if (!gh.selectedEntityTiles.isEmpty() && !hasSelectedEntity) {
 
-			for(Hexagon h : gh.selectedTiles){
-				if (currentHexagon.getGridPoint().equals(
-					h.getGridPoint()
-				)) {
-					gh.selectedTiles.remove(h);
-					return;
-				}
-			}
-			if (currentHexagon.getGridPoint().equals(
-				gh.selectedEntityTile.getGridPoint()
-			)) {
-				gh.drawSelectedTile(null);
-				return;
-			}
-		}
-	*/
 		if (!gh.selectedTiles.isEmpty()) {
 			for(Hexagon h : gh.selectedTiles){
 				if (currentHexagon.getGridPoint().equals(
@@ -379,7 +383,7 @@ public class IOHandler extends MouseAdapter {
 		Entity selectedEntity = gh.selectEntity(gh.selectedEntityTiles.getFirst());
 
 		if ((selectedEntity instanceof Character && isShiftDown
-			&& gh.entityRangeTiles.contains(currentHexagon)) 
+			&& gh.entityRangeTiles.contains(currentHexagon))
 			|| gameMaster) {
 			gh.gm.moveCharacter(currentHexagon, (entities.Character) selectedEntity);
 
@@ -395,5 +399,19 @@ public class IOHandler extends MouseAdapter {
 	}
 	protected void toggleGameMaster() {
 		gameMaster = !gameMaster;
+	}
+	public void updateMouseTile() {
+		Hexagon h = gh.gm.findClosestHexagon(mousePos);
+		if (h == null) return;
+		if(!h.equals(currentHexagon) || currentHexagon == null)
+		{
+			currentHexagon = h;
+			gh.drawTileUnderMouse(currentHexagon);
+
+			if(isShiftDown && gh.selectedEntityTiles != null) {
+				gh.entityPreviewTiles.clear();
+				gh.addEntityPreviewTiles(this);
+			}
+		}
 	}
 }
