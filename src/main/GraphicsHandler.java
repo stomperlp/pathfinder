@@ -44,9 +44,9 @@ public class GraphicsHandler extends JFrame {
 
     protected Point dragStart = null;
     Point gridOffset = new Point(0, 0);
-
+    
     public TwoKeyMap<Integer, Integer, Hexagon> hexlist = new TwoKeyMap<>();
-
+    
     public ArrayList<Measure> measure             = new ArrayList<>();
     public ArrayList<Marker>  markers             = new ArrayList<>();
     public ArrayList<Entity>  entities            = new ArrayList<>();
@@ -54,8 +54,10 @@ public class GraphicsHandler extends JFrame {
     public ArrayList<Hexagon> selectedEntityTiles = new ArrayList<>();
     public ArrayList<Hexagon> entityRangeTiles    = new ArrayList<>();
     public ArrayList<Hexagon> entityPreviewTiles  = new ArrayList<>();
-
+    
     public Hexagon tileUnderMouse;
+    public Line lineAttack;
+    public Marker totalLength;
 
     protected int zoomFactor = 1;
     protected boolean debugMode = false; // :d or debug to change
@@ -409,6 +411,24 @@ public class GraphicsHandler extends JFrame {
                         m.length() + "ft",
                         lineCenter.x, lineCenter.y
                     );
+                }
+                if (lineAttack != null) {
+                    g2d.setColor(Color.RED);
+                    Line2D line = lineAttack.getLine();
+                    if(line != null){ 
+                        g2d.draw(line);
+
+                        g2d.setColor(Color.BLACK);
+                        g2d.setFont(new Font("Arial", Font.BOLD, hexSize/2));
+                        Point lineCenter = new Point(
+                            (int) (line.getX1() + (line.getX2()-line.getX1())/2),
+                            (int) (line.getY1() + (line.getY2()-line.getY1())/2)
+                        );
+                        g2d.drawString(
+                            lineAttack.length() + "ft",
+                            lineCenter.x, lineCenter.y
+                        );
+                    }
                 }
             }
         };

@@ -77,7 +77,7 @@ public class Toolbox extends JPanel{
             3
         ));
         tools.add(new Tool(
-            ImageIO.read(new File("src/resources/images/toolIcons/move.png")),
+            ImageIO.read(new File("src/resources/images/toolIcons/cone.png")),
             Tool.CONE_MODE,
             4
         ));

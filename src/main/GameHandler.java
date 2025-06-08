@@ -8,7 +8,7 @@ public class GameHandler implements Runnable{
 
     protected final GraphicsHandler gh;
 	private final Object lock = new Object();
-
+	private int moveSpeed = 3;
     
     public GameHandler(GraphicsHandler gh){
 		this.gh = gh;
@@ -27,21 +27,25 @@ public class GameHandler implements Runnable{
 		return closest;
 	}
     public void tick(){
+		if(gh.io.isAltDown) 	   moveSpeed = 1000;
+		if(gh.io.isShiftDown) 	   moveSpeed = 12;
+		else if (gh.io.isCtrlDown) moveSpeed = 6;
+		else 				 	   moveSpeed = 3;
 
         if(gh.io.ADown) {
-            gh.gridOffset(3, 0);
+            gh.gridOffset(moveSpeed, 0);
             gh.repaint();
         }
         if(gh.io.DDown) {
-            gh.gridOffset(-3, 0);
+            gh.gridOffset(-moveSpeed, 0);
             gh.repaint();
         }
         if(gh.io.SDown) {
-            gh.gridOffset(0, -3);
+            gh.gridOffset(0, -moveSpeed);
             gh.repaint();
         }
         if(gh.io.WDown) {
-            gh.gridOffset(0, 3);
+            gh.gridOffset(0, moveSpeed);
             gh.repaint();
         }
 	}

@@ -49,8 +49,19 @@ public class Calc {
         
         BufferedImage bImage = toBufferedImage(image);
         int hexSize = (int) (bImage.getHeight()/2);
-        Hexagon hex = new Hexagon(new Point2D.Double(hexSize*2/Math.sqrt(3), hexSize), (int) (hexSize*2/Math.sqrt(3)), null, GraphicsHandler.isFlat);
-        BufferedImage output = new BufferedImage( (int) (hexSize*4/Math.sqrt(3)), (int) (hexSize*2), BufferedImage.TYPE_INT_ARGB);
+        Hexagon hex = new Hexagon(
+            new Point2D.Double(
+                hexSize*2/Math.sqrt(3), 
+                hexSize
+            ), 
+            (int) (hexSize*2/Math.sqrt(3)), 
+            null, GraphicsHandler.isFlat
+        );
+        BufferedImage output = new BufferedImage( 
+            (int) (hexSize*4/Math.sqrt(3)), 
+            (int) (hexSize*2), 
+            BufferedImage.TYPE_INT_ARGB
+        );
         
         for (int y = 0; y < (int) hexSize*2; y++) {
             System.out.println(y);
