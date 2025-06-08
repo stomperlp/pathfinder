@@ -84,7 +84,7 @@ public class Consol extends JTextField {
                 }
                 args = cutArgs(args);
             } 
-            catch (NumberFormatException e) {}
+            catch (Exception e) {}
             
         } while(args.length >= 3);
 

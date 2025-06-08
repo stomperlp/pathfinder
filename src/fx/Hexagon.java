@@ -32,6 +32,7 @@ public class Hexagon {
         shape.closePath();
         this.gridCoords = gridCoords;
     }
+    
     public boolean equals(Hexagon h) {
         if (h == null) return false;
         return h.getGridPoint().equals(this.getGridPoint());

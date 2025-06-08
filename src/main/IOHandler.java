@@ -20,7 +20,7 @@ public class IOHandler extends MouseAdapter {
 	protected int mode  = 0;
 	protected boolean isShiftDown = false;
 	protected boolean isCtrlDown  = false;
-	protected boolean isAltDown  = false;
+	protected boolean isAltDown   = false;
 	protected Marker mouseLog;
 
 	protected boolean ADown;
@@ -69,14 +69,19 @@ public class IOHandler extends MouseAdapter {
 					if(t.getHitbox().contains(mousePos)) {
 						gh.toolbox.selectedTool = t;
 						mode = t.getToolMode();
-						if (mode != Tool.LENGTH_MODE) {
+						if (mode != Tool.LENGTH_MODE && !gh.measure.isEmpty()) {
 							if(gh.measure.getLast().getFinishedPoint() == null) {
 								gh.measure.remove(gh.measure.size()-1);
 							}
 						}
+
 						if (mode != Tool.LINE_MODE) {
 							gh.lineAttack = null;
 						}
+						if (mode != Tool.AREA_MODE) {
+							gh.areaAttack = null;
+						}
+						gh.attackTiles.clear();
 						gh.repaint();
 						return;
 					}
@@ -108,6 +113,12 @@ public class IOHandler extends MouseAdapter {
 					}
 					case Tool.LINE_MODE	-> {
 						gh.lineAttack = new Line(gh);
+					}
+					case Tool.AREA_MODE	-> {
+						gh.areaAttack = new Area(gh);
+					}
+					case Tool.CONE_MODE	-> {
+						gh.coneAttack = new Cone(gh);
 					}
 				}
 			}
@@ -158,7 +169,6 @@ public class IOHandler extends MouseAdapter {
 			}
 			if (gh.totalLength == null) {
 				gh.totalLength = new Marker(mousePos, Marker.STAT, false);
-				System.out.println("g");
 				
 			}
 			gh.totalLength.setStat(length);
@@ -186,12 +196,20 @@ public class IOHandler extends MouseAdapter {
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int notches = e.getWheelRotation();
+		
 		if(isCtrlDown) {
 			int base = gh.consol.getFont().getSize();
 			gh.consol.setFontSize(base-notches);
 			
 			gh.revalidate();
 			gh.repaint();
+		} else if(isShiftDown) {
+			switch (mode) 
+			{
+				case Tool.CONE_MODE	-> {
+					gh.coneAttack.changeAngle(notches);
+				}
+			}
 		} else {
 			gh.zoom(notches, e.getPoint());
 		}
@@ -247,7 +265,7 @@ public class IOHandler extends MouseAdapter {
 				}
 			}
 			case KeyEvent.VK_CONTROL -> isCtrlDown = true;
-			case KeyEvent.VK_ALT -> isAltDown = true;
+			case KeyEvent.VK_ALT 	 -> isAltDown  = true;
 			case KeyEvent.VK_ENTER   -> {
 				e.consume();
 				if (isCtrlDown) { 
@@ -287,6 +305,8 @@ public class IOHandler extends MouseAdapter {
 				gh.repaint();
 			}
 			case KeyEvent.VK_CONTROL -> isCtrlDown = false;
+			case KeyEvent.VK_ALT 	 -> isAltDown  = false;
+
 		}
 	}
 
