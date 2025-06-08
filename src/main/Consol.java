@@ -1,5 +1,6 @@
 package main;
 
+import calc.Dice;
 import entities.Character;
 import fx.Hexagon;
 import fx.Marker;
@@ -10,9 +11,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTextField;
-
-import calc.Dice;
-import java.io.IO;
 
 public class Consol extends JTextField {
     private boolean Active = true;
@@ -86,7 +84,7 @@ public class Consol extends JTextField {
                 }
                 args = cutArgs(args);
             } 
-            catch (Exception e) {}
+            catch (NumberFormatException e) {}
             
         } while(args.length >= 3);
 

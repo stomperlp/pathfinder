@@ -64,7 +64,6 @@ public class Calc {
         );
         
         for (int y = 0; y < (int) hexSize*2; y++) {
-            System.out.println(y);
             for (int x = 0; x < (int) hexSize*4/Math.sqrt(3); x++) {
                 try {
                     if(hex.contains(new Point2D.Double(x,y))){

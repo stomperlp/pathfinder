@@ -158,8 +158,11 @@ public class IOHandler extends MouseAdapter {
 			}
 			if (gh.totalLength == null) {
 				gh.totalLength = new Marker(mousePos, Marker.STAT, false);
+				System.out.println("g");
+				
 			}
 			gh.totalLength.setStat(length);
+			gh.totalLength.moveTo(mousePos);
 		}
 	}
 	

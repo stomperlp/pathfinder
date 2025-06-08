@@ -278,7 +278,7 @@ public class GraphicsHandler extends JFrame {
                         hexlist.put(row,col,hex);
                     }
                 }
-
+                //Updating postition of hexagons
                 for (Hexagon h : selectedTiles){
                     if (h == null) continue;
                     selectedTiles.set(selectedTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y));
@@ -295,6 +295,7 @@ public class GraphicsHandler extends JFrame {
                     if (h == null) continue;
                     entityPreviewTiles.set(entityPreviewTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y)); 
                 }
+
                 if (tileUnderMouse != null && dragStart == null) {
 
                     g2d.setStroke(new BasicStroke(thickness+2));
@@ -349,11 +350,19 @@ public class GraphicsHandler extends JFrame {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+                if (totalLength != null) markers.add(totalLength);
+
                 for (Marker m: markers) {
                     if (m.isDebugMarker() != debugMode) continue;
                     
                     switch (m.getPurpose()) {
                         case Marker.COORDINATES -> {
+
+                            g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+                            g2d.setFont(new Font("Arial", Font.BOLD, 18));
+                            g2d.drawString(m.getText(), (int) m.getPoint().getX(), (int) m.getPoint().getY());
+                        }
+                        case Marker.STAT -> {
 
                             g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
                             g2d.setFont(new Font("Arial", Font.BOLD, 18));
