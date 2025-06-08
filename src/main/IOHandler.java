@@ -20,6 +20,7 @@ public class IOHandler extends MouseAdapter {
 	protected int mode  = 0;
 	protected boolean isShiftDown = false;
 	protected boolean isCtrlDown  = false;
+	protected boolean isAltDown  = false;
 	protected Marker mouseLog;
 
 	protected boolean ADown;
@@ -73,6 +74,9 @@ public class IOHandler extends MouseAdapter {
 								gh.measure.remove(gh.measure.size()-1);
 							}
 						}
+						if (mode != Tool.LINE_MODE) {
+							gh.lineAttack = null;
+						}
 						gh.repaint();
 						return;
 					}
@@ -103,7 +107,7 @@ public class IOHandler extends MouseAdapter {
 						gh.measure.add(new Measure(gh));
 					}
 					case Tool.LINE_MODE	-> {
-
+						gh.lineAttack = new Line(gh);
 					}
 				}
 			}
@@ -146,6 +150,16 @@ public class IOHandler extends MouseAdapter {
 				gh.entityPreviewTiles.clear();
 				gh.addEntityPreviewTiles(this);
 			}
+		}
+		if(mode == Tool.LENGTH_MODE) {
+			int length = 0;
+			for(Measure m : gh.measure) {
+				length += m.length();
+			}
+			if (gh.totalLength == null) {
+				gh.totalLength = new Marker(mousePos, Marker.STAT, false);
+			}
+			gh.totalLength.setStat(length);
 		}
 	}
 	
@@ -230,6 +244,7 @@ public class IOHandler extends MouseAdapter {
 				}
 			}
 			case KeyEvent.VK_CONTROL -> isCtrlDown = true;
+			case KeyEvent.VK_ALT -> isAltDown = true;
 			case KeyEvent.VK_ENTER   -> {
 				e.consume();
 				if (isCtrlDown) { 
