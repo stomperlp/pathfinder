@@ -65,4 +65,7 @@ public class Entity {
     public int getSize() {
         return 0;
     }
+    public int getSpeed() {
+        return 0;
+    }
 }

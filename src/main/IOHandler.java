@@ -31,6 +31,7 @@ public class IOHandler extends MouseAdapter {
 	private boolean hasSelectedEntity;
 	public Point mousePos;
 	private boolean LMBDown;
+	protected boolean gameMaster;
 
 	public IOHandler(GraphicsHandler gh) {
 		this.gh = gh;
@@ -69,7 +70,7 @@ public class IOHandler extends MouseAdapter {
 						gh.toolbox.selectedTool = t;
 						mode = t.getToolMode();
 						if (mode != Tool.LENGTH_MODE) {
-							if(gh.measure.getLast().getFinishedPoint() == null){
+							if(gh.measure.getLast().getFinishedPoint() == null) {
 								gh.measure.remove(gh.measure.size()-1);
 							}
 						}
@@ -80,14 +81,15 @@ public class IOHandler extends MouseAdapter {
 						return;
 					}
 				}
-				if (!isCtrlDown && !isShiftDown){
+				if (!isCtrlDown && !isShiftDown) {
 					if (!isShiftDown)
 						gh.selectedEntityTiles.clear();
 					gh.selectedTiles.clear();
 				}
 				currentHexagon = gh.gm.findClosestHexagon(mousePos);
-				selectEntity();
 				selectTile();
+				if(!isShiftDown) 
+					selectEntity();
 			}
 			case MouseEvent.BUTTON2 -> {}
 			case MouseEvent.BUTTON3 -> {
@@ -97,13 +99,13 @@ public class IOHandler extends MouseAdapter {
 					case Tool.DRAG_MODE 	-> gh.dragStart = mousePos;
 					case Tool.LENGTH_MODE 	-> {
 						if(!gh.measure.isEmpty()) {
-                        	if(gh.measure.getLast().finish()) {
+							if(gh.measure.getLast().finish()) {
 								//stops creation of new measure if double clicked.
 								return;
 							}
 						}
 						gh.measure.add(new Measure(gh));
-                    }
+					}
 					case Tool.LINE_MODE	-> {
 						gh.lineAttack = new Line(gh);
 					}
@@ -112,7 +114,6 @@ public class IOHandler extends MouseAdapter {
 			default -> {}
 		}
 	}
-
 	
 	@Override
 	public void mouseReleased(MouseEvent e) 
@@ -157,6 +158,7 @@ public class IOHandler extends MouseAdapter {
 			}
 			if (gh.totalLength == null) {
 				gh.totalLength = new Marker(mousePos, Marker.STAT, false);
+				System.out.println("g");
 				
 			}
 			gh.totalLength.setStat(length);
@@ -300,19 +302,19 @@ public class IOHandler extends MouseAdapter {
 		gh.repaint();
 	}
 	public void selectEntity() {
-		if(isShiftDown) return;
+		
 		if (!gh.selectedEntityTiles.isEmpty()) {
-			for(Hexagon h : gh.selectedEntityTiles){
+			for(Hexagon h : gh.selectedEntityTiles) {
 				if (currentHexagon.getGridPoint().equals(
 					h.getGridPoint()
-					)) {
-						gh.selectedEntityTiles.remove(h);
-						return;
-					}
+				)) {
+					gh.selectedEntityTiles.remove(h);
+					return;
 				}
+			}
 		}
 		for(Entity en : gh.entities) {
-			for (Hexagon occTile : en.getOccupiedTiles()){
+			for (Hexagon occTile : en.getOccupiedTiles()) {
 
 				if(currentHexagon.getGridPoint().equals(
 					occTile.getGridPoint()
@@ -368,16 +370,29 @@ public class IOHandler extends MouseAdapter {
 				} 
 			}
 		}
-		gh.addSelectedTile(currentHexagon);
+		if(gh.selectedEntityTiles != null && !isShiftDown)
+			gh.addSelectedTile(currentHexagon);
 
 		if (gh.selectedEntityTiles.isEmpty()) return;
 
 		Entity selectedEntity = gh.selectEntity(gh.selectedEntityTiles.getFirst());
 
-		if (selectedEntity instanceof Character
-			&& isShiftDown
-		) {
-			gh.gm.moveCharacter(currentHexagon, (entities.Character)selectedEntity);
+		if ((selectedEntity instanceof Character && isShiftDown
+			&& gh.entityRangeTiles.contains(currentHexagon)) 
+			|| gameMaster) {
+			gh.gm.moveCharacter(currentHexagon, (entities.Character) selectedEntity);
+
+			hasSelectedEntity = false;
+			gh.selectedEntityTiles.clear();
+			gh.entityRangeTiles.clear();
+			gh.selectedTiles.clear();
+
+			currentHexagon = gh.gm.findClosestHexagon(mousePos);
+			selectEntity();
+			selectTile();
 		}
+	}
+	protected void toggleGameMaster() {
+		gameMaster = !gameMaster;
 	}
 }

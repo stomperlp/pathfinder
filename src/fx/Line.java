@@ -44,7 +44,7 @@ public class Line {
             gh,
             true
         ).size();
-        return l == 0 ? 0 : l-1;
+        return l == 0 ? 0 : (l-1)*5;
     }
     public Point getFinishedPoint() {
         return finishedPoint;
