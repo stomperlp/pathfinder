@@ -1,23 +1,111 @@
-## Getting Started
+# pathfinder
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+A Java application for managing and visualizing hexagonal grids for tabletop RPGs like Pathfinder or D&D.
+
+## Table of Contents
+
+- [Folder Structure](#folder-structure)
+- [Features](#features)
+- [Controls](#Controls)
+  - [Mouse Controls](#mouse-controls)
+  - [Keyboard Controls](#keyboard-controls)
+    - [Console Commands](#console-commands)
+- [Notes](#notes)
+- [Chemie und STALINdustrie](#chemie-und-stalindustrie)
 
 ## Folder Structure
 
-The workspace contains two folders by default, where:
+Pathfinder/
+├── src/
+│   ├── main/         # Main application classes (entry point, UI, handlers)
+│   ├── entities/     # Character, Wall, and other entity classes
+│   ├── fx/           # Graphics, hexagon logic, markers, measurement tools
+│   ├── calc/         # Calculation logic (A*, dice, coordinate math, etc.)
+│   └── tools/        # Toolbox and tool definitions
+├── bin/              # Compiled class files
+├── resources/        # Images, icons, and other assets
+├── diagramme/        # UML diagrams 
+└── [README.md]        (http://_vscodecontentref_/0)
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Features
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+- **Hexagonal Grid System:**  
+  Interactive hex grid for precise movement and area calculations, supporting both flat-topped and pointy-topped hexes.
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+- **Character & Entity Management:**  
+  - Place, move, and remove characters and entities (e.g., walls, obstacles) on the grid.
+  - Support for different sizes (Tiny, Small, Medium, Large, Huge, Gargantuan).
+  - Track initiative, hit points, armor class, speed, and more.
 
-## Dependency Management
+- **Measurement Tools:**  
+  - Measure distances, draw lines, cones, and areas directly on the grid.
+  - Visual feedback for range and area-of-effect spells.
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+- **Dice Roller:**  
+  - Built-in dice roller supporting standard RPG notation (e.g., `2d6+3`).
+  - Displays results visually on the map.
 
-# pathfinder
+- **Initiative Tracker:**  
+  - Add, remove, and sort entities in initiative order.
+  - Visual display of current turn and order.
+
+- **Background Images:**  
+  - Import and set custom background images for your map.
+
+- **Dark/Light Mode:**  
+  - Switch between dark and light color schemes for better visibility.
+
+- **Toolbox:**  
+  - Select different tools for measuring, drawing, and entity management.
+
+- **Debug & Gamemaster Modes:**  
+  - Additional controls and overlays for game masters.
+
+
+## Controls
+
+### Mouse Controls
+
+- **Left-click:**   Select fields/units
+- **Right-click:**  Tool actions (e.g., measure, draw a line)
+- **Scroll Wheel:** Zoom in/out on the grid.
+
+### Keyboard Controls
+
+- **WASD:**             Move the map view (pan)
+- **Enter:**            Confirm input in the console
+- **Ctrl + Enter:**     Toggle console
+- **Arrow up / down:**  cycle through console history
+- **Ctrl / Shift:**     Multi-select (where supported)
+
+#### Console Commands:
+
+Command	      Description
+
+:q or quit	  # Quit the application
+:b	          # Set a background image
+:d	          # Toggle debug mode
+:dm	          # Toggle dark/light mode
+:c	          # Create or edit a character
+:w	          # Place a wall
+:e	          # Place a generic entity
+:r or roll	  # Roll dice (e.g., roll 2d6+1)
+:g	          # Change grid orientation
+:gm	          # Toggle gamemaster mode
+:i or init	  # Manage initiative order
+help	      # Show help and available commands
+
+For a full list of commands and options, see the source code in main/Consol.java.
+
+## Notes
+
+Tool icons must be present as PNG files in the folder src/resources/images/toolIcons/.
+
+The program does not save data permanently—all changes are lost upon closing.
+
+For custom extensions, refer to the class structure in the UML diagrams located in the diagramme/ folder.
+
+## Chemie und STALINdustrie
 
 ⣿⡇⠄⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠙⣦⠐⠠⡥⣿⣿   ⣿⣿⣿⣿⣿⠟⠋⠄⠄⠄⠄⠄⠄⠄⢁⠈⢻⢿⣿⣿⣿⣿⣿⣿⣿
 ⣿⡇⠄⣿⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣿⡔⠛⣿⣿   ⣿⣿⣿⣿⣿⠃⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⡀⠭⢿⣿⣿⣿⣿

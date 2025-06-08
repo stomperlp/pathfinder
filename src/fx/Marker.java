@@ -5,17 +5,20 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 
 public class Marker {
+
     public static final int COORDINATES = 0;
     public static final int STAT        = 1;
     public static final int DICE        = 2;
     public static final int DICERESULT  = 3;
     public static final int TILE        = 4;
-    private Point2D coords;
-    private Point2D displayCoords;
-    private final int purpose;
-    private int stat;
+
     private final boolean isDebugMarker;
+    private final int purpose;
+    private Point2D displayCoords;
+    private Point2D coords;
     private Color color;
+    private int stat;
+    private boolean isVisible = true;
 
     public Marker(Point2D location, int purpose, boolean isDebugMarker) {
         this.coords         = location;
@@ -71,5 +74,11 @@ public class Marker {
     }
     public int getPurpose() {
         return purpose;
+    }
+    public boolean isVisible() {
+        return isVisible;
+    }
+    public void toggleVisible() {
+        isVisible = !isVisible;
     }
 }

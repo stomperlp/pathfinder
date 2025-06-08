@@ -58,7 +58,8 @@ public class Consol extends JTextField {
                 case "roll",       ":r"  -> roll(args);
                 case "darkmode",   ":dm" -> gh.toggleDarkMode();
                 case "grid",       ":g"  -> gh.toggleGridOrientation();
-                case "gamemaster", ":gm" -> gh.io.toggleGameMaster(); 
+                case "gamemaster", ":gm" -> gh.io.toggleGameMaster();
+                case "init",       ":i"  -> initiative(args);
                 default -> {}
             }
         }
@@ -74,12 +75,12 @@ public class Consol extends JTextField {
         do{
             try {
                 switch (args[1].toLowerCase()) {
-                    case "d",  "delete"     -> {gh.deleteEntities();                                       }
-                    case "s",  "size"       -> {size        = Integer.parseInt(args[2]); hasValue[0] = true;}
-                    case "h",  "maxhealth"  -> {maxHealth   = Integer.parseInt(args[2]); hasValue[1] = true;}
-                    case "ac", "armorclass" -> {AC          = Integer.parseInt(args[2]); hasValue[2] = true;}
-                    case "sp", "speed"      -> {speed       = Integer.parseInt(args[2]); hasValue[3] = true;}
-                    case "i",  "initiative" -> {initiative  = Integer.parseInt(args[2]); hasValue[4] = true;}
+                    case "d",   "delete"      -> {gh.deleteEntities();                                        }
+                    case "s",   "size"        -> {size        = Integer.parseInt(args[2]); hasValue[0] = true;}
+                    case "h",   "maxhealth"   -> {maxHealth   = Integer.parseInt(args[2]); hasValue[1] = true;}
+                    case "ac",  "armorclass"  -> {AC          = Integer.parseInt(args[2]); hasValue[2] = true;}
+                    case "sp",  "speed"       -> {speed       = Integer.parseInt(args[2]); hasValue[3] = true;}
+                    case "i",   "initiative"  -> {initiative  = Integer.parseInt(args[2]); hasValue[4] = true;}
                     default -> {}
                 }
                 args = cutArgs(args);
@@ -114,11 +115,11 @@ public class Consol extends JTextField {
     }
     private void help(String arg) {
          switch(arg) {
-                case "quit",       ":q" -> {}
-                case "background", ":b" -> {}
-                case "debug",      ":d" -> {}
-                case "character",  ":c" -> {}
-                case "roll",       ":r" -> {}
+                case "quit",        ":q" -> {}
+                case "background",  ":b" -> {}
+                case "debug",       ":d" -> {}
+                case "character",   ":c" -> {}
+                case "roll",        ":r" -> {}
                 default -> {}
             }
 
@@ -148,6 +149,21 @@ public class Consol extends JTextField {
         gh.markers.add(m);
         diceMarkers[0] = m;
     }
+    private void initiative (String[] args) {
+        if (args == null) {
+            gh.gm.initiative(gh.entities);
+        }
+        else {
+            switch(args[1].toLowerCase()) {
+                case "add",     "a" -> {gh.gm.initiative(gh.selectEntity(gh.selectedEntityTiles.get(0)));}
+                case "remove",  "r" -> {gh.gm.removeFromInitiative(gh.selectEntity(gh.selectedEntityTiles.get(0)));}
+                case "clear",   "c" -> {gh.gm.init.clear();}
+                case "show",    "s" -> {gh.gm.showInitiative();}
+                default -> {}
+            }
+        }
+    }
+
     public boolean isActive() {
         return Active;
     }

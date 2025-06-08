@@ -54,7 +54,7 @@ public class AStar
                 if (neighbor == null) continue;
 
                 // Skip tiles that are occupied by entities
-                if (isOccupiedByEntity(neighbor, gh, start) && !ignoreObstacles) continue;
+                if (isOccupiedByEntity(neighbor, start, gh) && !ignoreObstacles) continue;
 
                 Point neighborPoint = neighbor.getGridPoint();
 
@@ -109,7 +109,7 @@ public class AStar
                 for (Hexagon hex : getNeighbors(h, gh)) {
                     if (hex != null   && !available.contains(hex) && 
                         hex != center && !nextHexagons.contains(hex) &&
-                        !isOccupiedByEntity(hex, gh, center)) {
+                        !isOccupiedByEntity(hex, center, gh)) {
                         available.add(hex);
                         nextHexagons.add(hex);
                     }
@@ -220,11 +220,11 @@ public class AStar
             Math.abs(az_cube - bz_cube));
     }
 
-    private static boolean isOccupiedByEntity(Hexagon hex, GraphicsHandler gh) {
-        return isOccupiedByEntity(hex, gh, null);
+    public static boolean isOccupiedByEntity(Hexagon hex, GraphicsHandler gh) {
+        return isOccupiedByEntity(hex, null, gh);
     }
 
-    private static boolean isOccupiedByEntity(Hexagon hex, GraphicsHandler gh, Hexagon sourceHex) {
+    public static boolean isOccupiedByEntity(Hexagon hex, Hexagon sourceHex, GraphicsHandler gh) {
 
         if (hex == null) return true;
 

@@ -1,16 +1,20 @@
 package main;
 
 import calc.AStar;
+import entities.Entity;
 import fx.*;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GameHandler implements Runnable{
 
-    protected final GraphicsHandler gh;
+	protected final GraphicsHandler gh;
 	private final Object lock = new Object();
 	private int moveSpeed = 3;
-    
-    public GameHandler(GraphicsHandler gh){
+	public HashMap<Entity, Double> init = new HashMap<>();
+
+	public GameHandler(GraphicsHandler gh){
 		this.gh = gh;
 	}
 
@@ -67,9 +71,40 @@ public class GameHandler implements Runnable{
 	}
 
 	public void moveCharacter(Hexagon h, entities.Character c) {
-		// TODO: A* Implementation
+		if (h == null || c == null) return;
 		AStar.run(c.getTile(), h, gh, false);
 		c.setTile(h);
 	}
-	
+
+	public void initiative(ArrayList<Entity> entities) {
+		if (entities == null) return;
+		for (Entity entity : entities) {
+			initiative(entity);
+		}
+	}
+	public void initiative(Entity entity) {
+		if (entity == null) return;
+		if (!init.containsKey(entity))
+			init.put(entity, Math.random());
+		
+	}
+	public void removeFromInitiative(Entity entity) {
+		if (entity == null) return;
+		init.remove(entity);
+	}
+	public void sortInitiative() {
+		init = init.entrySet().stream()
+		.sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
+		.collect(
+			java.util.stream.Collectors.toMap(
+				java.util.Map.Entry::getKey,
+				java.util.Map.Entry::getValue,
+				(oldValue, newValue) -> oldValue,
+				java.util.LinkedHashMap::new
+			)
+		);
+	}
+	public void showInitiative() {
+			
+	}
 }

@@ -7,7 +7,7 @@ public class Tool {
 
 	public static final int DRAG_MODE   = 0;
 	public static final int LENGTH_MODE = 1;
-	public static final int AREA_MODE = 2;
+	public static final int AREA_MODE   = 2;
 	public static final int LINE_MODE   = 3;
 	public static final int CONE_MODE   = 4;
 
