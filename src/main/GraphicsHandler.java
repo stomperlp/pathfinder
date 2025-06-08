@@ -762,10 +762,13 @@ public class GraphicsHandler extends JFrame {
         repaint();
     }
     public void addEntityPreviewTiles(IOHandler IO) {
-        if (selectEntity(selectedEntityTiles.get(0)) instanceof Character) {
-            for (Hexagon hex : Character.getOccupiedTiles(tileUnderMouse, selectEntity(selectedEntityTiles.get(0)).getSize(), this)) {
-                if (!entityPreviewTiles.contains(hex)) {
-                    addEntityPreviewTile(hex);
+        if (!selectedEntityTiles.isEmpty() && selectedEntityTiles != null &&
+            selectEntity(selectedEntityTiles.get(0)) instanceof Character) {
+            if (Character.getOccupiedTiles(tileUnderMouse, selectEntity(selectedEntityTiles.get(0)).getSize(), this) != null) {
+                for (Hexagon hex : Character.getOccupiedTiles(tileUnderMouse, selectEntity(selectedEntityTiles.get(0)).getSize(), this)) {
+                    if (hex != null && !entityPreviewTiles.contains(hex)) {
+                        addEntityPreviewTile(hex);
+                    }
                 }
             }
         }

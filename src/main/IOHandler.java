@@ -231,7 +231,7 @@ public class IOHandler extends MouseAdapter {
 		switch(e.getKeyCode()) {
 			case KeyEvent.VK_SHIFT   -> {
 				isShiftDown = true;
-				if(gh.selectedEntityTiles != null) {
+				if(gh.selectedEntityTiles != null && !gh.selectedEntityTiles.isEmpty()) {
 					gh.entityPreviewTiles.clear();
 					gh.addEntityPreviewTiles(this);
 				}
