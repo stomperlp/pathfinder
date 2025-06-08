@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.JTextField;
 
 import calc.Dice;
+import java.io.IO;
 
 public class Consol extends JTextField {
     private boolean Active = true;
@@ -59,6 +60,7 @@ public class Consol extends JTextField {
                 case "roll",       ":r"  -> roll(args);
                 case "darkmode",   ":dm" -> gh.toggleDarkMode();
                 case "grid",       ":g"  -> gh.toggleGridOrientation();
+                case "gamemaster", ":gm" -> gh.io.toggleGameMaster(); 
                 default -> {}
             }
         }

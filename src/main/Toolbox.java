@@ -62,14 +62,24 @@ public class Toolbox extends JPanel{
         ));
         //length tool
         tools.add(new Tool(
-            ImageIO.read(new File("src/resources/images/toolIcons/move.png")),
+            ImageIO.read(new File("src/resources/images/toolIcons/length.png")),
             Tool.LENGTH_MODE,
             1
         ));
         tools.add(new Tool(
-            ImageIO.read(new File("src/resources/images/toolIcons/move.png")),
-            Tool.HITBOX_MODE,
+            ImageIO.read(new File("src/resources/images/toolIcons/area.png")),
+            Tool.AREA_MODE,
             2
+        ));
+        tools.add(new Tool(
+            ImageIO.read(new File("src/resources/images/toolIcons/line.png")),
+            Tool.LINE_MODE,
+            3
+        ));
+        tools.add(new Tool(
+            ImageIO.read(new File("src/resources/images/toolIcons/move.png")),
+            Tool.CONE_MODE,
+            4
         ));
     }
     public ArrayList<Tool> getTools() {

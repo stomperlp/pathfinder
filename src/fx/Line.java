@@ -3,15 +3,16 @@ package fx;
 import calc.AStar;
 import java.awt.Point;
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
 import main.GraphicsHandler;
 
-public class Measure {
+public class Line {
     private final GraphicsHandler gh;
     private final Point origin;
     private Point finishedPoint;
     private Line2D line = new Line2D.Double();
 
-    public Measure(GraphicsHandler gh) {
+    public Line(GraphicsHandler gh) {
         this.gh = gh;
         this.origin = gh.tileUnderMouse.getGridPoint();
     }
@@ -28,16 +29,13 @@ public class Measure {
         
         return line;
     }
-    public boolean finish() {
-        //returns true if finishing process cleared the measures, so when double clicking.
-        if (finishedPoint == null){
-            finishedPoint = gh.tileUnderMouse.getGridPoint();
-        }
-        if (finishedPoint == origin) {
-            gh.measure.clear();
-            return true;
-        }
-        return false;
+    public ArrayList<Hexagon> tiles() {
+        return AStar.run(
+            gh.hexlist.get(origin.x,origin.y),
+            getFinishedPoint() == null ? gh.tileUnderMouse : gh.hexlist.get(finishedPoint.x, finishedPoint.y),
+            gh,
+            true
+        );
     }
     public int length() {
         int l = AStar.run(

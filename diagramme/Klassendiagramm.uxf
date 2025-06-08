@@ -1,0 +1,247 @@
+<diagram program="umletino" version="15.1"><zoom_level>3</zoom_level><element><id>UMLClass</id><coordinates><x>376</x><y>138</y><w>138</w><h>195</h></coordinates><panel_attributes>GraphicsHandler
+--
++DARK_PRIMARY: Color
++DARK_SECONDARY: Color
++LIGHT_PRIMARY: Color
++LIGHT_SECONDARY: Color
+#io: IOHandler
+#gm: GameHandler
+#waiter: AnswerWaiter
+#backgroundPanel: JPanel
+#contentPanel: JPanel
+#gridPanel: JPanel
+#fxPanel: JPanel
+#backgroundImage: Image
+#toolbox: Toolbox
+#consol: Consol
++hexSize: int
+#thickness: int
+#backgroundRows: int
+#backgroundCols: int
+#backgroundCenter: Point
++hexlist: TwoKeyMap&lt;Integer, Integer, Hexagon&gt;
++measure: ArrayList&lt;Measure&gt;
++markers: ArrayList&lt;Marker&gt;
++entities: ArrayList&lt;Entity&gt;
++selectedTiles: ArrayList&lt;Hexagon&gt;
++selectedEntityTiles: ArrayList&lt;Hexagon&gt;
++entityRangeTiles: ArrayList&lt;Hexagon&gt;
++entityPreviewTiles: ArrayList&lt;Hexagon&gt;
++tileUnderMouse: Hexagon
++isFlat: boolean
+--
++GraphicsHandler()
++toggleConsol(): void
++setBackgroundImage(): void
++drawTileUnderMouse(hex: Hexagon): void
++addSelectedTile(hex: Hexagon): void
++spawnCharacter(size: int, maxhealth: int, AC: int, speed: int, initiative: int): void
++selectEntity(hex: Hexagon): Entity
++deleteEntities(): void
++toggleDarkMode(): void
++summonWall(): void
++summonEntity(): void
++toggleGridOrientation(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>562</x><y>138</y><w>90</w><h>141</h></coordinates><panel_attributes>IOHandler
+--
+#currentHexagon: Hexagon
+#gh: GraphicsHandler
+#count: int
+#mode: int
+#isShiftDown: boolean
+#isCtrlDown: boolean
+#mouseLog: Marker
+#ADown: boolean
+#DDown: boolean
+#SDown: boolean
+#WDown: boolean
+#hasSelectedEntity: boolean
++mousePos: Point
+#LMBDown: boolean
+#gameMaster: boolean
+--
++IOHandler(gh: GraphicsHandler)
++openFileBrowser(): File
++mousePressed(e: MouseEvent): void
++mouseReleased(e: MouseEvent): void
++mouseMoved(e: MouseEvent): void
++mouseDragged(e: MouseEvent): void
++mouseWheelMoved(e: MouseWheelEvent): void
++keyTyped(e: KeyEvent): void
++keyPressed(e: KeyEvent): void
++keyReleased(e: KeyEvent): void
++logMousePos(e: MouseEvent): void
++selectEntity(): void
++selectTile(): void
+#toggleGameMaster(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>454</x><y>369</y><w>84</w><h>42</h></coordinates><panel_attributes>GameHandler
+--
+#gh: GraphicsHandler
+-lock: Object
+--
++GameHandler(gh: GraphicsHandler)
++findClosestHexagon(point: Point2D): Hexagon
++tick(): void
++run(): void
++moveCharacter(h: Hexagon, c: Character): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>454</x><y>420</y><w>69</w><h>48</h></coordinates><panel_attributes>Toolbox
+--
+-scroll: int
+-tools: ArrayList&lt;Tool&gt;
+#selectedTool: Tool
+--
++Toolbox()
+#paintComponent(g: Graphics): void
++initializeTools(): void
++getTools(): ArrayList&lt;Tool&gt;
++setTools(tools: ArrayList&lt;Tool&gt;): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>235</x><y>138</y><w>132</w><h>108</h></coordinates><panel_attributes>Entity
+--
+#image: Image
+#tile: Hexagon
+#location: Point2D
+#occupiedTiles: ArrayList&lt;Hexagon&gt;
+#hexTile: ArrayList&lt;Path2D&gt;
+#debugMarker: Marker
+#gh: GraphicsHandler
+--
++Entity(gh: GraphicsHandler, image: Image, tile: Hexagon, location: Point2D)
++getImage(): Image
++getDrawSize(): double
++debugUpdate(): void
++getMarker(): Marker
++setImage(image: Image): void
++getTile(): Hexagon
++setTile(tile: Hexagon): void
++getOccupiedTiles(): ArrayList&lt;Hexagon&gt;
++setOccupiedTiles(tiles: ArrayList&lt;Hexagon&gt;): void
++getLocation(): Point2D
++setLocation(p: Point2D): void
++getSize(): int
++getSpeed(): int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>223</x><y>276</y><w>144</w><h>150</h></coordinates><panel_attributes>Character
+--
++TINY: int = -2
++SMALL: int = -1
++NORMAL: int = 0
++LARGE: int = 1
++HUGE: int = 2
++GARGANTUAN: int = 3
+-initiative: int
+-maxHealth: int
+-attack: int
+-health: int
+-speed: int
+-size: int
+-AC: int
+--
++Character(gh: GraphicsHandler, image: Image, 
+  tile: Hexagon, location: Point2D, size: int, 
+  maxhealth: int, AC: int, speed: int, initiative: int)
++getSize(): int
++setSize(s: int): void
++getOccupiedTiles(): ArrayList&lt;Hexagon&gt;
++getOccupiedTiles(h: Hexagon, size: int, gh: GraphicsHandler): ArrayList&lt;Hexagon&gt;
++getDrawSize(): double
++getMaxHealth(): int
++setMaxHealth(maxHealth: int): void
++getHealth(): int
++setHealth(health: int): void
++getAttack(): int
++setAttack(attack: int): void
++getAC(): int
++setAC(AC: int): void
++getSpeed(): int
++setSpeed(speed: int): void
++getInitiative(): int
++setInitiative(initiative: int): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>142</x><y>276</y><w>75</w><h>27</h></coordinates><panel_attributes>Wall
+--
+--
++Wall(gh: GraphicsHandler, image:
+  Image, tile: Hexagon, location: Point2D)
++getOccupiedTiles(): ArrayList&lt;Hexagon&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>562</x><y>72</y><w>129</w><h>57</h></coordinates><panel_attributes>Hexagon
+--
+-shape: Path2D
+-center: Point2D
+-gridCoords: Point
+--
++Hexagon(center: Point2D, hexSize: int, gridCoords: Point, isFlat: boolean)
++contains(p: Point2D): boolean
++getShape(): Path2D
++getCenter(): Point2D
++getGridPoint(): Point
++setShape(shape: Path2D): void
++setCenter(center: Point2D): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>562</x><y>285</y><w>126</w><h>120</h></coordinates><panel_attributes>Marker
+--
++COORDINATES: int = 0
++STAT: int = 1
++DICE: int = 2
++DICERESULT: int = 3
++TILE: int = 4
+-coords: Point2D
+-displayCoords: Point2D
+-purpose: int
+-stat: int
+-isDebugMarker: boolean
+-color: Color
+--
++Marker(location: Point2D, purpose: int, isDebugMarker: boolean)
++Marker(stat: int, coords: Point, purpose: int, isDebugMarker: boolean)
++moveTo(p: Point2D): void
++moveTo(p: Point2D, dp: Point2D): void
++moveBy(p: Point2D): void
++getText(): String
++getColor(): Color
++setColor(color: Color): void
++getRawContent(): Object
++setStat(stat: int): void
++getPoint(): Point2D
++isDebugMarker(): boolean
++getPurpose(): int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>376</x><y>369</y><w>60</w><h>54</h></coordinates><panel_attributes>Measure
+--
+-gh: GraphicsHandler
+-origin: Point
+-finishedPoint: Point
+-line: Line2D
+--
++Measure(gh: GraphicsHandler)
++getLine(): Line2D
++finish(): boolean
++length(): int
++getFinishedPoint(): Point
++getOrigin(): Point</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>694</x><y>138</y><w>219</w><h>54</h></coordinates><panel_attributes>AStar
+--
+-neighborCache: HashMap&lt;Point, Point[]&gt;
+--
++run(start: Hexagon, end: Hexagon, gh: GraphicsHandler, ignoreObstacles: boolean): ArrayList&lt;Hexagon&gt;
++range(center: Hexagon, speed: int, gh: GraphicsHandler): ArrayList&lt;Hexagon&gt;
++getNeighbors(hex: Hexagon, gh: GraphicsHandler): Hexagon[]
++getNeighbor(hex: Hexagon, neighborNR: int, gh: GraphicsHandler): Hexagon
++heuristic(a: Hexagon, b: Hexagon): double
+-isOccupiedByEntity(hex: Hexagon, gh: GraphicsHandler): boolean
+-isOccupiedByEntity(hex: Hexagon, gh: GraphicsHandler, sourceHex: Hexagon): boolean
+-reconstructPath(start: Hexagon, end: Hexagon, cameFrom: HashMap&lt;Point, Point&gt;, gh: GraphicsHandler): ArrayList&lt;Hexagon&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>694</x><y>243</y><w>36</w><h>39</h></coordinates><panel_attributes>Dice
+--
+-numDice: int
+-numSides: int
+-rand: Random
+--
++Dice(dice: String)
++roll(): int[]
++getDice(): String</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>694</x><y>285</y><w>84</w><h>30</h></coordinates><panel_attributes>Calc
+--
+--
++toBufferedImage(img: Image): BufferedImage
++cutCirce(image: Image): Image
++cutHex(image: Image): Image
++toCubeCoordinate(x: int, y: int): int[]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>562</x><y>411</y><w>72</w><h>36</h></coordinates><panel_attributes>AnswerWaiter
+--
+-answerReceived: boolean
+-answer: Object
+--
++waitForAnswer(): Object
++provideAnswer(answer: Object): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>511</x><y>192</y><w>57</w><h>9</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>170;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>490</x><y>330</y><w>9</w><h>45</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;130;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>178</x><y>243</y><w>72</w><h>39</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>220;10;220;60;10;60;10;112</additional_attributes></element><element><id>Relation</id><coordinates><x>502</x><y>117</y><w>66</w><h>27</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>200;11;10;10;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>511</x><y>213</y><w>57</w><h>84</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>170;260;90;260;90;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>406</x><y>330</y><w>9</w><h>45</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;130;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>649</x><y>165</y><w>51</w><h>9</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>150;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>511</x><y>315</y><w>57</w><h>105</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>170;330;130;330;130;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>292</x><y>243</y><w>9</w><h>39</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>442</x><y>330</y><w>18</w><h>105</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>40;330;10;330;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>694</x><y>198</y><w>75</w><h>42</h></coordinates><panel_attributes>TwoKeyMap&lt;K1, K2, V&gt;
+--
+-map: Map&lt;CompositeKey&lt;K1, K2&gt;, V&gt;
+--
++put(key1: K1, key2: K2, value: V): void
++get(key1: K1, key2: K2): V
++containsKey(key1: K1, key2: K2): boolean
++remove(key1: K1, key2: K2): V
++clear(): void
++values(): Collection&lt;V&gt;</panel_attributes><additional_attributes></additional_attributes></element></diagram>

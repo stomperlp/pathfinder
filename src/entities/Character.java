@@ -118,6 +118,7 @@ public class Character extends Entity
     public void setAC(int AC) {
         this.AC = AC;
     }
+    @Override
     public int getSpeed() {
         return speed;
     }
