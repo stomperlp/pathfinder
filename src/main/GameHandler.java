@@ -3,18 +3,22 @@ package main;
 import calc.AStar;
 import entities.Entity;
 import fx.*;
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class GameHandler implements Runnable{
+public class GameHandler implements Runnable {
 
 	protected final GraphicsHandler gh;
 	private final Object lock = new Object();
 	private int moveSpeed = 3;
 	public HashMap<Entity, Double> init = new HashMap<>();
+	public ArrayList<Marker> intiMarkers = new ArrayList<>();
+	private Entity currentTurn = null;
+	private int currentTurnIndex = 0;
 
-	public GameHandler(GraphicsHandler gh){
+	public GameHandler(GraphicsHandler gh) {
 		this.gh = gh;
 	}
 
@@ -78,19 +82,40 @@ public class GameHandler implements Runnable{
 
 	public void initiative(ArrayList<Entity> entities) {
 		if (entities == null) return;
+
 		for (Entity entity : entities) {
 			initiative(entity);
 		}
+		sortInitiative();
 	}
 	public void initiative(Entity entity) {
 		if (entity == null) return;
-		if (!init.containsKey(entity))
+
+		if (!init.containsKey(entity)) {
 			init.put(entity, Math.random());
-		
+			Point temp = new Point((int) entity.getOccupiedTiles().getFirst().getCenter().getX(),
+								   (int) entity.getOccupiedTiles().getFirst().getCenter().getY());
+			Marker m = new Marker(init.get(entity), temp , 1, false);
+			intiMarkers.add(m);
+			gh.addMarker(m);
+		}
 	}
 	public void removeFromInitiative(Entity entity) {
 		if (entity == null) return;
-		init.remove(entity);
+
+		Marker markerToRemove = null;
+        Point entityPosition = entity.getOccupiedTiles().getFirst().getGridPoint();
+		for (Marker m : intiMarkers) {
+			if (m.getPoint().equals(entityPosition)) {
+				markerToRemove = m;
+				break;
+			}
+		}
+		if (markerToRemove != null) {
+            intiMarkers.remove(markerToRemove);
+            gh.markers.remove(markerToRemove);
+        }
+        init.remove(entity);
 	}
 	public void sortInitiative() {
 		init = init.entrySet().stream()
@@ -104,7 +129,32 @@ public class GameHandler implements Runnable{
 			)
 		);
 	}
-	public void showInitiative() {
-			
+	public void toggleShowInitiative() {
+		for (Marker m : intiMarkers) {
+			m.toggleVisible();
+		}
+		gh.repaint();
+	}
+	public void nextTurn() {
+		ArrayList<Entity> order = getInitiativeOrder();
+		currentTurnIndex = (currentTurnIndex + 1) % order.size();
+		currentTurn = order.get(currentTurnIndex);
+	}
+	public ArrayList<Entity> getInitiativeOrder() {
+		return new ArrayList<>(init.keySet());
+	}
+	public Entity getCurrentTurn() {
+		return currentTurn;
+	}
+	public Entity getNextInInitiative(Entity current) {
+		ArrayList<Entity> order = getInitiativeOrder();
+		int currentIndex = order.indexOf(current);
+		if (currentIndex == -1 || currentIndex == order.size() - 1) {
+			return order.isEmpty() ? null : order.get(0);
+		}
+		return order.get(currentIndex + 1);
+	}
+	public boolean isInInitiative(Entity entity) {
+		return init.containsKey(entity);
 	}
 }

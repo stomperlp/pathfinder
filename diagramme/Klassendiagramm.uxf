@@ -1,4 +1,4 @@
-<diagram program="umletino" version="15.1"><zoom_level>5</zoom_level><element><id>UMLClass</id><coordinates><x>390</x><y>125</y><w>230</w><h>325</h></coordinates><panel_attributes>GraphicsHandler
+<diagram program="umletino" version="15.1"><zoom_level>4</zoom_level><element><id>UMLClass</id><coordinates><x>372</x><y>228</y><w>184</w><h>260</h></coordinates><panel_attributes>GraphicsHandler
 --
 +DARK_PRIMARY: Color
 +DARK_SECONDARY: Color
@@ -41,7 +41,7 @@
 +toggleDarkMode(): void
 +summonWall(): void
 +summonEntity(): void
-+toggleGridOrientation(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>700</x><y>125</y><w>150</w><h>235</h></coordinates><panel_attributes>IOHandler
++toggleGridOrientation(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>620</x><y>228</y><w>120</w><h>188</h></coordinates><panel_attributes>IOHandler
 --
 #currentHexagon: Hexagon
 #gh: GraphicsHandler
@@ -72,7 +72,7 @@
 +logMousePos(e: MouseEvent): void
 +selectEntity(): void
 +selectTile(): void
-#toggleGameMaster(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>520</x><y>510</y><w>140</w><h>70</h></coordinates><panel_attributes>GameHandler
+#toggleGameMaster(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>476</x><y>536</y><w>112</w><h>56</h></coordinates><panel_attributes>GameHandler
 --
 #gh: GraphicsHandler
 -lock: Object
@@ -81,7 +81,7 @@
 +findClosestHexagon(point: Point2D): Hexagon
 +tick(): void
 +run(): void
-+moveCharacter(h: Hexagon, c: Character): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>520</x><y>595</y><w>115</w><h>80</h></coordinates><panel_attributes>Toolbox
++moveCharacter(h: Hexagon, c: Character): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>476</x><y>604</y><w>92</w><h>64</h></coordinates><panel_attributes>Toolbox
 --
 -scroll: int
 -tools: ArrayList&lt;Tool&gt;
@@ -91,7 +91,7 @@
 #paintComponent(g: Graphics): void
 +initializeTools(): void
 +getTools(): ArrayList&lt;Tool&gt;
-+setTools(tools: ArrayList&lt;Tool&gt;): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>155</x><y>125</y><w>220</w><h>180</h></coordinates><panel_attributes>Entity
++setTools(tools: ArrayList&lt;Tool&gt;): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>180</x><y>228</y><w>176</w><h>144</h></coordinates><panel_attributes>Entity
 --
 #image: Image
 #tile: Hexagon
@@ -114,7 +114,7 @@
 +getLocation(): Point2D
 +setLocation(p: Point2D): void
 +getSize(): int
-+getSpeed(): int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>135</x><y>355</y><w>240</w><h>250</h></coordinates><panel_attributes>Character
++getSpeed(): int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>168</x><y>408</y><w>192</w><h>200</h></coordinates><panel_attributes>Character
 --
 +TINY: int = -2
 +SMALL: int = -1
@@ -149,12 +149,12 @@
 +getSpeed(): int
 +setSpeed(speed: int): void
 +getInitiative(): int
-+setInitiative(initiative: int): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>355</y><w>125</w><h>45</h></coordinates><panel_attributes>Wall
++setInitiative(initiative: int): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>60</x><y>408</y><w>100</w><h>36</h></coordinates><panel_attributes>Wall
 --
 --
 +Wall(gh: GraphicsHandler, image:
   Image, tile: Hexagon, location: Point2D)
-+getOccupiedTiles(): ArrayList&lt;Hexagon&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>700</x><y>15</y><w>215</w><h>95</h></coordinates><panel_attributes>Hexagon
++getOccupiedTiles(): ArrayList&lt;Hexagon&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>620</x><y>140</y><w>172</w><h>76</h></coordinates><panel_attributes>Hexagon
 --
 -shape: Path2D
 -center: Point2D
@@ -166,7 +166,7 @@
 +getCenter(): Point2D
 +getGridPoint(): Point
 +setShape(shape: Path2D): void
-+setCenter(center: Point2D): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>700</x><y>370</y><w>210</w><h>200</h></coordinates><panel_attributes>Marker
++setCenter(center: Point2D): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>620</x><y>424</y><w>168</w><h>160</h></coordinates><panel_attributes>Marker
 --
 +COORDINATES: int = 0
 +STAT: int = 1
@@ -192,7 +192,7 @@
 +setStat(stat: int): void
 +getPoint(): Point2D
 +isDebugMarker(): boolean
-+getPurpose(): int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>390</x><y>510</y><w>100</w><h>90</h></coordinates><panel_attributes>Measure
++getPurpose(): int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>372</x><y>536</y><w>80</w><h>72</h></coordinates><panel_attributes>Measure
 --
 -gh: GraphicsHandler
 -origin: Point
@@ -204,7 +204,7 @@
 +finish(): boolean
 +length(): int
 +getFinishedPoint(): Point
-+getOrigin(): Point</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>920</x><y>125</y><w>365</w><h>80</h></coordinates><panel_attributes>AStar
++getOrigin(): Point</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>792</x><y>228</y><w>292</w><h>64</h></coordinates><panel_attributes>AStar
 --
 --
 +run(start: Hexagon, end: Hexagon, gh: GraphicsHandler, ignoreObstacles: boolean): ArrayList&lt;Hexagon&gt;
@@ -214,7 +214,7 @@
 +heuristic(a: Hexagon, b: Hexagon): double
 -isOccupiedByEntity(hex: Hexagon, gh: GraphicsHandler): boolean
 -isOccupiedByEntity(hex: Hexagon, gh: GraphicsHandler, sourceHex: Hexagon): boolean
--reconstructPath(start: Hexagon, end: Hexagon, cameFrom: HashMap&lt;Point, Point&gt;, gh: GraphicsHandler): ArrayList&lt;Hexagon&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>920</x><y>300</y><w>60</w><h>65</h></coordinates><panel_attributes>Dice
+-reconstructPath(start: Hexagon, end: Hexagon, cameFrom: HashMap&lt;Point, Point&gt;, gh: GraphicsHandler): ArrayList&lt;Hexagon&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>348</x><y>68</y><w>48</w><h>52</h></coordinates><panel_attributes>Dice
 --
 -numDice: int
 -numSides: int
@@ -222,19 +222,43 @@
 --
 +Dice(dice: String)
 +roll(): int[]
-+getDice(): String</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>920</x><y>370</y><w>140</w><h>50</h></coordinates><panel_attributes>Calc
++getDice(): String</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>812</x><y>368</y><w>112</w><h>40</h></coordinates><panel_attributes>Calc
 --
 --
 +toBufferedImage(img: Image): BufferedImage
 +cutCirce(image: Image): Image
 +cutHex(image: Image): Image
-+toCubeCoordinate(x: int, y: int): int[]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>700</x><y>580</y><w>120</w><h>60</h></coordinates><panel_attributes>AnswerWaiter
++toCubeCoordinate(x: int, y: int): int[]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>620</x><y>592</y><w>96</w><h>48</h></coordinates><panel_attributes>AnswerWaiter
 --
 -answerReceived: boolean
 -answer: Object
 --
 +waitForAnswer(): Object
-+provideAnswer(answer: Object): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>615</x><y>215</y><w>95</w><h>15</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>170;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>580</x><y>445</y><w>15</w><h>75</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;130;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>60</x><y>300</y><w>120</w><h>70</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>220;10;220;60;10;60;10;112</additional_attributes></element><element><id>Relation</id><coordinates><x>600</x><y>90</y><w>110</w><h>45</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>200;11;10;10;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>615</x><y>250</y><w>95</w><h>140</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>170;260;90;260;90;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>440</x><y>445</y><w>15</w><h>75</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;130;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>845</x><y>145</y><w>85</w><h>15</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>150;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>615</x><y>420</y><w>95</w><h>175</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>170;330;130;330;130;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>250</x><y>300</y><w>15</w><h>65</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>500</x><y>445</y><w>30</w><h>175</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>40;330;10;330;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>920</x><y>225</y><w>125</w><h>70</h></coordinates><panel_attributes>TwoKeyMap&lt;K1, K2, V&gt;
++provideAnswer(answer: Object): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>552</x><y>300</y><w>76</w><h>12</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>170;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>572</x><y>400</y><w>236</w><h>260</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>420;10;570;10;570;630;10;630;10;480</additional_attributes></element><element><id>Relation</id><coordinates><x>120</x><y>368</y><w>84</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>190;10;190;60;10;60;10;102</additional_attributes></element><element><id>Relation</id><coordinates><x>540</x><y>200</y><w>88</w><h>36</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>200;11;10;10;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>552</x><y>328</y><w>76</w><h>112</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>170;260;90;260;90;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>408</x><y>484</y><w>12</w><h>60</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;130;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>736</x><y>244</y><w>64</w><h>12</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>140;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>552</x><y>464</y><w>76</w><h>140</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>170;330;130;330;130;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>260</x><y>368</y><w>12</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;100</additional_attributes></element><element><id>Relation</id><coordinates><x>460</x><y>484</y><w>24</w><h>140</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>40;330;10;330;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>408</x><y>68</y><w>116</w><h>148</h></coordinates><panel_attributes>Consol
+--
+- Active: boolean = true
+- gh: GraphicsHandler
+- commandHistory: List&lt;String&gt;
+- historyIndex: int = -1
+- currentInput: String = ""
+- diceMarkers: Marker[] = {}
+- confirm: boolean = false
+--
++ Consol(gh: GraphicsHandler)
++ command(input: String): void
+- character(args: String[]): void
+- cutArgs(args: String[]): String[]
+- help(arg: String): void
+- roll(inputSegments: String[]): void
++ isActive(): boolean
++ setGraphicsHandler(gh: GraphicsHandler): void
++ toggleActive(): void
++ arrowUp(): void
++ arrowDown(): void
++ setFontSize(s: int): void
++ displayConfirmText(s: String): void
+- confirm(): void
+- deny(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>460</x><y>212</y><w>12</w><h>24</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;40;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>264</x><y>200</y><w>152</w><h>36</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;70;10;10;360;10</additional_attributes></element><element><id>Relation</id><coordinates><x>96</x><y>200</y><w>180</w><h>216</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;520;10;10;430;10</additional_attributes></element><element><id>Relation</id><coordinates><x>344</x><y>200</y><w>28</w><h>216</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;520;10;450;50;450;50;10</additional_attributes></element><element><id>Relation</id><coordinates><x>528</x><y>484</y><w>12</w><h>60</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;130;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>796</x><y>288</y><w>144</w><h>140</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>340;10;340;330;10;330</additional_attributes></element><element><id>UMLClass</id><coordinates><x>812</x><y>308</y><w>100</w><h>56</h></coordinates><panel_attributes>TwoKeyMap&lt;K1, K2, V&gt;
 --
 -map: Map&lt;CompositeKey&lt;K1, K2&gt;, V&gt;
 --
@@ -243,4 +267,4 @@
 +containsKey(key1: K1, key2: K2): boolean
 +remove(key1: K1, key2: K2): V
 +clear(): void
-+values(): Collection&lt;V&gt;</panel_attributes><additional_attributes></additional_attributes></element></diagram>
++values(): Collection&lt;V&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>392</x><y>76</y><w>24</w><h>12</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;40;10</additional_attributes></element></diagram>

@@ -624,7 +624,7 @@ public class GraphicsHandler extends JFrame {
             repaint();
         }
     }
-    void outOfBoundsCorrection(){
+    void outOfBoundsCorrection() {
         // Bound to the left
         if(backgroundImage == null) return;
 
@@ -676,9 +676,15 @@ public class GraphicsHandler extends JFrame {
         }
 
         thickness = Math.max(1, hexSize / 30);
-        tileUnderMouse = hexlist.get(tileUnderMouse.getGridPoint().x, tileUnderMouse.getGridPoint().y); 
-        
-        
+        if (tileUnderMouse != null) {
+            Hexagon newTile = hexlist.get(tileUnderMouse.getGridPoint().x, tileUnderMouse.getGridPoint().y);
+            if (newTile != null) {
+                tileUnderMouse = newTile;
+            } else {
+                tileUnderMouse = null;
+            }
+        }
+
         outOfBoundsCorrection();
         repaint();
     }
@@ -697,13 +703,13 @@ public class GraphicsHandler extends JFrame {
     public void spawnCharacter(int size, int maxhealth, int AC, int speed, int initiative) {
         ArrayList<Hexagon> tiles = new ArrayList<>();
         // tile the character spawns on
-        if (selectedTiles.size() == 1) tiles.add(selectedTiles.getFirst());
-        else if (selectedTiles.size() > 1) {
+        if      (selectedTiles.size() == 1) tiles.add(selectedTiles.getFirst());
+        else if (selectedTiles.size() > 1 ) {
 
             new Thread(() -> {
                 try {
                     consol.displayConfirmText("are you sure you want to create [" + selectedTiles.size() + "] Characters: (Y/N)" );
-                    boolean confirm = (boolean)waiter.waitForAnswer();
+                    boolean confirm = (boolean) waiter.waitForAnswer();
                     if (confirm) {
                         for (Hexagon tile : selectedTiles) {
                             tiles.add(tile);
@@ -845,5 +851,29 @@ public class GraphicsHandler extends JFrame {
                 }
             }
         }
+    }
+    @Override
+    public void repaint() {
+    // Move all initiative markers to the current position of their entity
+    if (gm != null && gm.intiMarkers != null) {
+        for (Marker m : gm.intiMarkers) {
+            // Find the entity for this marker
+            for (Entity e : entities) {
+                // Compare by initiative value (unique per entity in init map)
+                if (gm.init.containsKey(e) && m.getRawContent() instanceof Double) {
+                    double markerValue = (Double) m.getRawContent();
+                    double entityValue = gm.init.get(e);
+                    if (Double.compare(markerValue, entityValue) == 0) {
+                        // Move marker to the center of the entity's first occupied tile
+                        if (!e.getOccupiedTiles().isEmpty() && e.getOccupiedTiles().get(0) != null) {
+                            m.moveTo(e.getOccupiedTiles().get(0).getCenter());
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    super.repaint();
     }
 }

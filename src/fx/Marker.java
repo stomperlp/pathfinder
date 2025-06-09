@@ -17,15 +17,16 @@ public class Marker {
     private Point2D displayCoords;
     private Point2D coords;
     private Color color;
-    private int stat;
+    private double stat;
     private boolean isVisible = true;
+    private String suffix = "";
 
     public Marker(Point2D location, int purpose, boolean isDebugMarker) {
         this.coords         = location;
         this.purpose        = purpose;
         this.isDebugMarker  = isDebugMarker;
     }
-    public Marker(int stat, Point coords, int purpose, boolean isDebugMarker) {
+    public Marker(double stat, Point coords, int purpose, boolean isDebugMarker) {
         this.stat          = stat;
         this.coords        = coords;
         this.purpose       = purpose;
@@ -46,7 +47,7 @@ public class Marker {
     public String getText() {
         return switch (purpose) {
             case 0       -> "[" + (int) displayCoords.getX() + "|" + (int) displayCoords.getY() + "]";
-            case 1, 2, 3 -> Integer.toString(stat);
+            case 1, 2, 3 -> Double.toString(stat) + " " + suffix;
             default      -> "";
         };
     }
@@ -80,5 +81,8 @@ public class Marker {
     }
     public void toggleVisible() {
         isVisible = !isVisible;
+    }
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
     }
 }
