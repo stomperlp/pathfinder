@@ -11,18 +11,24 @@ public class Tool {
 	public static final int LINE_MODE   = 3;
 	public static final int CONE_MODE   = 4;
 
+    private Rectangle hitbox;
     private Image icon;
     private int toolMode;
-    private Rectangle hitbox;
+    private final int sort;
     
     public Tool(Image icon, int toolMode, int sort) {
         this.icon = icon;
         this.toolMode = toolMode;
+        this.sort = sort;
         this.hitbox = new Rectangle(1,sort*32-1,30,30);
     }
     
     public Image getIcon() {
         return icon;
+    }
+    public void updateHitbox(int s) {
+
+        this.hitbox = new Rectangle(1,sort*s-1,s-2,s-2);
     }
     public void setIcon(Image icon) {
         this.icon = icon;

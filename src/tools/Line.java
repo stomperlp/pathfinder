@@ -1,8 +1,9 @@
-package fx;
+package tools;
 
 import calc.AStar;
 import entities.Character;
 import entities.Entity;
+import fx.Hexagon;
 import java.awt.Point;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -23,7 +24,8 @@ public class Line {
     public Line2D getLine() {
         try {
             line.setLine(
-                gh.hexlist.get(origin.x, origin.y).getCenter(),gh.tileUnderMouse.getCenter()
+                gh.hexlist.get(origin.x, origin.y).getCenter(),
+                gh.io.isCtrlDown ? gh.io.mousePos : gh.tileUnderMouse.getCenter()
             );
         } catch (Exception e) {
             return null;
@@ -47,6 +49,7 @@ public class Line {
         gh.attackTiles.clear();
         for (Point2D p : getPointsAlongLineBySpacing(line, (double) gh.hexSize)) {
             Hexagon h = gh.gm.findClosestHexagon(p);
+            if (h == null) continue;
             Entity e = (Character) gh.selectEntity(h);
             gh.attackTiles.add(h);
             if (e instanceof Character c) {

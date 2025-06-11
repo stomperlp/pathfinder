@@ -61,19 +61,22 @@ Pathfinder/
 
 ## Controls
 
-### Mouse Controls
+### ### Keyboard and Mouse Controls
 
-- **Left-click:**   Select fields/units
-- **Right-click:**  Tool actions (e.g., measure, draw a line)
-- **Scroll Wheel:** Zoom in/out on the grid.
+- **Left-click:**           Select fields/units
+- **Right-click:**          Tool actions (e.g., measure, draw a line)
+- **Scroll Wheel:**         Zoom in/out on the grid.
+- **Ctrl + Scroll Wheel:**  Change size of consol and toolbar
+
+- **WASD:**                 Move the map view (pan)
+- **Enter:**                Confirm input in the console
+- **Ctrl + Enter:**         Toggle console
+- **Arrow up / down:**      cycle through console history
+- **Ctrl / Shift:**         Multi-select (where supported)
 
 ### Keyboard Controls
 
-- **WASD:**             Move the map view (pan)
-- **Enter:**            Confirm input in the console
-- **Ctrl + Enter:**     Toggle console
-- **Arrow up / down:**  cycle through console history
-- **Ctrl / Shift:**     Multi-select (where supported)
+
 
 ### Console Commands:
 

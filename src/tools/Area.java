@@ -1,5 +1,7 @@
-package fx;
+package tools;
 
+import calc.Calc;
+import fx.Hexagon;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -19,8 +21,9 @@ public class Area {
 
     public double getRadius() {
         originPoint = gh.hexlist.get(origin.x, origin.y).getCenter();
-        radius = Math.sqrt(Math.pow(gh.tileUnderMouse.getCenter().getX() - originPoint.getX(), 2) + 
-                           Math.pow(gh.tileUnderMouse.getCenter().getY() - originPoint.getY(), 2));
+        radius = gh.io.isCtrlDown 
+            ? Calc.distance(gh.io.mousePos, originPoint)
+            : Calc.distance(gh.tileUnderMouse.getCenter(), originPoint);
         
         return radius;
     }
@@ -36,9 +39,7 @@ public class Area {
         getRadius();
         for(Hexagon h : gh.hexlist.values()) {
             if ( 
-                radius+1 > 
-                Math.sqrt(Math.pow(h.getCenter().getX() - originPoint.getX(), 2) + 
-                          Math.pow(h.getCenter().getY() - originPoint.getY(), 2))
+                radius+1 > Calc.distance(h.getCenter(), originPoint)
             ) {
                 attacked.add(h);
                 gh.attackTiles.add(h);

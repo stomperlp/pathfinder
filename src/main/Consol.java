@@ -222,6 +222,10 @@ public class Consol extends JTextField {
         this.setPreferredSize(new Dimension(200, s*8/5));
         this.setFont(new Font("Arial", Font.PLAIN, s));
     }
+    public void changeFontSize(int s) {
+        this.setPreferredSize(new Dimension(200, (s + getFont().getSize())*8/5));
+        this.setFont(new Font("Arial", Font.PLAIN, (s + getFont().getSize())));
+    }
     public void displayConfirmText(String s) {
         setText(s);
         confirm = true;

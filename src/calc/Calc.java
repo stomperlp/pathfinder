@@ -83,5 +83,10 @@ public class Calc {
         int y_cube = -x_cube - z_cube;
         return new int[]{x_cube, y_cube, z_cube};
     }
+    public static double distance(Point2D a, Point2D b) {
+        return Math.sqrt(
+                Math.pow(a.getX() - b.getX(), 2) + 
+                Math.pow(a.getY() - b.getY(), 2)) ;
+    }
 }
 
