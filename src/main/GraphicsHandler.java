@@ -785,12 +785,12 @@ public class GraphicsHandler extends JFrame {
     public void toggleDarkMode() {
         darkMode = !darkMode;
 
-        setBackground                  (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY);
-        contentPanel.setBackground     (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY);
-        gridPanel.setBackground        (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY);
-        consol.setBackground           (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY);
-        backgroundPanel.setBackground  (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY);
-        consol.setSelectedTextColor    (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY);
+        setBackground                  (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        contentPanel.setBackground     (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        gridPanel.setBackground        (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        consol.setBackground           (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        backgroundPanel.setBackground  (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        consol.setSelectedTextColor    (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
         consol.setForeground           (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
         consol.setSelectionColor       (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
         consol.setBorder(new LineBorder(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));

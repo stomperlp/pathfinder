@@ -104,7 +104,7 @@ public class GameHandler implements Runnable {
 		if (entity == null) return;
 
 		Marker markerToRemove = null;
-        Point entityPosition = entity.getOccupiedTiles().getFirst().getGridPoint();
+		Point entityPosition = entity.getOccupiedTiles().getFirst().getGridPoint();
 		for (Marker m : intiMarkers) {
 			if (m.getPoint().equals(entityPosition)) {
 				markerToRemove = m;
