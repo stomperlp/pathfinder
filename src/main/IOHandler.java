@@ -8,6 +8,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.util.*;
 import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import tools.Area;
 import tools.Cone;
@@ -191,6 +192,16 @@ public class IOHandler extends MouseAdapter {
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int notches = e.getWheelRotation();
 		
+		Point consolPos = SwingUtilities.convertPoint(
+			e.getComponent(), 
+			mousePos, 
+			gh.consol
+		);
+		if(gh.consol.contains(consolPos)) {
+			gh.consol.scrollLog(notches);
+			return;
+		}
+
 		if(isCtrlDown) {
 
 		} else if(isShiftDown) {
@@ -213,8 +224,8 @@ public class IOHandler extends MouseAdapter {
 		if (gh.consol.isActive())
 		//Any only active in consol
 		switch(e.getKeyCode()) {
-			case KeyEvent.VK_UP   -> gh.consol.arrowUp();
-			case KeyEvent.VK_DOWN -> gh.consol.arrowDown();
+			case KeyEvent.VK_UP   -> gh.consol.consol.arrowUp();
+			case KeyEvent.VK_DOWN -> gh.consol.consol.arrowDown();
 		}
 		else switch(e.getKeyCode()) {
 			//Any only active out of consol
@@ -262,20 +273,24 @@ public class IOHandler extends MouseAdapter {
 					gh.toggleConsol();
 					return;
 				}
-				if(gh.consol.isActive()) gh.consol.command(gh.consol.getText());
+				if(gh.consol.isActive()) gh.consol.consol.command(gh.consol.consol.getText());
 			}
 
 			case KeyEvent.VK_PLUS -> {
-				gh.consol.changeFontSize(1);
-				gh.toolbox.changeSize(1);
-				gh.revalidate();
-				gh.repaint();
+				if(isCtrlDown) {
+					gh.consol.changeFontSize(1);
+					gh.toolbox.changeSize(1);
+					gh.revalidate();
+					gh.repaint();
+				}
 			}
 			case '-' -> {
-				gh.consol.changeFontSize(-1);
-				gh.toolbox.changeSize(-1);
-				gh.revalidate();
-				gh.repaint();
+				if(isCtrlDown) {
+					gh.consol.changeFontSize(-1);
+					gh.toolbox.changeSize(-1);
+					gh.revalidate();
+					gh.repaint();
+				}
 			}
 		}
 	}
@@ -320,7 +335,6 @@ public class IOHandler extends MouseAdapter {
 			mouseLog = new Marker(new Point(0,0), Marker.COORDINATES, true);
 			gh.markers.add(mouseLog);
 		}
-		System.out.println(mousePos);
 		mouseLog.moveTo(e.getPoint());
 		gh.repaint();
 	}

@@ -20,6 +20,7 @@ public class Toolbox extends JPanel{
     protected Tool selectedTool;
     private int size;
 
+    @SuppressWarnings("OverridableMethodCallInConstructor")
     public Toolbox() {
         super();
         this.size = 32;

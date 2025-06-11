@@ -18,10 +18,12 @@ import tools.Cone;
 import tools.Line;
 import tools.Measure;
 
-public class GraphicsHandler extends JFrame {
+public final class GraphicsHandler extends JFrame {
 
-    public final Color DARK_PRIMARY    = new Color(0x0D1219);
-    public final Color DARK_SECONDARY  = new Color(0x626972);
+    //public final Color DARK_PRIMARY    = new Color(0x0D1219);
+    //public final Color DARK_SECONDARY  = new Color(0x626972);
+    public final Color DARK_PRIMARY    = new Color(0x4e0a56);
+    public final Color DARK_SECONDARY  = new Color(0xda80ff);
     public final Color LIGHT_PRIMARY   = new Color(0xD0D0D0);
     public final Color LIGHT_SECONDARY = new Color(0x000000);
 
@@ -33,10 +35,10 @@ public class GraphicsHandler extends JFrame {
     protected JPanel contentPanel;
     protected JPanel gridPanel;
     protected JPanel fxPanel;
-
+    
     protected Image  backgroundImage;
     protected Toolbox toolbox;
-    protected Consol consol;
+    protected ConsolPanel consol;
 
     public    int hexSize        = 40; // Initial size
     protected int thickness      = 2;  // Hexagon Line thickness
@@ -485,55 +487,60 @@ public class GraphicsHandler extends JFrame {
                         (int)(origin.getY())
                     );
                 }
+
+                
                 if (coneAttack != null) {
-                    g2d.setColor(Color.RED);
-
-                    Point2D origin = hexlist.get(coneAttack.getOrigin().x, coneAttack.getOrigin().y).getCenter();
-
-                    
-                    g2d.setStroke(new BasicStroke(thickness*2));
-                    
-                    g2d.drawArc( 
-                        (int)(origin.getX() - coneAttack.getRadius()), 
-                        (int)(origin.getY() - coneAttack.getRadius()), 
-                        (int) coneAttack.getRadius() * 2, 
-                        (int) coneAttack.getRadius() * 2,
-                        (int) coneAttack.getStartAngle(),
-                        (int) coneAttack.getAngle()
-                    );
-                    g2d.drawArc( 
-                        (int)(origin.getX() - hexSize/2), 
-                        (int)(origin.getY() - hexSize/2), 
-                        (int) hexSize/2 * 2,
-                        (int) hexSize/2 * 2, 
-                        (int) coneAttack.getStartAngle(),
-                        (int) coneAttack.getAngle()
-                    );
-                    double startAngle = coneAttack.getStartAngle();
-                    double endAngle = startAngle + coneAttack.getAngle();
-                    g2d.drawLine(
-                        (int)(origin.getX() + Math.cos(startAngle * -Math.PI/180) * hexSize/2), 
-                        (int)(origin.getY() + Math.sin(startAngle * -Math.PI/180) * hexSize/2), 
-                        (int)(origin.getX() + Math.cos(startAngle * -Math.PI/180) * coneAttack.getRadius()), 
-                        (int)(origin.getY() + Math.sin(startAngle * -Math.PI/180) * coneAttack.getRadius())
-                    );
-                    
-                    g2d.drawLine(
-                        (int)(origin.getX() + Math.cos(endAngle * -Math.PI/180) * hexSize/2), 
-                        (int)(origin.getY() + Math.sin(endAngle * -Math.PI/180) * hexSize/2), 
-                        (int)(origin.getX() + Math.cos(endAngle * -Math.PI/180) * coneAttack.getRadius()), 
-                        (int)(origin.getY() + Math.sin(endAngle * -Math.PI/180) * coneAttack.getRadius())
-                    );
-                    
-                        g2d.setColor(Color.BLACK);
-                    g2d.setFont(new Font("Arial", Font.BOLD, hexSize/2));
-                    g2d.drawString(
-                        (int)(coneAttack.getRadiusInTiles()*5) + "ft",
-                        (int)(origin.getX()),
-                        (int)(origin.getY())
-                    );
-                    coneAttack.getAttackedCharacters();
+                    double radius = coneAttack.getRadius();
+                    if(radius > hexSize) {
+                        g2d.setColor(Color.RED);
+                        
+                        Point2D origin = hexlist.get(coneAttack.getOrigin().x, coneAttack.getOrigin().y).getCenter();
+                        double startAngle = coneAttack.getStartAngle();
+                        double endAngle = startAngle + coneAttack.getAngle();
+    
+                        
+                        g2d.setStroke(new BasicStroke(thickness*2));
+                        
+                        g2d.drawArc( 
+                            (int)(origin.getX() - radius), 
+                            (int)(origin.getY() - radius), 
+                            (int) radius * 2, 
+                            (int) radius * 2,
+                            (int) coneAttack.getStartAngle(),
+                            (int) coneAttack.getAngle()
+                        );
+                        g2d.drawArc( 
+                            (int)(origin.getX() - hexSize/2), 
+                            (int)(origin.getY() - hexSize/2), 
+                            (int) hexSize/2 * 2,
+                            (int) hexSize/2 * 2, 
+                            (int) coneAttack.getStartAngle(),
+                            (int) coneAttack.getAngle()
+                        );
+                        g2d.drawLine(
+                            (int)(origin.getX() + Math.cos(startAngle * -Math.PI/180) * hexSize/2), 
+                            (int)(origin.getY() + Math.sin(startAngle * -Math.PI/180) * hexSize/2), 
+                            (int)(origin.getX() + Math.cos(startAngle * -Math.PI/180) * radius), 
+                            (int)(origin.getY() + Math.sin(startAngle * -Math.PI/180) * radius)
+                        );
+                        
+                        g2d.drawLine(
+                            (int)(origin.getX() + Math.cos(endAngle * -Math.PI/180) * hexSize/2), 
+                            (int)(origin.getY() + Math.sin(endAngle * -Math.PI/180) * hexSize/2), 
+                            (int)(origin.getX() + Math.cos(endAngle * -Math.PI/180) * radius), 
+                            (int)(origin.getY() + Math.sin(endAngle * -Math.PI/180) * radius)
+                        );
+                        
+                            g2d.setColor(Color.BLACK);
+                        g2d.setFont(new Font("Arial", Font.BOLD, hexSize/2));
+                        g2d.drawString(
+                            (int)(coneAttack.getRadiusInTiles()*5) + "ft",
+                            (int)(origin.getX()),
+                            (int)(origin.getY())
+                        );
+                        coneAttack.getAttackedCharacters();
                     }
+                }
             }
         };
         fxPanel.setOpaque(false);
@@ -563,23 +570,27 @@ public class GraphicsHandler extends JFrame {
                 }
             }
         };
+        
+        consol = new ConsolPanel(this);
+        consol.setOpaque(false);
+
         toolbox = new Toolbox();
         toolbox.setOpaque(true);
 
-        consol = new Consol(this);
+
+
 
         backgroundPanel.add(contentPanel);
         contentPanel.add(gridPanel);
         gridPanel.add(fxPanel);
-        add(consol, BorderLayout.SOUTH);
         fxPanel.add(toolbox, BorderLayout.WEST);
         add(backgroundPanel);
-
+        fxPanel.add(consol, BorderLayout.SOUTH);
+        
         toggleDarkMode();
 
         // Center the window on screen
         setLocationRelativeTo(null);
-        setBackgroundImage();
         inputListener();
 
     }
@@ -598,7 +609,7 @@ public class GraphicsHandler extends JFrame {
             backgroundPanel.add(consol, BorderLayout.SOUTH);
             consol.requestFocusInWindow();
         }
-        consol.setText("");
+        consol.consol.setText("");
         revalidate();
         repaint();
     }
@@ -728,7 +739,7 @@ public class GraphicsHandler extends JFrame {
 
             new Thread(() -> {
                 try {
-                    consol.displayConfirmText("are you sure you want to create [" + selectedTiles.size() + "] Characters: (Y/N)" );
+                    consol.consol.displayConfirmText("are you sure you want to create [" + selectedTiles.size() + "] Characters: (Y/N)" );
                     boolean confirm = (boolean) waiter.waitForAnswer();
                     if (confirm) {
                         for (Hexagon tile : selectedTiles) {
@@ -788,14 +799,19 @@ public class GraphicsHandler extends JFrame {
         return null;
     }
 
-    public void deleteEntities() {
+    public void deleteEntities(int t) {
         ArrayList<Entity> delEntites = new ArrayList<>();
+        Class<?> type = switch (t) {
+            case 0  -> Character.class;
+            case 1  -> Wall.class;
+            default -> Entity.class;
+        };
         for(Entity e : entities) {
-            for(Hexagon tile : selectedEntityTiles) {
-                if (e.getTile().getGridPoint().equals(tile.getGridPoint())) {
-                    markers.remove(e.getMarker());
-                    delEntites.add(e);
-                }
+            if(type.isInstance(e)) {
+                Point p = e.getTile().getGridPoint();
+                hexlist.get(p.x, p.y);
+                markers.remove(e.getMarker());
+                delEntites.add(e);
             }
         }
         for (Entity e : delEntites) {
@@ -805,17 +821,18 @@ public class GraphicsHandler extends JFrame {
     public void toggleDarkMode() {
         darkMode = !darkMode;
 
-        setBackground                   (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        contentPanel.setBackground      (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        gridPanel.setBackground         (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        consol.setBackground            (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        backgroundPanel.setBackground   (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        consol.setSelectedTextColor     (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        consol.setForeground            (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
-        consol.setSelectionColor        (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
-        toolbox.setBackground           (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
-        consol.setBorder(new LineBorder (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
-        toolbox.setBorder(new LineBorder(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
+        setBackground                      (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        contentPanel.setBackground         (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        gridPanel.setBackground            (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        consol.changeBackground            (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        backgroundPanel.setBackground      (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        consol.setSelectedTextColor        (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        consol.setLogBackground            (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        consol.changeForeground            (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+        consol.setSelectionColor           (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+        toolbox.setBackground              (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+        consol.changeBorder(new LineBorder (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
+        toolbox.setBorder  (new LineBorder (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
     }
 
     public void summonWall() {

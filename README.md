@@ -93,7 +93,8 @@ Command	          Description
 :g	or grid       # Change grid orientation (Instable)
 :gm or gamemaster # Toggle gamemaster mode
 :i  or init	      # Manage initiative order
-:h  or help	      # Show help and available commands
+:h  or help	      # Show available commands
+:cl or clear      # Clear the command log and history
 
 **Arguments**
 :c
@@ -105,7 +106,7 @@ Command	          Description
 - ~~initative <int>   # set the initiative of selected Characters~~ (depricated)
 
 :h
-- <command>
+- <command> # get additional information about a spesific command
 
 :i
 - add     # add the selected Characters from the initiative order

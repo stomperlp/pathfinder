@@ -30,7 +30,7 @@ public class Cone {
     }
 
     public double getRadiusInTiles() {
-        return (getRadius()/(gh.hexSize*Math.sqrt(3)));
+        return ((getRadius()+1)/(gh.hexSize*Math.sqrt(3)));
     }
 
     public Point getOrigin() {

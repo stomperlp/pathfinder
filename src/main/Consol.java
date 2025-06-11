@@ -6,15 +6,13 @@ import entities.Entity;
 import fx.Hexagon;
 import fx.Marker;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTextField;
 
-public class Consol extends JTextField {
-    private boolean Active = true;
+public final class Consol extends JTextField {
     private GraphicsHandler gh;
     private final List<String> commandHistory = new ArrayList<>();
     private int historyIndex = -1;
@@ -22,10 +20,11 @@ public class Consol extends JTextField {
     private Marker[] diceMarkers = {};
     private boolean confirm = false;
     
+
+    
     public Consol(GraphicsHandler gh) {
         super();
         this.gh = gh;
-        this.setPreferredSize(new Dimension(200, 32));
         this.setFont(new Font("Arial", Font.PLAIN, 20));
         this.setSelectedTextColor(Color.BLACK);
     }
@@ -38,13 +37,13 @@ public class Consol extends JTextField {
         currentInput = "";
         gh.repaint();
         if (confirm) {
-
-            if(input.toLowerCase().endsWith("y") 
-            || input.toLowerCase().startsWith("y")) 
-                confirm();
+            
             if(input.toLowerCase().endsWith("n") 
             || input.toLowerCase().startsWith("n")) 
                 deny();
+            else {
+                confirm();
+            } 
             confirm = false;
 
         } else {
@@ -55,16 +54,39 @@ public class Consol extends JTextField {
                 case "background", ":b"  -> gh.setBackgroundImage();
                 case "debug",      ":d"  -> gh.toggleDebugMode();
                 case "character",  ":c"  -> character(args);
-                case "wall",       ":w"  -> gh.summonWall();
-                case "entity",     ":e"  -> gh.summonEntity();
-                case "help",       ":h"  -> help(args[1]);
+                case "wall",       ":w"  -> wall(args);
+                case "entity",     ":e"  -> entity(args);
+                case "help",       ":h"  -> help(args);
                 case "roll",       ":r"  -> roll(args);
                 case "darkmode",   ":dm" -> gh.toggleDarkMode();
                 case "grid",       ":g"  -> gh.toggleGridOrientation();
                 case "gamemaster", ":gm" -> gh.io.toggleGameMaster();
                 case "init",       ":i"  -> initiative(args);
-                default                  -> {}
+                case "clear",      ":cl" -> clear();
+                default                  -> gh.consol.addLogMessage("Invalid input: \"" + input + "\" - Try help for a list of commands");
             }
+        }
+    }
+    private void clear() {
+        commandHistory.clear();
+        gh.consol.clearLogs();
+    }
+    private void wall(String[] args) {
+        String arg = "";
+        if(args.length > 1) arg = args[1];
+        if(arg.equals("delete") || arg.equals("d")) {
+            gh.deleteEntities(1);
+        } else {
+            gh.summonWall();
+        }
+    }
+    private void entity(String[] args) {
+        String arg = "";
+        if(args.length > 1) arg = args[1];
+        if(arg.equals("delete") || arg.equals("d")) {
+            gh.deleteEntities(1);
+        } else {
+            gh.summonEntity();
         }
     }
     private void character(String[] args) {
@@ -78,7 +100,7 @@ public class Consol extends JTextField {
         do{
             try {
                 switch (args[1].toLowerCase()) {
-                    case "d",   "delete"      -> {gh.deleteEntities();                                        }
+                    case "d",   "delete"      -> {gh.deleteEntities(0);                                        }
                     case "s",   "size"        -> {size        = Integer.parseInt(args[2]); hasValue[0] = true;}
                     case "h",   "maxhealth"   -> {maxHealth   = Integer.parseInt(args[2]); hasValue[1] = true;}
                     case "ac",  "armorclass"  -> {AC          = Integer.parseInt(args[2]); hasValue[2] = true;}
@@ -116,16 +138,79 @@ public class Consol extends JTextField {
         }
         return temp;
     }
-    private void help(String arg) {
-         switch(arg) {
-                case "quit",        ":q" -> {}
-                case "background",  ":b" -> {}
-                case "debug",       ":d" -> {}
-                case "character",   ":c" -> {}
-                case "roll",        ":r" -> {}
-                default -> {}
+    private void help(String[] args) {
+        String arg = "";
+        if(args.length > 1) arg = args[1];
+        switch(arg) {
+                case "quit",        ":q" -> {
+                    gh.consol.addLogMessage(":q  or quit # Quit the application - No Arguments");
+                }
+                case "background",  ":b" -> {
+                    gh.consol.addLogMessage(":b  or background # Set a background image - No Arguments");
+                }
+                case "debug",       ":d" -> {
+                    gh.consol.addLogMessage(":d  or debug # Toggle debug mode - No Arguments");
+                }
+                case "character",  ":c"  -> {
+                    gh.consol.addLogMessage(":c  or creature # Create or edit a character");
+                    gh.consol.addLogMessage(" - d # Delete a Creature");
+                    gh.consol.addLogMessage(" - size <int> # set the size of selected Characters");
+                    gh.consol.addLogMessage(" - speed <int> # set the speed of selected Characters");
+                    gh.consol.addLogMessage(" - armorclass <int> # set the Armor Class of selected Characters");
+                    gh.consol.addLogMessage(" - maxHealth <int> # set the Max Health of selected Characters");
+                }
+                case "wall",       ":w"  -> {
+                    gh.consol.addLogMessage(":w  or wall # Place a wall");
+                    gh.consol.addLogMessage(" - d # Delete a wall");
+                }
+                case "entity",     ":e"  -> {
+                    gh.consol.addLogMessage(":e  or entity # Place a generic entity (Please use :c or :w)");
+                    gh.consol.addLogMessage(" - d # Delete a generic Entity");
+                }
+                case "help",       ":h"  -> {
+                    gh.consol.addLogMessage(":h  or help # Show available commands");
+                    gh.consol.addLogMessage(" - <command> # get additional information about a spesific command");
+                }
+                case "roll",       ":r"  -> {
+                    gh.consol.addLogMessage(":r  or roll # Roll dice (e.g., roll 2d6)");
+                    gh.consol.addLogMessage(" - <dice> # in the form _d_");
+                }
+                case "darkmode",   ":dm" -> {
+                    gh.consol.addLogMessage(":dm or darkmode # Toggle dark/light mode - No Arguments");
+                }
+                case "grid",       ":g"  -> {
+                    gh.consol.addLogMessage(":g  or grid # Change grid orientation (Instable)");
+                    gh.consol.addLogMessage("this might cause errors.");
+                }
+                case "gamemaster", ":gm" -> {
+                    gh.consol.addLogMessage(":gm or gamemaster # Toggle gamemaster mode - No Arguments");
+                }
+                case "init",       ":i"  -> {
+                    gh.consol.addLogMessage(":i  or init # Manage initiative order");
+                    gh.consol.addLogMessage("- add # add the selected Characters from the initiative order");
+                    gh.consol.addLogMessage("- remove # remove the selected Characters from the initiative order");
+                    gh.consol.addLogMessage("- clear # clear the initiative order");
+                    gh.consol.addLogMessage("- show # toggles wether or not the initiative placing is shown at the Characters");
+                }
+                case "clear",      ":cl" -> {
+                    gh.consol.addLogMessage(":cl or clear # Clear the command log and history - No Arguments");
+                }
+                default -> {
+                    gh.consol.addLogMessage(":q  or quit # Quit the application");
+                    gh.consol.addLogMessage(":b  or background # Set a background image ");
+                    gh.consol.addLogMessage(":d  or debug # Toggle debug mode ");
+                    gh.consol.addLogMessage(":dm or darkmode # Toggle dark/light mode");
+                    gh.consol.addLogMessage(":c  or creature # Create or edit a character");
+                    gh.consol.addLogMessage(":w  or wall # Place a wall");
+                    gh.consol.addLogMessage(":e  or entity # Place a generic entity (Please use :c or :w)");
+                    gh.consol.addLogMessage(":r  or roll # Roll dice");
+                    gh.consol.addLogMessage(":g  or grid # Change grid orientation (Instable)");
+                    gh.consol.addLogMessage(":gm or gamemaster # Toggle gamemaster mode");
+                    gh.consol.addLogMessage(":i  or init # Manage initiative order");
+                    gh.consol.addLogMessage(":h  or help # Show available commands");
+                    gh.consol.addLogMessage(":cl or clear # Clear the command log and history");
+                }
             }
-
     }
     private void roll(String[] inputSegments) {
 
@@ -180,19 +265,12 @@ public class Consol extends JTextField {
                 default -> {}
             }
         }
-    }
-
-    public boolean isActive() {
-        return Active;
-    }
+    }  
     public void setGraphicsHandler(GraphicsHandler gh) {
         this.gh = gh;
-    }
-    public void toggleActive() {
-        Active = !Active;
-    }
+    }  
     public void arrowUp() {
-        if (!gh.consol.commandHistory.isEmpty())
+        if (!commandHistory.isEmpty())
         {
             if(historyIndex == commandHistory.size())
             {
@@ -218,14 +296,7 @@ public class Consol extends JTextField {
         }
         setCaretPosition(currentInput.length());
     }
-    public void setFontSize(int s) {
-        this.setPreferredSize(new Dimension(200, s*8/5));
-        this.setFont(new Font("Arial", Font.PLAIN, s));
-    }
-    public void changeFontSize(int s) {
-        this.setPreferredSize(new Dimension(200, (s + getFont().getSize())*8/5));
-        this.setFont(new Font("Arial", Font.PLAIN, (s + getFont().getSize())));
-    }
+
     public void displayConfirmText(String s) {
         setText(s);
         confirm = true;
@@ -235,5 +306,8 @@ public class Consol extends JTextField {
     }
     private void deny() {
         gh.waiter.provideAnswer(false); 
+    }
+    public void setCurrentInput(String currentInput) {
+        this.currentInput = currentInput;
     }
 }
