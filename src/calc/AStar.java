@@ -122,6 +122,8 @@ public class AStar
 
     public static Hexagon[] getNeighbors(Hexagon hex, GraphicsHandler gh) {
 
+        if (hex == null || gh == null) return new Hexagon[0];
+
         Point key = hex.getGridPoint();
 
         Hexagon[] neighbors = new Hexagon[6];

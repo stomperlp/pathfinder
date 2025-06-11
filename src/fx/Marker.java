@@ -24,6 +24,7 @@ public class Marker {
     private boolean isVisible = true;
     private String suffix = "";
     private Entity attachedTo;
+    private double debugValue;
 
     public Marker(Point2D location, int purpose, boolean isDebugMarker) {
         this.coords         = location;
@@ -49,6 +50,9 @@ public class Marker {
         coords.setLocation(coords.getX()+p.getX(), coords.getY()+ p.getY());
     }
     public String getText() {
+        if (purpose == STAT && Marker.gh != null && Marker.gh.debugMode && attachedTo != null)
+            return (int)stat + " [" + String.format("%.3f", debugValue) + "]" + suffix;
+
         return switch (purpose) {
             case 0       -> "[" + (int) displayCoords.getX() + "|" + (int) displayCoords.getY() + "]";
             case 1, 2, 3 -> Double.toString(stat) + " " + suffix;
@@ -99,10 +103,16 @@ public class Marker {
         if(attachedTo == null) return;
         
         Point coord = new Point((int) attachedTo.getOccupiedTiles().getFirst().getCenter().getX(),
-								 (int) attachedTo.getOccupiedTiles().getFirst().getCenter().getY() - gh.hexSize);
+								(int) attachedTo.getOccupiedTiles().getFirst().getCenter().getY() - gh.hexSize);
         this.coords = coord;
     }
     public void attachTo(Entity e) {
         attachedTo = e;
+    }
+    public Entity getAttachedEntity() {
+        return attachedTo;
+    }
+    public void setDebugValue(double value) {
+        this.debugValue = value;
     }
 }

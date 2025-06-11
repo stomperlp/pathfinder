@@ -155,10 +155,12 @@ public class Consol extends JTextField {
     private void initiative (String[] args) {
         if (args == null || args.length < 2) {
             gh.gm.initiative(gh.entities);
-        }
-        else {
+        } else {
+
             switch(args[1].toLowerCase()) {
+
                 case "add",     "a" -> {
+
                     ArrayList<Entity> selected = new ArrayList<>();
                     for (Hexagon h : gh.selectedEntityTiles) {
                         if (h != null && gh.selectEntity(h) != null) {
@@ -170,13 +172,27 @@ public class Consol extends JTextField {
                     if (!selected.isEmpty())
                         gh.gm.initiative(selected);
                 }
-                case "remove",  "r" -> {gh.gm.removeFromInitiative(gh.selectEntity(gh.selectedEntityTiles.get(0)));}
-                case "clear",   "c" -> {gh.gm.init.clear();                                                              }
-                case "show",    "s" -> {gh.gm.toggleShowInitiative();                                                    }
-                case "next",    "n" -> {
-                    if (gh.gm.init.isEmpty()) return;
-                    gh.gm.nextTurn();
+                case "remove",  "r" -> {
+
+                    if (!gh.selectedEntityTiles.isEmpty()) {
+
+                        ArrayList<Entity> entitiesToRemove = new ArrayList<>();
+
+                        for (Hexagon h : gh.selectedEntityTiles) {
+                            Entity entity = gh.selectEntity(h);
+                            if (entity != null && !entitiesToRemove.contains(entity)) {
+                                entitiesToRemove.add(entity);
+                            }
+                        }
+
+                        for (Entity entity : entitiesToRemove) {
+                            gh.gm.removeFromInitiative(entity);
+                        }
+                    }
                 }
+                case "clear",   "c" -> {gh.gm.clearInitiative();                           }
+                case "show",    "s" -> {gh.gm.toggleShowInitiative();                      }
+                case "next",    "n" -> {if (gh.gm.init.isEmpty()) return; gh.gm.nextTurn();}
                 default -> {}
             }
         }

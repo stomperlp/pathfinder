@@ -200,7 +200,7 @@ public class GraphicsHandler extends JFrame {
                         double x = switch (c.getSize()) {
                             case Character.LARGE      -> h.getCenter().getX();
                             case Character.GARGANTUAN -> h.getCenter().getX() - ((e.getDrawSize()-2) * hexSize/2);
-                            default                   -> h.getCenter().getX() - (e.getDrawSize() * hexSize/2);
+                            default                   -> h.getCenter().getX() - ( e.getDrawSize()    * hexSize/2);
                         };
                         double y = switch (e.getDrawSize()) {
                             default -> h.getCenter().getY() - (e.getDrawSize() * hexSize/2);
@@ -372,7 +372,7 @@ public class GraphicsHandler extends JFrame {
                 if (totalLength != null) markers.add(totalLength);
 
                 for (Marker m: markers) {
-                    if (m.isDebugMarker() != debugMode) continue;
+                    if (m.isDebugMarker() && !debugMode && !(m.getPurpose() == Marker.STAT && m.getAttachedEntity() != null)) continue;
                     if (!m.isVisible()) continue;
                     m.update();
                     switch (m.getPurpose()) {
@@ -384,7 +384,7 @@ public class GraphicsHandler extends JFrame {
                         }
                         case Marker.STAT        -> {
 
-                            g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+                            g2d.setColor(m.getColor() != null ? m.getColor() : (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY));
                             g2d.setFont(new Font("Arial", Font.BOLD, 18));
                             g2d.drawString(m.getText(), (int) m.getPoint().getX(), (int) m.getPoint().getY());
                         }
