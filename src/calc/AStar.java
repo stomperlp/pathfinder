@@ -122,6 +122,8 @@ public class AStar
 
     public static Hexagon[] getNeighbors(Hexagon hex, GraphicsHandler gh) {
 
+        if (hex == null || gh == null) return new Hexagon[0];
+
         Point key = hex.getGridPoint();
 
         Hexagon[] neighbors = new Hexagon[6];
@@ -203,9 +205,10 @@ public class AStar
         int bx = (int) b.getGridPoint().getX();
         int by = (int) b.getGridPoint().getY();
         
+        // Convert to cube coordinates
         int[] aCube = Calc.toCubeCoordinate(ax,ay);
         int[] bCube = Calc.toCubeCoordinate(bx,by);
-        // Convert to cube coordinates
+
         int ax_cube = aCube[0];
         int ay_cube = aCube[1];
         int az_cube = aCube[2];

@@ -3,6 +3,7 @@ package main;
 import calc.AStar;
 import entities.Entity;
 import fx.*;
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -87,36 +88,78 @@ public class GameHandler implements Runnable {
 			initiative(entity);
 		}
 		sortInitiative();
+		updateInitiativeMarkers();
 	}
 	public void initiative(Entity entity) {
 		if (entity == null) return;
 
 		if (!init.containsKey(entity)) {
+			double randomValue = Math.random();
 			init.put(entity, Math.random());
 			Point coords = new Point((int) entity.getOccupiedTiles().getFirst().getCenter().getX(),
-								   (int) entity.getOccupiedTiles().getFirst().getCenter().getY() - gh.hexSize);
-			Marker m = new Marker(init.get(entity), coords , 1, false);
+									 (int) entity.getOccupiedTiles().getFirst().getCenter().getY() - gh.hexSize);
+			Marker m = new Marker(0, coords , 1, false);
 			m.attachTo(entity);
+			m.setDebugValue(randomValue);
 			intiMarkers.add(m);
 			gh.addMarker(m);
 		}
 	}
+	public void updateInitiativeMarkers() {
+		ArrayList<Entity> order = getInitiativeOrder();
+		for (int i = 0; i < order.size(); i++) {
+			Entity entity = order.get(i);
+			for (Marker m : intiMarkers) {
+				if (m.getAttachedEntity() == entity) {
+					m.setStat(i);
+
+					if (init.containsKey(entity))
+						m.setDebugValue(init.get(entity));
+
+					if (i == currentTurnIndex) {
+						m.setColor(Color.GREEN);
+					} else if (i == (currentTurnIndex + 1) % order.size()) {
+						m.setColor(new Color(0xF9A801));
+					} else {
+						m.setColor(Color.RED);
+					}
+					break;
+				}
+			}
+		}
+		gh.repaint();
+	}
 	public void removeFromInitiative(Entity entity) {
-		if (entity == null) return;
+		if (entity == null || !init.containsKey(entity)) return;
+
+		init.remove(entity);
 
 		Marker markerToRemove = null;
-        Point entityPosition = entity.getOccupiedTiles().getFirst().getGridPoint();
 		for (Marker m : intiMarkers) {
-			if (m.getPoint().equals(entityPosition)) {
+			if (m.getAttachedEntity() == entity) {
 				markerToRemove = m;
 				break;
 			}
 		}
 		if (markerToRemove != null) {
-            intiMarkers.remove(markerToRemove);
-            gh.markers.remove(markerToRemove);
-        }
-        init.remove(entity);
+			intiMarkers.remove(markerToRemove);
+			gh.markers.remove(markerToRemove);
+		}
+
+		if (entity == currentTurn) {
+			if (init.isEmpty()) {
+				currentTurn = null;
+				currentTurnIndex = 0;
+			} else {
+				nextTurn();
+			}
+		} else if (currentTurnIndex > 0 && 
+				   getInitiativeOrder().indexOf(currentTurn) < currentTurnIndex) {
+			currentTurnIndex--;
+		}
+
+		updateInitiativeMarkers();
+		gh.repaint();
 	}
 	public void sortInitiative() {
 		init = init.entrySet().stream()
@@ -129,6 +172,9 @@ public class GameHandler implements Runnable {
 				java.util.LinkedHashMap::new
 			)
 		);
+		if (!intiMarkers.isEmpty()) {
+			updateInitiativeMarkers();
+		}
 	}
 	public void toggleShowInitiative() {
 		for (Marker m : intiMarkers) {
@@ -138,8 +184,11 @@ public class GameHandler implements Runnable {
 	}
 	public void nextTurn() {
 		ArrayList<Entity> order = getInitiativeOrder();
+		if (order.isEmpty()) return;
+
 		currentTurnIndex = (currentTurnIndex + 1) % order.size();
 		currentTurn = order.get(currentTurnIndex);
+		updateInitiativeMarkers();
 	}
 	public ArrayList<Entity> getInitiativeOrder() {
 		return new ArrayList<>(init.keySet());
@@ -147,15 +196,17 @@ public class GameHandler implements Runnable {
 	public Entity getCurrentTurn() {
 		return currentTurn;
 	}
-	public Entity getNextInInitiative(Entity current) {
-		ArrayList<Entity> order = getInitiativeOrder();
-		int currentIndex = order.indexOf(current);
-		if (currentIndex == -1 || currentIndex == order.size() - 1) {
-			return order.isEmpty() ? null : order.get(0);
-		}
-		return order.get(currentIndex + 1);
-	}
 	public boolean isInInitiative(Entity entity) {
 		return init.containsKey(entity);
+	}
+	public void clearInitiative() {
+		for (Marker m : intiMarkers) {
+			gh.markers.remove(m);
+		}
+		intiMarkers.clear();
+		init.clear();
+		currentTurn = null;
+		currentTurnIndex = 0;
+		gh.repaint();
 	}
 }

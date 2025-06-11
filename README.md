@@ -7,8 +7,7 @@ A Java application for managing and visualizing hexagonal grids for tabletop RPG
 - [Folder Structure](#folder-structure)
 - [Features](#features)
 - [Controls](#Controls)
-  - [Mouse Controls](#mouse-controls)
-  - [Keyboard Controls](#keyboard-controls)
+  - [Keyboard and Mouse Controls](#keyboard-and-mouse-controls)
   - [Console Commands](#console-commands)
 - [Notes](#notes)
 - [Chemie und STALINdustrie](#chemie-und-stalindustrie)
@@ -61,22 +60,18 @@ Pathfinder/
 
 ## Controls
 
-### ### Keyboard and Mouse Controls
+### Keyboard and Mouse Controls
 
 - **Left-click:**           Select fields/units
 - **Right-click:**          Tool actions (e.g., measure, draw a line)
 - **Scroll Wheel:**         Zoom in/out on the grid.
-- **Ctrl + Scroll Wheel:**  Change size of consol and toolbar
+- **Ctrl + [+] / [-]:**     Change size of consol and toolbar
 
 - **WASD:**                 Move the map view (pan)
 - **Enter:**                Confirm input in the console
 - **Ctrl + Enter:**         Toggle console
 - **Arrow up / down:**      cycle through console history
 - **Ctrl / Shift:**         Multi-select (where supported)
-
-### Keyboard Controls
-
-
 
 ### Console Commands:
 
@@ -98,12 +93,12 @@ Command	          Description
 
 **Arguments**
 :c
-- delete            # deletes the selected Characters
-- size <int>        # set the size of selected Characters
-- speed <int>       # set the speed of selected Characters
-- armorclass <int>  # set the Armor Class of selected Characters
-- maxHealth <int>   # set the Max Health of selected Characters
-- ~~initative <int>   # set the initiative of selected Characters~~ (depricated)
+- delete            # deletes the selected Character(s)
+- size <int>        # set the size of selected Character(s)
+- speed <int>       # set the speed of selected Character(s)
+- armorclass <int>  # set the Armor Class of selected Character(s)
+- maxHealth <int>   # set the Max Health of selected Character(s)
+- ~~initative <int>   # set the initiative of selected Character(s)~~ (deprecated)
 
 :h
 - <command> # get additional information about a spesific command
