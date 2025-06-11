@@ -79,8 +79,7 @@ Command	          Description
 
 :q  or quit	      # Quit the application              
 :b  or background # Set a background image            
-:d  or debug      # Toggle debug mode                 
-:dm	or darkmode   # Toggle dark/light mode            
+:d  or debug      # Toggle debug mode                
 :c	or creature   # Create or edit a character         
 :w	or wall       # Place a wall
 :e	or entity     # Place a generic entity (Please use :c or :w)
@@ -90,6 +89,7 @@ Command	          Description
 :i  or init	      # Manage initiative order
 :h  or help	      # Show available commands
 :cl or clear      # Clear the command log and history
+:t  or theme # Show or choose all available themes
 
 **Arguments**
 :c
@@ -111,6 +111,9 @@ Command	          Description
 
 :r 
 - <dice>
+
+:t 
+ - <theme> # choose a theme by it's name
 
 For a full list of commands and options, see the source code in main/Consol.java.
 

@@ -20,10 +20,8 @@ import tools.Measure;
 
 public final class GraphicsHandler extends JFrame {
 
-    //public final Color DARK_PRIMARY    = new Color(0x0D1219);
-    //public final Color DARK_SECONDARY  = new Color(0x626972);
-    public final Color DARK_PRIMARY    = new Color(0x4e0a56);
-    public final Color DARK_SECONDARY  = new Color(0xda80ff);
+    public final Color DARK_PRIMARY    = new Color(0x0D1219);
+    public final Color DARK_SECONDARY  = new Color(0x626972);
     public final Color LIGHT_PRIMARY   = new Color(0xD0D0D0);
     public final Color LIGHT_SECONDARY = new Color(0x000000);
 
@@ -53,6 +51,7 @@ public final class GraphicsHandler extends JFrame {
     
     public TwoKeyMap<Integer, Integer, Hexagon> hexlist = new TwoKeyMap<>();
     
+    public ArrayList<Theme>   themes              = new ArrayList<>();
     public ArrayList<Measure> measure             = new ArrayList<>();
     public ArrayList<Marker>  markers             = new ArrayList<>();
     public ArrayList<Entity>  entities            = new ArrayList<>();
@@ -63,8 +62,9 @@ public final class GraphicsHandler extends JFrame {
     public ArrayList<Hexagon> attackTiles         = new ArrayList<>();
     
     public Hexagon tileUnderMouse;
-    public Line    lineAttack;
+    public Theme   currentTheme; 
     public Marker  totalLength;
+    public Line    lineAttack;
     public Area    areaAttack;
     public Cone    coneAttack;
 
@@ -282,7 +282,7 @@ public final class GraphicsHandler extends JFrame {
                         Point2D p   = new Point2D.Double(centerX, centerY);
                         Hexagon hex = new Hexagon(p, hexSize, new Point(row, col), isFlat);
                         
-                        g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+                        g2d.setColor(currentTheme.getSecondary());
                         g2d.draw(hex.getShape());
                         hexlist.put(row,col,hex);
                     }
@@ -587,12 +587,20 @@ public final class GraphicsHandler extends JFrame {
         add(backgroundPanel);
         fxPanel.add(consol, BorderLayout.SOUTH);
         
-        toggleDarkMode();
 
-        // Center the window on screen
         setLocationRelativeTo(null);
-        inputListener();
 
+        inputListener();
+        initializeThemes();
+
+        changeTheme("light");
+    }
+
+    private void initializeThemes() {
+        themes.add(new Theme("Purple",  new Color(0x4e0a56), new Color(0xda80ff)));
+        themes.add(new Theme("Light",   new Color(0xD0D0D0), new Color(0x000000)));
+        themes.add(new Theme("Dark",    new Color(0x0D1219), new Color(0x626972)));
+        themes.add(new Theme("Green",   new Color(0xff00ff), new Color(0x00ff00)));
     }
 
     public void toggleConsol() {
@@ -833,6 +841,33 @@ public final class GraphicsHandler extends JFrame {
         toolbox.setBackground              (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
         consol.changeBorder(new LineBorder (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
         toolbox.setBorder  (new LineBorder (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
+    }
+    public void changeTheme(String s) {
+        Theme theme = null;
+        for(Theme t : themes) {
+            if(t.getName().equals(s.toLowerCase())) {
+                theme = t;
+                break;
+            }
+        }
+        if(theme == null) {
+            consol.addLogMessage("There is no such theme as \"" + s + "\"");
+            return;
+        }
+        currentTheme = theme;
+
+        setBackground                      (theme.getPrimary());
+        contentPanel.setBackground         (theme.getPrimary());
+        gridPanel.setBackground            (theme.getPrimary());
+        consol.changeBackground            (theme.getPrimary());
+        backgroundPanel.setBackground      (theme.getPrimary());
+        consol.setSelectedTextColor        (theme.getPrimary());
+        consol.setLogBackground            (theme.getPrimary());
+        consol.changeForeground            (theme.getSecondary());
+        consol.setSelectionColor           (theme.getSecondary());
+        toolbox.setBackground              (theme.getSecondary());
+        consol.changeBorder(new LineBorder (theme.getSecondary(), 1));
+        toolbox.setBorder  (new LineBorder (theme.getSecondary(), 1));
     }
 
     public void summonWall() {

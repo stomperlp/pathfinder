@@ -5,6 +5,7 @@ import entities.Character;
 import entities.Entity;
 import fx.Hexagon;
 import fx.Marker;
+import fx.Theme;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
@@ -58,12 +59,22 @@ public final class Consol extends JTextField {
                 case "entity",     ":e"  -> entity(args);
                 case "help",       ":h"  -> help(args);
                 case "roll",       ":r"  -> roll(args);
-                case "darkmode",   ":dm" -> gh.toggleDarkMode();
                 case "grid",       ":g"  -> gh.toggleGridOrientation();
                 case "gamemaster", ":gm" -> gh.io.toggleGameMaster();
                 case "init",       ":i"  -> initiative(args);
                 case "clear",      ":cl" -> clear();
+                case "theme",      ":t"  -> theme(args);
                 default                  -> gh.consol.addLogMessage("Invalid input: \"" + input + "\" - Try help for a list of commands");
+            }
+        }
+    }
+    private void theme(String[] args) {
+        if(args.length > 1) gh.changeTheme(args[1]);
+        else {
+            gh.consol.addLogMessage("The following themes are available:");
+
+            for(Theme t : gh.themes) {
+                gh.consol.addLogMessage(t.toString());
             }
         }
     }
@@ -175,9 +186,6 @@ public final class Consol extends JTextField {
                     gh.consol.addLogMessage(":r  or roll # Roll dice (e.g., roll 2d6)");
                     gh.consol.addLogMessage(" - <dice> # in the form _d_");
                 }
-                case "darkmode",   ":dm" -> {
-                    gh.consol.addLogMessage(":dm or darkmode # Toggle dark/light mode - No Arguments");
-                }
                 case "grid",       ":g"  -> {
                     gh.consol.addLogMessage(":g  or grid # Change grid orientation (Instable)");
                     gh.consol.addLogMessage("this might cause errors.");
@@ -195,11 +203,14 @@ public final class Consol extends JTextField {
                 case "clear",      ":cl" -> {
                     gh.consol.addLogMessage(":cl or clear # Clear the command log and history - No Arguments");
                 }
+                case "theme",      ":t"  -> {
+                    gh.consol.addLogMessage(":t or theme # Show all available themes");
+                    gh.consol.addLogMessage(" - <theme> # choose a theme by it's name");
+                }
                 default -> {
                     gh.consol.addLogMessage(":q  or quit # Quit the application");
                     gh.consol.addLogMessage(":b  or background # Set a background image ");
                     gh.consol.addLogMessage(":d  or debug # Toggle debug mode ");
-                    gh.consol.addLogMessage(":dm or darkmode # Toggle dark/light mode");
                     gh.consol.addLogMessage(":c  or creature # Create or edit a character");
                     gh.consol.addLogMessage(":w  or wall # Place a wall");
                     gh.consol.addLogMessage(":e  or entity # Place a generic entity (Please use :c or :w)");
@@ -209,6 +220,7 @@ public final class Consol extends JTextField {
                     gh.consol.addLogMessage(":i  or init # Manage initiative order");
                     gh.consol.addLogMessage(":h  or help # Show available commands");
                     gh.consol.addLogMessage(":cl or clear # Clear the command log and history");
+                    gh.consol.addLogMessage(":t  or theme # Show or choose all available themes");
                 }
             }
     }
