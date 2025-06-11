@@ -393,7 +393,7 @@ public class IOHandler extends MouseAdapter {
 			}
 		}
 	}
-	
+
 	public void selectTile() {
 
 		if (!gh.selectedTiles.isEmpty()) {

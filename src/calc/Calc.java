@@ -8,20 +8,21 @@ import java.awt.image.BufferedImage;
 import main.GraphicsHandler;
 
 public class Calc {
+
     public static BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage bufferedImage) {
             return bufferedImage;
         }
-        
+
         // Create a buffered image with transparency
         BufferedImage bimage = new BufferedImage(
             img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-        
+
         // Draw the image on to the buffered image
         Graphics2D bGr = bimage.createGraphics();
         bGr.drawImage(img, 0, 0, null);
         bGr.dispose();
-        
+
         return bimage;
     }
 
@@ -31,7 +32,7 @@ public class Calc {
         int diameter = Math.min(bImage.getWidth(), bImage.getHeight());
         BufferedImage output = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
         
-        int radius = diameter / 2;
+        int radius  = diameter / 2;
         int centerX = radius;
         int centerY = radius;
         
@@ -81,12 +82,12 @@ public class Calc {
         int x_cube = x - offset;
         int z_cube = y;
         int y_cube = -x_cube - z_cube;
-        return new int[]{x_cube, y_cube, z_cube};
+        return new int[] {x_cube, y_cube, z_cube};
     }
     public static double distance(Point2D a, Point2D b) {
         return Math.sqrt(
-                Math.pow(a.getX() - b.getX(), 2) + 
-                Math.pow(a.getY() - b.getY(), 2)) ;
+            Math.pow(a.getX() - b.getX(), 2) + 
+            Math.pow(a.getY() - b.getY(), 2)) ;
     }
 }
 
