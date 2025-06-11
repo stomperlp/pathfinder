@@ -9,6 +9,10 @@ import java.io.File;
 import java.util.*;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import tools.Area;
+import tools.Cone;
+import tools.Line;
+import tools.Measure;
 import tools.Tool;
 
 
@@ -18,9 +22,9 @@ public class IOHandler extends MouseAdapter {
 	protected final GraphicsHandler gh;
 	protected int count = 0;
 	protected int mode  = 0;
-	protected boolean isShiftDown = false;
-	protected boolean isCtrlDown  = false;
-	protected boolean isAltDown   = false;
+	public boolean isShiftDown = false;
+	public boolean isCtrlDown  = false;
+	public boolean isAltDown   = false;
 	protected Marker mouseLog;
 
 	protected boolean ADown;
@@ -67,26 +71,7 @@ public class IOHandler extends MouseAdapter {
 				LMBDown = true;
 				for (Tool t : gh.toolbox.getTools()) {
 					if(t.getHitbox().contains(mousePos)) {
-						gh.toolbox.selectedTool = t;
-						mode = t.getToolMode();
-						if (mode != Tool.LENGTH_MODE && !gh.measure.isEmpty()) {
-							if(gh.measure.getLast().getFinishedPoint() == null) {
-								gh.measure.remove(gh.measure.size()-1);
-							}
-						}
-
-						if (mode != Tool.LINE_MODE) {
-							gh.lineAttack = null;
-						}
-						if (mode != Tool.AREA_MODE) {
-							gh.areaAttack = null;
-						}
-						if (mode != Tool.CONE_MODE) {
-							gh.coneAttack = null;
-						}
-						gh.attackTiles.clear();
-						gh.repaint();
-						return;
+						selectTool(t);
 					}
 				}
 				if (!isCtrlDown && !isShiftDown) {
@@ -129,6 +114,31 @@ public class IOHandler extends MouseAdapter {
 		}
 	}
 	
+	private void selectTool(Tool t) {
+		gh.toolbox.selectedTool = t;
+		mode = t.getToolMode();
+		if (mode != Tool.LENGTH_MODE && !gh.measure.isEmpty()) {
+			if(gh.measure.getLast().getFinishedPoint() == null) {
+				gh.measure.remove(gh.measure.size()-1);
+			}
+			updateTotalLength();
+			gh.totalLength.moveTo(new Point(gh.toolbox.getFrameSize(), 20));
+		}
+
+		if (mode != Tool.LINE_MODE) {
+			gh.lineAttack = null;
+		}
+		if (mode != Tool.AREA_MODE) {
+			gh.areaAttack = null;
+		}
+		if (mode != Tool.CONE_MODE) {
+			gh.coneAttack = null;
+		}
+		gh.attackTiles.clear();
+		gh.repaint();
+		return;
+	}
+
 	@Override
 	public void mouseReleased(MouseEvent e) 
 	{
@@ -156,16 +166,7 @@ public class IOHandler extends MouseAdapter {
 		updateMouseTile();
 
 		if(mode == Tool.LENGTH_MODE) {
-			int length = 0;
-			for(Measure m : gh.measure) {
-				length += m.length();
-			}
-			if (gh.totalLength == null) {
-				gh.totalLength = new Marker(mousePos, Marker.STAT, false);
-				
-			}
-			gh.totalLength.setStat(length);
-			gh.totalLength.moveTo(mousePos);
+			updateTotalLength();
 		}
 	}
 	
@@ -191,11 +192,7 @@ public class IOHandler extends MouseAdapter {
 		int notches = e.getWheelRotation();
 		
 		if(isCtrlDown) {
-			int base = gh.consol.getFont().getSize();
-			gh.consol.setFontSize(base-notches);
-			
-			gh.revalidate();
-			gh.repaint();
+
 		} else if(isShiftDown) {
 			switch (mode) 
 			{
@@ -266,6 +263,19 @@ public class IOHandler extends MouseAdapter {
 					return;
 				}
 				if(gh.consol.isActive()) gh.consol.command(gh.consol.getText());
+			}
+
+			case KeyEvent.VK_PLUS -> {
+				gh.consol.changeFontSize(1);
+				gh.toolbox.changeSize(1);
+				gh.revalidate();
+				gh.repaint();
+			}
+			case '-' -> {
+				gh.consol.changeFontSize(-1);
+				gh.toolbox.changeSize(-1);
+				gh.revalidate();
+				gh.repaint();
 			}
 		}
 	}
@@ -415,7 +425,6 @@ public class IOHandler extends MouseAdapter {
 
 			currentHexagon = gh.gm.findClosestHexagon(mousePos);
 			selectEntity();
-			selectTile();
 		}
 	}
 	protected void toggleGameMaster() {
@@ -434,5 +443,19 @@ public class IOHandler extends MouseAdapter {
 				gh.addEntityPreviewTiles(this);
 			}
 		}
+	}
+	public void updateTotalLength() {
+		int length = 0;
+		for(Measure m : gh.measure) {
+			length += m.length();
+		}
+		if (gh.totalLength == null) {
+			gh.totalLength = new Marker(mousePos, Marker.STAT, false);
+			gh.totalLength.setSuffix("ft");
+			
+		}
+		gh.totalLength.setStat(length);
+		gh.totalLength.moveTo(mousePos);
+		gh.totalLength.setVisible(length > 0);
 	}
 }

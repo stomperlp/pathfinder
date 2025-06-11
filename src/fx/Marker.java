@@ -1,8 +1,10 @@
 package fx;
 
+import entities.Entity;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import main.GraphicsHandler;
 
 public class Marker {
 
@@ -11,6 +13,7 @@ public class Marker {
     public static final int DICE        = 2;
     public static final int DICERESULT  = 3;
     public static final int TILE        = 4;
+    public static GraphicsHandler gh;
 
     private final boolean isDebugMarker;
     private final int purpose;
@@ -20,6 +23,7 @@ public class Marker {
     private double stat;
     private boolean isVisible = true;
     private String suffix = "";
+    private Entity attachedTo;
 
     public Marker(Point2D location, int purpose, boolean isDebugMarker) {
         this.coords         = location;
@@ -82,7 +86,23 @@ public class Marker {
     public void toggleVisible() {
         isVisible = !isVisible;
     }
+    public void setVisible(boolean isVisible) {
+        this.isVisible = isVisible;
+    }
+    public String getSuffix() {
+        return suffix;
+    }
     public void setSuffix(String suffix) {
         this.suffix = suffix;
+    }
+    public void update() {
+        if(attachedTo == null) return;
+        
+        Point coord = new Point((int) attachedTo.getOccupiedTiles().getFirst().getCenter().getX(),
+								 (int) attachedTo.getOccupiedTiles().getFirst().getCenter().getY() - gh.hexSize);
+        this.coords = coord;
+    }
+    public void attachTo(Entity e) {
+        attachedTo = e;
     }
 }

@@ -13,6 +13,10 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import tools.Area;
+import tools.Cone;
+import tools.Line;
+import tools.Measure;
 
 public class GraphicsHandler extends JFrame {
 
@@ -161,6 +165,7 @@ public class GraphicsHandler extends JFrame {
         io = new IOHandler(this);
         gm = new GameHandler(this);
         gm.run();
+        Marker.gh = this;
         setTitle("Bitti bitti 15 Punkte");
         setDefaultCloseOperation(0);
         setSize(600, 400); // Initial size
@@ -175,7 +180,6 @@ public class GraphicsHandler extends JFrame {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                g.drawImage(new ImageIcon("./assets/UI/toolIcons/move.png").getImage(), 200, 200, 100, 100, this);
                 for (Entity e : entities) {
 
                     if(e.getTile() == null) {
@@ -370,7 +374,7 @@ public class GraphicsHandler extends JFrame {
                 for (Marker m: markers) {
                     if (m.isDebugMarker() != debugMode) continue;
                     if (!m.isVisible()) continue;
-                    
+                    m.update();
                     switch (m.getPurpose()) {
                         case Marker.COORDINATES -> {
 
@@ -486,34 +490,50 @@ public class GraphicsHandler extends JFrame {
 
                     Point2D origin = hexlist.get(coneAttack.getOrigin().x, coneAttack.getOrigin().y).getCenter();
 
-                    coneAttack.getAttackedCharacters();
-
+                    
                     g2d.setStroke(new BasicStroke(thickness*2));
-
-                    g2d.drawArc( (int)(origin.getX() - coneAttack.getRadius()), 
-                                 (int)(origin.getY() - coneAttack.getRadius()), 
-                                 (int) coneAttack.getRadius() * 2, 
-                                 (int) coneAttack.getRadius() * 2,
-                                 (int) coneAttack.getStartAngle(),
-                                 (int) coneAttack.getAngle());
-
-                    g2d.drawLine((int) origin.getX(), 
-                                 (int) origin.getY(), 
-                                 (int)(origin.getX() + Math.cos(coneAttack.getStartAngle() * -Math.PI/180) * coneAttack.getRadius()), 
-                                 (int)(origin.getY() + Math.sin(coneAttack.getStartAngle() * -Math.PI/180) * coneAttack.getRadius()));
-
-                    g2d.drawLine((int) origin.getX(), 
-                                 (int) origin.getY(), 
-                                 (int)(origin.getX() + Math.cos((coneAttack.getAngle() + coneAttack.getStartAngle()) * -Math.PI/180) * coneAttack.getRadius()), 
-                                 (int)(origin.getY() + Math.sin((coneAttack.getAngle() + coneAttack.getStartAngle()) * -Math.PI/180) * coneAttack.getRadius()));
-                    g2d.setColor(Color.BLACK);
+                    
+                    g2d.drawArc( 
+                        (int)(origin.getX() - coneAttack.getRadius()), 
+                        (int)(origin.getY() - coneAttack.getRadius()), 
+                        (int) coneAttack.getRadius() * 2, 
+                        (int) coneAttack.getRadius() * 2,
+                        (int) coneAttack.getStartAngle(),
+                        (int) coneAttack.getAngle()
+                    );
+                    g2d.drawArc( 
+                        (int)(origin.getX() - hexSize/2), 
+                        (int)(origin.getY() - hexSize/2), 
+                        (int) hexSize/2 * 2,
+                        (int) hexSize/2 * 2, 
+                        (int) coneAttack.getStartAngle(),
+                        (int) coneAttack.getAngle()
+                    );
+                    double startAngle = coneAttack.getStartAngle();
+                    double endAngle = startAngle + coneAttack.getAngle();
+                    g2d.drawLine(
+                        (int)(origin.getX() + Math.cos(startAngle * -Math.PI/180) * hexSize/2), 
+                        (int)(origin.getY() + Math.sin(startAngle * -Math.PI/180) * hexSize/2), 
+                        (int)(origin.getX() + Math.cos(startAngle * -Math.PI/180) * coneAttack.getRadius()), 
+                        (int)(origin.getY() + Math.sin(startAngle * -Math.PI/180) * coneAttack.getRadius())
+                    );
+                    
+                    g2d.drawLine(
+                        (int)(origin.getX() + Math.cos(endAngle * -Math.PI/180) * hexSize/2), 
+                        (int)(origin.getY() + Math.sin(endAngle * -Math.PI/180) * hexSize/2), 
+                        (int)(origin.getX() + Math.cos(endAngle * -Math.PI/180) * coneAttack.getRadius()), 
+                        (int)(origin.getY() + Math.sin(endAngle * -Math.PI/180) * coneAttack.getRadius())
+                    );
+                    
+                        g2d.setColor(Color.BLACK);
                     g2d.setFont(new Font("Arial", Font.BOLD, hexSize/2));
                     g2d.drawString(
                         (int)(coneAttack.getRadiusInTiles()*5) + "ft",
                         (int)(origin.getX()),
                         (int)(origin.getY())
                     );
-                }
+                    coneAttack.getAttackedCharacters();
+                    }
             }
         };
         fxPanel.setOpaque(false);
@@ -785,16 +805,16 @@ public class GraphicsHandler extends JFrame {
     public void toggleDarkMode() {
         darkMode = !darkMode;
 
-        setBackground                  (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        contentPanel.setBackground     (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        gridPanel.setBackground        (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        consol.setBackground           (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        backgroundPanel.setBackground  (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        consol.setSelectedTextColor    (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        consol.setForeground           (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
-        consol.setSelectionColor       (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
-        consol.setBorder(new LineBorder(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
-        toolbox.setBackground(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+        setBackground                   (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        contentPanel.setBackground      (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        gridPanel.setBackground         (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        consol.setBackground            (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        backgroundPanel.setBackground   (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        consol.setSelectedTextColor     (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
+        consol.setForeground            (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+        consol.setSelectionColor        (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+        toolbox.setBackground           (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+        consol.setBorder(new LineBorder (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
         toolbox.setBorder(new LineBorder(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
     }
 
@@ -851,29 +871,5 @@ public class GraphicsHandler extends JFrame {
                 }
             }
         }
-    }
-    @Override
-    public void repaint() {
-    // Move all initiative markers to the current position of their entity
-    if (gm != null && gm.intiMarkers != null) {
-        for (Marker m : gm.intiMarkers) {
-            // Find the entity for this marker
-            for (Entity e : entities) {
-                // Compare by initiative value (unique per entity in init map)
-                if (gm.init.containsKey(e) && m.getRawContent() instanceof Double) {
-                    double markerValue = (Double) m.getRawContent();
-                    double entityValue = gm.init.get(e);
-                    if (Double.compare(markerValue, entityValue) == 0) {
-                        // Move marker to the center of the entity's first occupied tile
-                        if (!e.getOccupiedTiles().isEmpty() && e.getOccupiedTiles().get(0) != null) {
-                            m.moveTo(e.getOccupiedTiles().get(0).getCenter());
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    super.repaint();
     }
 }

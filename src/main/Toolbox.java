@@ -18,9 +18,11 @@ public class Toolbox extends JPanel{
     private int scroll;
     private ArrayList<Tool> tools = new ArrayList<>();
     protected Tool selectedTool;
+    private int size;
 
     public Toolbox() {
         super();
+        this.size = 32;
         this.setPreferredSize(new Dimension(32, 200));
         try {
             initializeTools();
@@ -41,7 +43,7 @@ public class Toolbox extends JPanel{
         g2d.setStroke(new BasicStroke(2));
         int height = 0;
         for (Tool tool : getTools()) {
-            g2d.drawImage(tool.getIcon(), 1, height*32, 30, 30, this);
+            g2d.drawImage(tool.getIcon(), 1, height*size, size - 2, size - 2, this);
             height++;
         }
 
@@ -87,5 +89,16 @@ public class Toolbox extends JPanel{
     }
     public void setTools(ArrayList<Tool> tools) {
         this.tools = tools;
+    }
+    public void changeSize(int s) {
+        size += s;
+        setPreferredSize(new Dimension(size, 200));
+        for(Tool t : tools) {
+            t.updateHitbox(size);
+        }
+    }
+    public int getFrameSize() {
+        // TODO Auto-generated method stub
+        return size;
     }
 }

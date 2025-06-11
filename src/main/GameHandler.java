@@ -93,9 +93,10 @@ public class GameHandler implements Runnable {
 
 		if (!init.containsKey(entity)) {
 			init.put(entity, Math.random());
-			Point temp = new Point((int) entity.getOccupiedTiles().getFirst().getCenter().getX(),
-								   (int) entity.getOccupiedTiles().getFirst().getCenter().getY());
-			Marker m = new Marker(init.get(entity), temp , 1, false);
+			Point coords = new Point((int) entity.getOccupiedTiles().getFirst().getCenter().getX(),
+								   (int) entity.getOccupiedTiles().getFirst().getCenter().getY() - gh.hexSize);
+			Marker m = new Marker(init.get(entity), coords , 1, false);
+			m.attachTo(entity);
 			intiMarkers.add(m);
 			gh.addMarker(m);
 		}

@@ -1,4 +1,6 @@
-package fx;
+package tools;
+import calc.Calc;
+import fx.Hexagon;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -21,8 +23,9 @@ public class Cone {
 
     public double getRadius() {
         originPoint = gh.hexlist.get(origin.x, origin.y).getCenter();
-        radius = Math.sqrt(Math.pow(gh.io.mousePos.getX() - originPoint.getX(), 2) +
-                Math.pow(gh.io.mousePos.getY() - originPoint.getY(), 2));
+        radius = gh.io.isCtrlDown 
+            ? Calc.distance(gh.io.mousePos, originPoint)
+            : Calc.distance(gh.tileUnderMouse.getCenter(), originPoint);
         return radius;
     }
 
@@ -36,7 +39,7 @@ public class Cone {
 
     // Korrekte Winkelberechnung
     // Korrekte Winkelberechnung für Java AWT
-    private double calculateAngle(Point2D point1, Point2D point2) {
+    private static double calculateAngle(Point2D point1, Point2D point2) {
         double dx = point2.getX() - point1.getX();
         double dy = point2.getY() - point1.getY();
         // Negatives dy für AWT-Koordinatensystem (Y wächst nach unten)
@@ -47,14 +50,12 @@ public class Cone {
     }
     // Prüft ob ein Winkel im Bereich liegt (berücksichtigt Wrap-around)
     private boolean isAngleInRange(double testAngle, double startAngle, double rangeAngle) {
-        // Normalisierung
-        testAngle = testAngle % 360;
-        if (testAngle < 0) testAngle += 360;
         
         double endAngle = (startAngle + rangeAngle) % 360;
         
         if (startAngle <= endAngle) {
             // Normaler Fall
+
             return testAngle >= startAngle && testAngle <= endAngle;
         } else {
             // Wrap-around über 0°
@@ -69,9 +70,8 @@ public class Cone {
         getStartAngle(); // Aktualisiert startAngle
         
         for(Hexagon h : gh.hexlist.values()) {
-            double distance = Math.sqrt(Math.pow(h.getCenter().getX() - originPoint.getX(), 2) +
-                    Math.pow(h.getCenter().getY() - originPoint.getY(), 2));
-            
+            double distance = Calc.distance(h.getCenter(), originPoint);
+            if(distance < gh.hexSize) continue;
             if (distance <= radius + 1) {
                 double hexAngle = calculateAngle(originPoint, h.getCenter());
                 
@@ -89,7 +89,7 @@ public class Cone {
     public void changeAngle(int notches) {
         angle += notches * 5;
         angle = angle % 360;
-        if (angle < 0) angle += 360; // Negative Winkel vermeiden
+        if (angle < 0) angle += 360;
         System.out.println(angle);
     }
 
@@ -98,12 +98,14 @@ public class Cone {
     }
 
     public double getStartAngle() {
-        double mouseAngle = calculateAngle(originPoint, gh.io.mousePos);
+        double mouseAngle = calculateAngle(originPoint, gh.io.isCtrlDown ? gh.io.mousePos : gh.tileUnderMouse.getCenter());
         startAngle = mouseAngle - angle/2;
         
         // Normalisierung
         startAngle = startAngle % 360;
+        if(startAngle < 0) startAngle += 360;
         
+
         return startAngle;
     }
 }

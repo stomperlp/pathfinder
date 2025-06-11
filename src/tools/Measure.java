@@ -1,4 +1,4 @@
-package fx;
+package tools;
 
 import calc.AStar;
 import java.awt.Point;
