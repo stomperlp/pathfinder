@@ -372,10 +372,10 @@ public class IOHandler extends MouseAdapter {
 		if (hasSelectedEntity && !gh.selectedEntityTiles.isEmpty()) {
 			Entity selectedEntity = gh.selectEntity(gh.selectedEntityTiles.getFirst());
 			if (selectedEntity instanceof Character character) {
-				ArrayList<Hexagon> rangeTiles = AStar.range(character.getTile(), character.getSpeed(), gh);
+				ArrayList<Hexagon> rangeTiles = AStar.range(character.getTile(), character.getSpeed(), (Character) selectedEntity, gh);
 				for (Hexagon centerTile : rangeTiles) {
 					if (centerTile == null) continue;
-					if(character.getSize() > 0) {
+					if (character.getSize() > 0) {
 						ArrayList<Hexagon> wouldOccupyTiles = Character.getOccupiedTiles(centerTile, character.getSize(), gh);
 						boolean positionIsValid = true;
 						
@@ -415,7 +415,8 @@ public class IOHandler extends MouseAdapter {
 	}
 
 	public void selectTile() {
-
+		
+		gh.path.clear();
 		if (!gh.selectedTiles.isEmpty()) {
 			for(Hexagon h : gh.selectedTiles){
 				if (currentHexagon.getGridPoint().equals(

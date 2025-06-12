@@ -1,7 +1,7 @@
 package calc;
 
-import entities.Entity;
 import entities.Character;
+import entities.Entity;
 import fx.Hexagon;
 import java.awt.Point;
 import java.util.*;
@@ -96,7 +96,7 @@ public class AStar
         return null;
     }
 
-    public static ArrayList<Hexagon> range(Hexagon center, int speed, GraphicsHandler gh) {
+    public static ArrayList<Hexagon> range(Hexagon center, int speed, entities.Character movingCharacter, GraphicsHandler gh) {
 
         if(speed == 0 || center == null) return new ArrayList<>();
 
@@ -108,11 +108,53 @@ public class AStar
             ArrayList<Hexagon> nextHexagons = new ArrayList<>();
             for (Hexagon h : currentHexagons) {
                 for (Hexagon hex : getNeighbors(h, gh)) {
-                    if (hex != null   && !available.contains(hex) && 
-                        hex != center && !nextHexagons.contains(hex) &&
-                        !isOccupiedByEntity(hex, center, gh)) {
-                        available.add(hex);
-                        nextHexagons.add(hex);
+                    if (hex != null && !available.contains(hex) && 
+                        hex != center && !nextHexagons.contains(hex)) {
+                        
+                        // Check if this would be a valid destination for the character
+                        boolean isValid = true;
+                        
+                        // Only perform the check if we have a moving character (for large character collision)
+                        if (movingCharacter != null) {
+                            // Get all tiles the character would occupy at this destination
+                            ArrayList<Hexagon> targetTiles = Character.getOccupiedTiles(hex, movingCharacter.getSize(), gh);
+                            
+                            // Check if any of these tiles are already occupied by another entity
+                            for (Hexagon targetTile : targetTiles) {
+                                // Skip checking the character's current tiles
+                                boolean isCurrentlyOccupiedByMovingChar = false;
+                                for (Hexagon currentTile : movingCharacter.getOccupiedTiles()) {
+                                    if (targetTile.getGridPoint().equals(currentTile.getGridPoint())) {
+                                        isCurrentlyOccupiedByMovingChar = true;
+                                        break;
+                                    }
+                                }
+                                
+                                if (!isCurrentlyOccupiedByMovingChar) {
+                                    // Check if any other entity occupies this tile
+                                    for (Entity entity : gh.entities) {
+                                        if (entity != movingCharacter) {
+                                            for (Hexagon occupiedTile : entity.getOccupiedTiles()) {
+                                                if (targetTile.getGridPoint().equals(occupiedTile.getGridPoint())) {
+                                                    isValid = false;
+                                                    break;
+                                                }
+                                            }
+                                            if (!isValid) break;
+                                        }
+                                    }
+                                }
+                                if (!isValid) break;
+                            }
+                        } else {
+                            // If no specific character is specified, use the original obstacle check
+                            isValid = !isOccupiedByEntity(hex, center, gh);
+                        }
+                        
+                        if (isValid) {
+                            available.add(hex);
+                            nextHexagons.add(hex);
+                        }
                     }
                 }
             }
@@ -266,6 +308,7 @@ public class AStar
         }
         return null;
     }
+
     private static ArrayList<Hexagon> reconstructPath(Hexagon start, Hexagon end, 
                                                       HashMap<Point, Point> cameFrom, 
                                                       GraphicsHandler gh) {

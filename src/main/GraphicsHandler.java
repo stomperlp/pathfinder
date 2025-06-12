@@ -60,6 +60,7 @@ public final class GraphicsHandler extends JFrame {
     public ArrayList<Hexagon> entityRangeTiles    = new ArrayList<>();
     public ArrayList<Hexagon> entityPreviewTiles  = new ArrayList<>();
     public ArrayList<Hexagon> attackTiles         = new ArrayList<>();
+    public ArrayList<Hexagon> path                = new ArrayList<>();
     
     public Hexagon tileUnderMouse;
     public Theme   currentTheme; 
@@ -308,6 +309,10 @@ public final class GraphicsHandler extends JFrame {
                     if (h == null) continue;
                     attackTiles.set(attackTiles.indexOf(h),hexlist.get(h.getGridPoint().x, h.getGridPoint().y)); 
                 }
+                for (Hexagon h : path) {
+                    if (h == null) continue;
+                    path.set(path.indexOf(h), hexlist.get(h.getGridPoint().x, h.getGridPoint().y));
+                }
 
                 if (tileUnderMouse != null && dragStart == null) {
 
@@ -541,6 +546,22 @@ public final class GraphicsHandler extends JFrame {
                         coneAttack.getAttackedCharacters();
                     }
                 }
+
+                if (path != null && !path.isEmpty()) {
+                    g2d.setColor(Color.RED);
+                    g2d.setStroke(new BasicStroke(thickness*3));
+                    for (int i = 0; i < path.size() - 1; i++) {
+                        Hexagon start = path.get(i);
+                        Hexagon end   = path.get(i + 1);
+                        if (start == null || end == null) continue;
+                        g2d.drawLine(
+                            (int) start.getCenter().getX(), 
+                            (int) start.getCenter().getY(), 
+                            (int)   end.getCenter().getX(), 
+                            (int)   end.getCenter().getY()
+                        );
+                    }
+                }
             }
         };
         fxPanel.setOpaque(false);
@@ -576,9 +597,6 @@ public final class GraphicsHandler extends JFrame {
 
         toolbox = new Toolbox();
         toolbox.setOpaque(true);
-
-
-
 
         backgroundPanel.add(contentPanel);
         contentPanel.add(gridPanel);
