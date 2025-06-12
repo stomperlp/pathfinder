@@ -906,6 +906,8 @@ public final class GraphicsHandler extends JFrame {
                 for (Hexagon hex : Character.getOccupiedTiles(tileUnderMouse, selectEntity(selectedEntityTiles.get(0)).getSize(), this)) {
                     if (hex != null && !entityPreviewTiles.contains(hex)) {
                         addEntityPreviewTile(hex);
+                        if(entityRangeTiles.contains(hex))
+                            path = AStar.run(selectedEntityTiles.get(0), hex, this, false);
                     }
                 }
             }
