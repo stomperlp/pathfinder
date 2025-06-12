@@ -8,8 +8,6 @@ public class Theme {
     public final Color primary;
     public final Color secondary;
 
-
-
     public Theme (String name, Color primary, Color secondary) {
         this.name = name.toLowerCase();
         this.primary = primary;
