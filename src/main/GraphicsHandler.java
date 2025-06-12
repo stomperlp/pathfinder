@@ -598,9 +598,12 @@ public final class GraphicsHandler extends JFrame {
 
     private void initializeThemes() {
         themes.add(new Theme("Purple",  new Color(0x4e0a56), new Color(0xda80ff)));
+        themes.add(new Theme("Red",     new Color(0x101820), new Color(0xff0000)));
+        themes.add(new Theme("Green",   new Color(0x101820), new Color(0x1a7a4c)));
+        themes.add(new Theme("Yellow",  new Color(0xFEE715), new Color(0x101820)));
         themes.add(new Theme("Light",   new Color(0xD0D0D0), new Color(0x000000)));
         themes.add(new Theme("Dark",    new Color(0x0D1219), new Color(0x626972)));
-        themes.add(new Theme("Green",   new Color(0xff00ff), new Color(0x00ff00)));
+        themes.add(new Theme("Black",   new Color(0x000000), new Color(0x1c2022)));
     }
 
     public void toggleConsol() {

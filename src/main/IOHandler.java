@@ -296,6 +296,17 @@ public class IOHandler extends MouseAdapter {
 					gh.repaint();
 				}
 			}
+			case 'A' -> {
+				if(isCtrlDown) {
+					for(Entity en : gh.entities) {
+						currentHexagon = en.getTile();
+						if(gh.selectedEntityTiles.contains(currentHexagon)) continue;
+
+						selectEntityNoDeselection();
+					}
+				}
+
+			}
 		}
 	}
 	void keyReleased(KeyEvent e) {
@@ -353,6 +364,9 @@ public class IOHandler extends MouseAdapter {
 			}
 		}
 
+		selectEntityNoDeselection();
+	}
+	private void selectEntityNoDeselection() {
 		for(Entity en : gh.entities) {
 			for (Hexagon occTile : en.getOccupiedTiles()) {
 
