@@ -229,6 +229,7 @@ public class IOHandler extends MouseAdapter {
 		switch(e.getKeyCode()) {
 			case KeyEvent.VK_UP   -> gh.consol.consol.arrowUp();
 			case KeyEvent.VK_DOWN -> gh.consol.consol.arrowDown();
+			case KeyEvent.VK_TAB  -> gh.consol.consol.setText(gh.consol.consol.getAutoComplete(gh.consol.consol.getText()));
 		}
 		else switch(e.getKeyCode()) {
 			//Any only active out of consol
