@@ -15,7 +15,7 @@ public class GameHandler implements Runnable {
 	private final Object lock = new Object();
 	private int moveSpeed = 3;
 	public HashMap<Entity, Double> init = new HashMap<>();
-	public ArrayList<Marker> intiMarkers = new ArrayList<>();
+	public ArrayList<Marker> initMarkers = new ArrayList<>();
 	private Entity currentTurn = null;
 	private int currentTurnIndex = 0;
 
@@ -102,7 +102,7 @@ public class GameHandler implements Runnable {
 			Marker m = new Marker(0, coords , 1, false);
 			m.attachTo(entity);
 			m.setDebugValue(randomValue);
-			intiMarkers.add(m);
+			initMarkers.add(m);
 			gh.addMarker(m);
 		}
 	}
@@ -110,7 +110,7 @@ public class GameHandler implements Runnable {
 		ArrayList<Entity> order = getInitiativeOrder();
 		for (int i = 0; i < order.size(); i++) {
 			Entity entity = order.get(i);
-			for (Marker m : intiMarkers) {
+			for (Marker m : initMarkers) {
 				if (m.getAttachedEntity() == entity) {
 					m.setStat(i);
 
@@ -136,14 +136,14 @@ public class GameHandler implements Runnable {
 		init.remove(entity);
 
 		Marker markerToRemove = null;
-		for (Marker m : intiMarkers) {
+		for (Marker m : initMarkers) {
 			if (m.getAttachedEntity() == entity) {
 				markerToRemove = m;
 				break;
 			}
 		}
 		if (markerToRemove != null) {
-			intiMarkers.remove(markerToRemove);
+			initMarkers.remove(markerToRemove);
 			gh.markers.remove(markerToRemove);
 		}
 
@@ -173,12 +173,12 @@ public class GameHandler implements Runnable {
 				java.util.LinkedHashMap::new
 			)
 		);
-		if (!intiMarkers.isEmpty()) {
+		if (!initMarkers.isEmpty()) {
 			updateInitiativeMarkers();
 		}
 	}
 	public void toggleShowInitiative() {
-		for (Marker m : intiMarkers) {
+		for (Marker m : initMarkers) {
 			m.toggleVisible();
 		}
 		gh.repaint();
@@ -201,10 +201,10 @@ public class GameHandler implements Runnable {
 		return init.containsKey(entity);
 	}
 	public void clearInitiative() {
-		for (Marker m : intiMarkers) {
+		for (Marker m : initMarkers) {
 			gh.markers.remove(m);
 		}
-		intiMarkers.clear();
+		initMarkers.clear();
 		init.clear();
 		currentTurn = null;
 		currentTurnIndex = 0;

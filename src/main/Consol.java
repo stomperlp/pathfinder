@@ -14,15 +14,18 @@ import java.util.List;
 import javax.swing.JTextField;
 
 public final class Consol extends JTextField {
+
     private GraphicsHandler gh;
     private final List<String> commandHistory = new ArrayList<>();
     private int historyIndex = -1;
     private String currentInput = "";
     private Marker[] diceMarkers = {};
     private boolean confirm = false;
-    
+    private final String[] commands = {
+        "character", "wall", "entity", "initiative", "quit", "background", 
+        "debug", "roll", "grid", "gamemaster", "help", "clear", "theme"
+    };
 
-    
     public Consol(GraphicsHandler gh) {
         super();
         this.gh = gh;
@@ -292,7 +295,19 @@ public final class Consol extends JTextField {
                 default -> {}
             }
         }
-    }  
+    }
+    public String getAutoComplete(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        for (String cmd : commands) {
+            if (cmd.startsWith(input.toLowerCase())) {
+                return cmd;
+            }
+        }
+        return input;
+    }
     public void setGraphicsHandler(GraphicsHandler gh) {
         this.gh = gh;
     }  
@@ -336,5 +351,9 @@ public final class Consol extends JTextField {
     }
     public void setCurrentInput(String currentInput) {
         this.currentInput = currentInput;
+        setText(currentInput);
+    }
+    public String getCurrentInput() {
+        return currentInput;
     }
 }

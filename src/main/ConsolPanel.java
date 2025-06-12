@@ -27,13 +27,13 @@ public class ConsolPanel extends JPanel {
 
     public ConsolPanel(GraphicsHandler gh) {
         super(new BorderLayout());
-        
+
         this.gh = gh;
         consol = new Consol(gh);
-        
+
         logPanel.setLayout(new BoxLayout(logPanel, BoxLayout.Y_AXIS));
         logPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        
+
         // Initialize with 5 empty labels
         for (int i = 0; i < 5; i++) {
             JLabel label = new JLabel(" ");
