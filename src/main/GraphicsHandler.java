@@ -253,10 +253,10 @@ public final class GraphicsHandler extends JFrame {
                 double ColDistance = (isFlat ? hexWidth  : hexHeight);
                 double RowDistance = (isFlat ? hexHeight : hexWidth);
 
-                int firstVisibleCol = -5 + (int) Math.floor((           - gridOffset.x - ColDistance) * 2 / Math.sqrt(3) / ColDistance);
-                int lastVisibleCol  =  5 + (int) Math.ceil((getWidth()  - gridOffset.x - ColDistance) * 2 / Math.sqrt(3) / ColDistance);
-                int firstVisibleRow = -5 + (int) Math.floor((           - gridOffset.y - RowDistance) * 1.16 / RowDistance);
-                int lastVisibleRow  =  5 + (int) Math.ceil((getHeight() - gridOffset.y - RowDistance) * 1.16 / RowDistance);
+                int firstVisibleCol = -2 + (int) Math.floor((           - gridOffset.x - ColDistance) * 2 / Math.sqrt(3) / ColDistance);
+                int lastVisibleCol  =  2 + (int) Math.ceil((getWidth()  - gridOffset.x - ColDistance) * 2 / Math.sqrt(3) / ColDistance);
+                int firstVisibleRow = -2 + (int) Math.floor((           - gridOffset.y - RowDistance) * 1.16 / RowDistance);
+                int lastVisibleRow  =  2 + (int) Math.ceil((getHeight() - gridOffset.y - RowDistance) * 1.16 / RowDistance);
                 
                 // Draw the grid
                 for (    int row = firstVisibleRow; row <= lastVisibleRow; row++) {
@@ -316,8 +316,8 @@ public final class GraphicsHandler extends JFrame {
 
                 if (tileUnderMouse != null && dragStart == null) {
 
-                    g2d.setStroke(new BasicStroke(thickness+2));
-                    g2d.setColor(darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
+                    g2d.setStroke(new BasicStroke(thickness + (io.mouseActive ? 2 : 4)));
+                    g2d.setColor(currentTheme.getSecondary());
                     g2d.draw(tileUnderMouse.getShape());
                 }
                 for (Hexagon h : selectedTiles) {
@@ -616,9 +616,12 @@ public final class GraphicsHandler extends JFrame {
 
     private void initializeThemes() {
         themes.add(new Theme("Purple",  new Color(0x4e0a56), new Color(0xda80ff)));
+        themes.add(new Theme("Red",     new Color(0x101820), new Color(0xff0000)));
+        themes.add(new Theme("Green",   new Color(0x101820), new Color(0x1a7a4c)));
+        themes.add(new Theme("Yellow",  new Color(0xFEE715), new Color(0x101820)));
         themes.add(new Theme("Light",   new Color(0xD0D0D0), new Color(0x000000)));
         themes.add(new Theme("Dark",    new Color(0x0D1219), new Color(0x626972)));
-        themes.add(new Theme("Green",   new Color(0xff00ff), new Color(0x00ff00)));
+        themes.add(new Theme("Black",   new Color(0x000000), new Color(0x1c2022)));
     }
 
     public void toggleConsol() {
@@ -626,18 +629,15 @@ public final class GraphicsHandler extends JFrame {
         consol.toggleActive();
 
         if(!consol.isActive()) {
-
-            backgroundPanel.remove(consol);
             backgroundPanel.requestFocusInWindow();
-
         } else {
-
-            backgroundPanel.add(consol, BorderLayout.SOUTH);
-            consol.requestFocusInWindow();
+            consol.consol.requestFocusInWindow();
         }
-        consol.consol.setText("");
         revalidate();
         repaint();
+    }
+    public void setConsolVisibility(boolean isVisible) {
+        if(consol.isVisible() != isVisible) toggleConsol();
     }
     public final void setBackgroundImage() {
         File file = io.openFileBrowser();
@@ -704,7 +704,7 @@ public final class GraphicsHandler extends JFrame {
     public void toggleDebugMode() {
         debugMode = !debugMode;
     }
-    public void zoom(int notches, Point mousePoint) {
+    public void zoom(int notches, Point2D mousePoint) {
         // Store previous values
         int prevHexSize = hexSize;
         double prevZoom = (double)prevHexSize / 40;  // baseHexSize should be your initial hex size
@@ -724,12 +724,12 @@ public final class GraphicsHandler extends JFrame {
 
         if (mousePoint != null) {
             // Convert mouse point to world coordinates
-            double worldX = (mousePoint.x - gridOffset.x) / prevZoom;
-            double worldY = (mousePoint.y - gridOffset.y) / prevZoom;
+            double worldX = (mousePoint.getX() - gridOffset.x) / prevZoom;
+            double worldY = (mousePoint.getY() - gridOffset.y) / prevZoom;
 
             // Calculate new offset to keep mouse position stable
-            gridOffset.x = mousePoint.x - (int)(worldX * newZoom);
-            gridOffset.y = mousePoint.y - (int)(worldY * newZoom);
+            gridOffset.x = (int) mousePoint.getX() - (int)(worldX * newZoom);
+            gridOffset.y = (int) mousePoint.getY() - (int)(worldY * newZoom);
         }
 
         thickness = Math.max(1, hexSize / 30);
@@ -784,7 +784,7 @@ public final class GraphicsHandler extends JFrame {
             tiles.add(tileUnderMouse);
         }
         else {
-            tiles.add(gm.findClosestHexagon(
+            tiles.add(findClosestHexagon(
                 new Point2D.Double(getWidth()/2, getHeight()/2)
             ));
         }
@@ -913,4 +913,22 @@ public final class GraphicsHandler extends JFrame {
             }
         }
     }
+
+    public static boolean isFlat() {
+        return isFlat;
+    }
+
+
+	public Hexagon findClosestHexagon(Point2D point) {
+		Hexagon closest = null;
+		double minDist = hexSize-1;
+		for (Hexagon hex : hexlist.values()) {
+			double dist = point.distance(hex.getCenter());
+			if (dist < minDist) {
+				minDist = dist;
+				closest = hex;
+			}
+		}
+		return closest;
+	}
 }

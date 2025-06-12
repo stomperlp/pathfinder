@@ -3,6 +3,7 @@ package calc;
 import fx.Hexagon;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import main.GraphicsHandler;
@@ -78,16 +79,25 @@ public class Calc {
         return output;
     }
     public static int[] toCubeCoordinate(int x, int y) {
-        int offset = (y >> 1); // Equivalent to ay/2 for offset adjustment
+        int offset = (y >> 1); // Equivalent to y/2 for offset adjustment
         int x_cube = x - offset;
         int z_cube = y;
         int y_cube = -x_cube - z_cube;
         return new int[] {x_cube, y_cube, z_cube};
     }
+    public static Point toPoint(int [] cube) {
+        int y = cube[2];
+        int x = cube[0] + (cube[2] >> 1);
+
+        return new Point(x,y);
+    }
     public static double distance(Point2D a, Point2D b) {
         return Math.sqrt(
             Math.pow(a.getX() - b.getX(), 2) + 
             Math.pow(a.getY() - b.getY(), 2)) ;
+    }
+    public static Point toPoint(Point2D p) {
+        return new Point((int) p.getX(), (int) p.getY());
     }
 }
 

@@ -7,7 +7,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import main.GraphicsHandler;
 
-public abstract class Entity {
+public abstract class Entity implements Cloneable {
 
     protected Image   image;
     protected Hexagon tile;
@@ -61,6 +61,10 @@ public abstract class Entity {
     }
     public void setLocation(Point2D p) {
         this.location = p;
+    }
+    @Override
+    public Entity clone() throws CloneNotSupportedException {
+        return (Entity) super.clone();
     }
 
     // Placeholder methods for character attributes -------------------

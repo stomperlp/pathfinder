@@ -8,9 +8,11 @@ import fx.Marker;
 import fx.Theme;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JTextField;
 
 public final class Consol extends JTextField {
@@ -108,20 +110,22 @@ public final class Consol extends JTextField {
         int AC         = 0; // hasValue[2]
         int speed      = 0; // hasValue[3]
         int initiative = 0; // hasValue[4]
-        boolean[] hasValue = new boolean[5];
+        Image image    = null; // hasValue[5]
+        boolean[] hasValue = new boolean[6];
         //runs until all arguments are consumed
         do{
             try {
                 switch (args[1].toLowerCase()) {
                     case "d",   "delete"      -> {gh.deleteEntities(0);                                        }
-                    case "s",   "size"        -> {size        = Integer.parseInt(args[2]); hasValue[0] = true;}
+                    case "sz",  "size"        -> {size        = Integer.parseInt(args[2]); hasValue[0] = true;}
                     case "h",   "maxhealth"   -> {maxHealth   = Integer.parseInt(args[2]); hasValue[1] = true;}
                     case "ac",  "armorclass"  -> {AC          = Integer.parseInt(args[2]); hasValue[2] = true;}
-                    case "sp",  "speed"       -> {speed       = Integer.parseInt(args[2]); hasValue[3] = true;}
-                    case "i",   "initiative"  -> {initiative  = Integer.parseInt(args[2]); hasValue[4] = true;}
+                    case "s",   "speed"       -> {speed       = Integer.parseInt(args[2]); hasValue[3] = true;}
+                    case "in",  "initiative"  -> {initiative  = Integer.parseInt(args[2]); hasValue[4] = true;}
+                    case "ic",  "icon"        -> {image       = new ImageIcon(gh.io.openFileBrowser().getPath()).getImage(); hasValue[5] = true; cutArgs(args, 1);}
                     default -> {}
                 }
-                args = cutArgs(args);
+                args = cutArgs(args, 2);
             } 
             catch (Exception e) {}
             
@@ -135,19 +139,20 @@ public final class Consol extends JTextField {
                 if (hasValue[2]) c.setAC(AC);
                 if (hasValue[3]) c.setSpeed(speed);
                 if (hasValue[4]) c.setInitiative(initiative);
+                if (hasValue[5]) c.setImage(image);
             }
 
         } else {
             gh.spawnCharacter(size, maxHealth, AC, speed, initiative);
         }
     }
-    private String[] cutArgs(String[] args) {
+    private static String[] cutArgs(String[] args, int num) {
 
-        String[] temp = new String[args.length - 2];
+        String[] temp = new String[args.length - num];
         temp[0] = args[0];
 
-        for(int i = 3; i < args.length; i++) {
-            temp[i-2] = args[i];
+        for(int i = num+1; i < args.length; i++) {
+            temp[i-num] = args[i];
         }
         return temp;
     }

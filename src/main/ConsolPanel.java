@@ -107,7 +107,7 @@ public class ConsolPanel extends JPanel {
         consol.setFont(font);
         
         // Calculate preferred size
-        int height = size * 8 / 5 * (showLog ? logLabels.size() + 1 : 1);
+        int height = 1 + size * 8 / 5 * (showLog ? logLabels.size() + 1 : 1);
         this.setPreferredSize(new Dimension(200, height));
     }
 
@@ -118,7 +118,7 @@ public class ConsolPanel extends JPanel {
 
     public void toggleLog() {
         showLog = !showLog;
-        logPanel.setPreferredSize(showLog ? null : new Dimension(0, 0));
+        logPanel.setVisible(showLog);
         setFontSize(getFont().getSize());
         gh.updateTheme();
         revalidate();
