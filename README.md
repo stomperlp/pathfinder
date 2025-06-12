@@ -58,7 +58,7 @@ Pathfinder/
 - **Debug & Gamemaster Modes:**  
   - Additional controls and overlays for game masters and developers.
 
-## Controls
+## ControlssetFontSize(getFont().getSize());
 
 ### Keyboard and Mouse Controls
 
@@ -77,43 +77,49 @@ Pathfinder/
 
 Command	          Description 
 
-:q  or quit	      # Quit the application              
-:b  or background # Set a background image            
-:d  or debug      # Toggle debug mode                
-:c	or creature   # Create or edit a character         
-:w	or wall       # Place a wall
-:e	or entity     # Place a generic entity (Please use :c or :w)
-:r  or roll	      # Roll dice (e.g., roll 2d6+1)
-:g	or grid       # Change grid orientation (Instable)
-:gm or gamemaster # Toggle gamemaster mode
-:i  or init	      # Manage initiative order
-:h  or help	      # Show available commands
-:cl or clear      # Clear the command log and history
-:t  or theme # Show or choose all available themes
+- :q  or quit	      # Quit the application              
+- :b  or background # Set a background image            
+- :d  or debug      # Toggle debug mode                
+- :c	or creature   # Create or edit a character         
+- :w	or wall       # Place a wall
+- :e	or entity     # Generic entity manipulation (Delete)
+- :r  or roll	      # Roll dice (e.g., roll 2d6+1)
+- :g	or grid       # Change grid orientation (Instable)
+- :gm or gamemaster # Toggle gamemaster mode
+- :i  or init	      # Manage initiative order
+- :h  or help	      # Show available commands
+- :cl or clear      # Clear the command log and history
+- :t  or theme # Show or choose all available themes
 
 **Arguments**
-:c
-- delete            # deletes the selected Character(s)
-- size <int>        # set the size of selected Character(s)
-- speed <int>       # set the speed of selected Character(s)
-- armorclass <int>  # set the Armor Class of selected Character(s)
-- maxHealth <int>   # set the Max Health of selected Character(s)
-- ~~initative <int>   # set the initiative of selected Character(s)~~ (deprecated)
 
-:h
-- <command> # get additional information about a spesific command
+- :c
+  - delete            # deletes the selected Character(s)
+  - size <int>        # set the size of selected Character(s)
+  - speed <int>       # set the speed of selected Character(s)
+  - armorclass <int>  # set the Armor Class of selected Character(s)
+  - maxHealth <int>   # set the Max Health of selected Character(s)
+  - ~~initative <int>   # set the initiative of selected Character(s)~~ (deprecated)
+  
+- :h
+  - <command> # get additional information about a spesific command
 
-:i
-- add     # add the selected Characters from the initiative order
-- remove  # remove the selected Characters from the initiative order
-- clear   # clear the initiative order
-- show    # toggles wether or not the initiative placing is shown at the Characters
+- :i
+  - add     # add the selected Characters from the initiative order
+  - remove  # remove the selected Characters from the initiative order
+  - clear   # clear the initiative order
+  - show    # toggles wether or not the initiative placing is shown at the Characters
 
-:r 
-- <dice>
+- :r 
+  - <dice>
 
-:t 
- - <theme> # choose a theme by it's name
+- :t 
+  - <theme> # choose a theme by it's name
+- :w
+
+  - delete            # deletes the selected Wall(s)
+- :e
+  - delete # deletes the selected Entit(y/ies)
 
 For a full list of commands and options, see the source code in main/Consol.java.
 

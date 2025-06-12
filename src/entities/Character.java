@@ -49,7 +49,7 @@ public class Character extends Entity
     @Override
     public ArrayList<Hexagon> getOccupiedTiles() {
         occupiedTiles.clear();
-        return getOccupiedTiles(tile ,size, gh);
+        return getOccupiedTiles(tile, size, gh);
     }
 
     public static ArrayList<Hexagon> getOccupiedTiles(Hexagon h, int size, GraphicsHandler gh) {

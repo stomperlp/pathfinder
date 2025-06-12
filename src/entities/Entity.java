@@ -7,7 +7,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import main.GraphicsHandler;
 
-public class Entity {
+public abstract class Entity {
 
     protected Image   image;
     protected Hexagon tile;

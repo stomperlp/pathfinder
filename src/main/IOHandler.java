@@ -273,6 +273,10 @@ public class IOHandler extends MouseAdapter {
 					gh.toggleConsol();
 					return;
 				}
+				if (isAltDown) {
+					gh.consol.toggleLog();
+					return;
+				}
 				if(gh.consol.isActive()) gh.consol.consol.command(gh.consol.consol.getText());
 			}
 
@@ -348,6 +352,7 @@ public class IOHandler extends MouseAdapter {
 				}
 			}
 		}
+
 		for(Entity en : gh.entities) {
 			for (Hexagon occTile : en.getOccupiedTiles()) {
 
@@ -359,6 +364,7 @@ public class IOHandler extends MouseAdapter {
 				}
 			}
 		}
+		
 		if (hasSelectedEntity && !gh.entityRangeTiles.isEmpty()) {
 			gh.entityRangeTiles.clear();
 		}

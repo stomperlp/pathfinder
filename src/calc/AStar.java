@@ -1,6 +1,7 @@
 package calc;
 
 import entities.Entity;
+import entities.Character;
 import fx.Hexagon;
 import java.awt.Point;
 import java.util.*;
@@ -228,36 +229,43 @@ public class AStar
     }
 
     public static boolean isOccupiedByEntity(Hexagon hex, Hexagon sourceHex, GraphicsHandler gh) {
-
-        if (hex == null) return true;
-
-        Entity sourceEntity = null;
-        if (sourceHex != null) {
-            for (Entity entity : gh.entities) {
-                for (Hexagon occupiedTile : entity.getOccupiedTiles()) {
-                    if (occupiedTile != null && 
-                        occupiedTile.getGridPoint().equals(sourceHex.getGridPoint())) {
-                        sourceEntity = entity;
-                        break;
-                    }
-                }
-                if (sourceEntity != null) break;
-            }
+        // Early returns for invalid cases
+        if (hex == null || gh == null || gh.entities == null) {
+            return true;
         }
+
+        // Find source entity if sourceHex provided
+        Entity sourceEntity = findEntityOccupyingHex(sourceHex, gh);
+        
+        // Check if any other entity occupies the target hex
         for (Entity entity : gh.entities) {
-            // Skip checking the source entity (the one we're moving)
-            if (entity == sourceEntity) continue;
+            if (entity == sourceEntity) continue; // Skip source entity
             
             for (Hexagon occupiedTile : entity.getOccupiedTiles()) {
-                if (occupiedTile != null && 
-                    occupiedTile.getGridPoint().equals(hex.getGridPoint())) {
+                if (occupiedTile != null && hex.equals(occupiedTile)) {
                     return true;
                 }
             }
         }
+        
         return false;
     }
 
+    // Helper method to find entity occupying a hex
+    private static Entity findEntityOccupyingHex(Hexagon hex, GraphicsHandler gh) {
+        if (hex == null || gh == null || gh.entities == null) {
+            return null;
+        }
+
+        for (Entity entity : gh.entities) {
+            for (Hexagon occupiedTile : entity.getOccupiedTiles()) {
+                if (occupiedTile != null && hex.getGridPoint().equals(occupiedTile.getGridPoint())) {
+                    return entity;
+                }
+            }
+        }
+        return null;
+    }
     private static ArrayList<Hexagon> reconstructPath(Hexagon start, Hexagon end, 
                                                       HashMap<Point, Point> cameFrom, 
                                                       GraphicsHandler gh) {

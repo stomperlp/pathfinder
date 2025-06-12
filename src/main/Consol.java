@@ -97,7 +97,6 @@ public final class Consol extends JTextField {
         if(arg.equals("delete") || arg.equals("d")) {
             gh.deleteEntities(1);
         } else {
-            gh.summonEntity();
         }
     }
     private void character(String[] args) {

@@ -826,22 +826,6 @@ public final class GraphicsHandler extends JFrame {
             entities.remove(e);
         }
     }
-    public void toggleDarkMode() {
-        darkMode = !darkMode;
-
-        setBackground                      (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        contentPanel.setBackground         (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        gridPanel.setBackground            (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        consol.changeBackground            (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        backgroundPanel.setBackground      (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        consol.setSelectedTextColor        (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        consol.setLogBackground            (darkMode ? DARK_PRIMARY   : LIGHT_PRIMARY  );
-        consol.changeForeground            (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
-        consol.setSelectionColor           (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
-        toolbox.setBackground              (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY);
-        consol.changeBorder(new LineBorder (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
-        toolbox.setBorder  (new LineBorder (darkMode ? DARK_SECONDARY : LIGHT_SECONDARY, 1));
-    }
     public void changeTheme(String s) {
         Theme theme = null;
         for(Theme t : themes) {
@@ -855,19 +839,21 @@ public final class GraphicsHandler extends JFrame {
             return;
         }
         currentTheme = theme;
-
-        setBackground                      (theme.getPrimary());
-        contentPanel.setBackground         (theme.getPrimary());
-        gridPanel.setBackground            (theme.getPrimary());
-        consol.changeBackground            (theme.getPrimary());
-        backgroundPanel.setBackground      (theme.getPrimary());
-        consol.setSelectedTextColor        (theme.getPrimary());
-        consol.setLogBackground            (theme.getPrimary());
-        consol.changeForeground            (theme.getSecondary());
-        consol.setSelectionColor           (theme.getSecondary());
-        toolbox.setBackground              (theme.getSecondary());
-        consol.changeBorder(new LineBorder (theme.getSecondary(), 1));
-        toolbox.setBorder  (new LineBorder (theme.getSecondary(), 1));
+        updateTheme();
+    }
+    public void updateTheme() {
+        setBackground                      (currentTheme.getPrimary());
+        contentPanel.setBackground         (currentTheme.getPrimary());
+        gridPanel.setBackground            (currentTheme.getPrimary());
+        consol.changeBackground            (currentTheme.getPrimary());
+        backgroundPanel.setBackground      (currentTheme.getPrimary());
+        consol.setSelectedTextColor        (currentTheme.getPrimary());
+        consol.setLogBackground            (currentTheme.getPrimary());
+        consol.changeForeground            (currentTheme.getSecondary());
+        consol.setSelectionColor           (currentTheme.getSecondary());
+        toolbox.setBackground              (currentTheme.getSecondary());
+        consol.changeBorder(new LineBorder (currentTheme.getSecondary(), 1));
+        toolbox.setBorder  (new LineBorder (currentTheme.getSecondary(), 1));
     }
 
     public void summonWall() {
@@ -884,24 +870,6 @@ public final class GraphicsHandler extends JFrame {
                 entities.add(w);
             } catch (Exception e) {
                 System.err.println("Wall summon canceled");
-            }
-        }
-    }
-
-    public void summonEntity() {
-        Image image = new ImageIcon(io.openFileBrowser().getPath()).getImage();
-
-        for(Hexagon tile : selectedTiles) {
-            try {
-                Entity w = new Entity(
-                    this,
-                    image,
-                    tile, 
-                    tile.getCenter()
-                );
-                entities.add(w);
-            } catch (Exception e) {
-                System.err.println("Entity summon canceled");
             }
         }
     }

@@ -69,8 +69,8 @@ public class ConsolPanel extends JPanel {
         if(scrollLog < 0) {
             scrollLog = 0;
         }
-        if(scrollLog > logs.size()-4) {
-            scrollLog = logs.size()-4;
+        if(scrollLog > logs.size() - logLabels.size()) {
+            scrollLog = logs.size() - logLabels.size();
         }
     }
 
@@ -118,8 +118,11 @@ public class ConsolPanel extends JPanel {
 
     public void toggleLog() {
         showLog = !showLog;
-        logPanel.setVisible(showLog);
+        logPanel.setPreferredSize(showLog ? null : new Dimension(0, 0));
+        setFontSize(getFont().getSize());
+        gh.updateTheme();
         revalidate();
+        repaint();
     }
 
     public void setSelectedTextColor(Color c) {
