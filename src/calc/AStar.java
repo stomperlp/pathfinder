@@ -1,7 +1,7 @@
 package calc;
 
-import entities.Entity;
 import entities.Character;
+import entities.Entity;
 import fx.Hexagon;
 import java.awt.Point;
 import java.util.*;
@@ -14,20 +14,12 @@ public class AStar
 
         if (start == null || end == null) return null;
 
-        // Open list (hexagons to be evaluated)
         PriorityQueue<HexNode> openList = new PriorityQueue<>((a, b) ->
             Double.compare(a.fCost, b.fCost));
-
-        // Closed list (already evaluated hexagons)
         HashSet<Point> closedList = new HashSet<>();
-
-        // Map to track the best path
         HashMap<Point, Point> cameFrom = new HashMap<>();
+        HashMap<Point, Double> gCost   = new HashMap<>();
 
-        // Map to store g costs
-        HashMap<Point, Double> gCost = new HashMap<>();
-
-        // Initial node
         HexNode startNode = new HexNode(start, 0, heuristic(start, end));
         openList.add(startNode);
         gCost.put(start.getGridPoint(), 0.0);
@@ -37,44 +29,34 @@ public class AStar
             Hexagon currentHex = current.hex;
             Point currentPoint = currentHex.getGridPoint();
 
-            // If we reached the end, reconstruct and return the path
             if (currentPoint.equals(end.getGridPoint())) {
-                // Path found - could reconstruct here if needed
-                if(gh.debugMode) {
-                    System.out.println("Shortest path is " + current.gCost + " tiles long.");
-                }
+                if(gh.debugMode) 
+                    gh.consol.addLogMessage("Shortest path is " + current.gCost + " tiles long.");
 
-                return reconstructPath(start, end, cameFrom, gh);
+                    return reconstructPath(start, end, cameFrom, gh);
             }
 
             closedList.add(currentPoint);
 
-            // Check all neighbors
             Hexagon[] neighbors = getNeighbors(currentHex, gh);
             for (Hexagon neighbor : neighbors) {
                 if (neighbor == null) continue;
 
-                // Skip tiles that are occupied by entities
                 if (isOccupiedByEntity(neighbor, start, gh) && !ignoreObstacles) continue;
 
                 Point neighborPoint = neighbor.getGridPoint();
 
-                // Skip already evaluated hexagons
                 if (closedList.contains(neighborPoint)) continue;
 
-                // Calculate tentative g cost
-                double tentativeGCost = gCost.get(currentPoint) + 1; // Assuming uniform cost
+                double tentativeGCost = gCost.get(currentPoint) + 1;
 
-                // If neighbor not in open list or new path is better
                 Double neighborGCost = gCost.get(neighborPoint);
                 if (neighborGCost == null || tentativeGCost < neighborGCost) {
-                    // Update this path as the best path to neighbor
                     cameFrom.put(neighborPoint, currentPoint);
                     gCost.put(neighborPoint, tentativeGCost);
 
                     double fCost = tentativeGCost + heuristic(neighbor, end);
 
-                    // Add to open list if not already there
                     boolean found = false;
                     for (HexNode node : openList) {
                         if (node.hex.getGridPoint().equals(neighborPoint)) {
@@ -90,13 +72,12 @@ public class AStar
                 }
             }
         }
-
-        // No path found
-        System.out.println("No path found");
+        if(gh.debugMode)
+            gh.consol.addLogMessage("No path found");
         return null;
     }
 
-    public static ArrayList<Hexagon> range(Hexagon center, int speed, GraphicsHandler gh) {
+    public static ArrayList<Hexagon> range(Hexagon center, int speed, entities.Character movingCharacter, GraphicsHandler gh) {
 
         if(speed == 0 || center == null) return new ArrayList<>();
 
@@ -108,11 +89,46 @@ public class AStar
             ArrayList<Hexagon> nextHexagons = new ArrayList<>();
             for (Hexagon h : currentHexagons) {
                 for (Hexagon hex : getNeighbors(h, gh)) {
-                    if (hex != null   && !available.contains(hex) && 
-                        hex != center && !nextHexagons.contains(hex) &&
-                        !isOccupiedByEntity(hex, center, gh)) {
-                        available.add(hex);
-                        nextHexagons.add(hex);
+                    if (hex != null && !available.contains(hex) && 
+                        hex != center && !nextHexagons.contains(hex)) {
+
+                        boolean isValid = true;
+
+                        if (movingCharacter != null) {
+                            ArrayList<Hexagon> targetTiles = Character.getOccupiedTiles(hex, movingCharacter.getSize(), gh);
+
+                            for (Hexagon targetTile : targetTiles) {
+                                boolean isCurrentlyOccupiedByMovingChar = false;
+                                for (Hexagon currentTile : movingCharacter.getOccupiedTiles()) {
+                                    if (targetTile.getGridPoint().equals(currentTile.getGridPoint())) {
+                                        isCurrentlyOccupiedByMovingChar = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!isCurrentlyOccupiedByMovingChar) {
+                                    for (Entity entity : gh.entities) {
+                                        if (entity != movingCharacter) {
+                                            for (Hexagon occupiedTile : entity.getOccupiedTiles()) {
+                                                if (targetTile.getGridPoint().equals(occupiedTile.getGridPoint())) {
+                                                    isValid = false;
+                                                    break;
+                                                }
+                                            }
+                                            if (!isValid) break;
+                                        }
+                                    }
+                                }
+                                if (!isValid) break;
+                            }
+                        } else {
+                            isValid = !isOccupiedByEntity(hex, center, gh);
+                        }
+                        
+                        if (isValid) {
+                            available.add(hex);
+                            nextHexagons.add(hex);
+                        }
                     }
                 }
             }
@@ -131,14 +147,12 @@ public class AStar
 
         int hexX = (int) key.getX();
         int hexY = (int) key.getY();
-        
-        // Create a temporary map for quick lookup
+
         HashMap<Point, Hexagon> hexMap = new HashMap<>();
         for (Hexagon h : gh.getHexlist().values()) {
             hexMap.put(h.getGridPoint(), h);
         }
-        
-        // Define all possible neighbor positions
+
         Point[] neighborPositions;
         if (hexY % 2 == 0) {
             neighborPositions = new Point[] {
@@ -160,7 +174,6 @@ public class AStar
             };
         }
 
-        // Look up each position
         for (int i = 0; i < 6; i++) {
             neighbors[i] = hexMap.get(neighborPositions[i]);
         }
@@ -200,13 +213,11 @@ public class AStar
 
     public static double heuristic(Hexagon a, Hexagon b) {
 
-        // Proper hexagonal distance for odd-q offset coordinates
         int ax = (int) a.getGridPoint().getX();
         int ay = (int) a.getGridPoint().getY();
         int bx = (int) b.getGridPoint().getX();
         int by = (int) b.getGridPoint().getY();
-        
-        // Convert to cube coordinates
+
         int[] aCube = Calc.toCubeCoordinate(ax,ay);
         int[] bCube = Calc.toCubeCoordinate(bx,by);
 
@@ -217,7 +228,7 @@ public class AStar
         int bx_cube = bCube[0];
         int by_cube = bCube[1];
         int bz_cube = bCube[2];
-        // Hex distance in cube coordinates is the maximum of the absolute differences
+
         return Math.max(Math.max(
             Math.abs(ax_cube - bx_cube),
             Math.abs(ay_cube - by_cube)),
@@ -229,18 +240,15 @@ public class AStar
     }
 
     public static boolean isOccupiedByEntity(Hexagon hex, Hexagon sourceHex, GraphicsHandler gh) {
-        // Early returns for invalid cases
         if (hex == null || gh == null || gh.entities == null) {
             return true;
         }
 
-        // Find source entity if sourceHex provided
         Entity sourceEntity = findEntityOccupyingHex(sourceHex, gh);
-        
-        // Check if any other entity occupies the target hex
+
         for (Entity entity : gh.entities) {
-            if (entity == sourceEntity) continue; // Skip source entity
-            
+            if (entity == sourceEntity) continue;
+
             for (Hexagon occupiedTile : entity.getOccupiedTiles()) {
                 if (occupiedTile != null && hex.equals(occupiedTile)) {
                     return true;
@@ -266,6 +274,7 @@ public class AStar
         }
         return null;
     }
+
     private static ArrayList<Hexagon> reconstructPath(Hexagon start, Hexagon end, 
                                                       HashMap<Point, Point> cameFrom, 
                                                       GraphicsHandler gh) {

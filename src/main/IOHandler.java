@@ -1,5 +1,6 @@
 package main;
 import calc.AStar;
+import calc.Calc;
 import entities.Character;
 import entities.Entity;
 import fx.*;
@@ -27,6 +28,8 @@ public class IOHandler extends MouseAdapter {
 	public boolean isCtrlDown  = false;
 	public boolean isAltDown   = false;
 	protected Marker mouseLog;
+
+	private ArrayList<Entity> clipBoard = new ArrayList<>();
 
 	protected boolean ADown;
 	protected boolean DDown;
@@ -299,13 +302,46 @@ public class IOHandler extends MouseAdapter {
 			case 'A' -> {
 				if(isCtrlDown) {
 					for(Entity en : gh.entities) {
+						if(en.getTile() == null) continue;
 						currentHexagon = en.getTile();
 						if(gh.selectedEntityTiles.contains(currentHexagon)) continue;
 
 						selectEntityNoDeselection();
 					}
 				}
+			}
+			case 'C' -> {
+				if(isCtrlDown) {
+					clipBoard.clear();
+					for(Hexagon tile : gh.selectedEntityTiles) {
+						Entity en = gh.selectEntity(tile);
+						if(clipBoard.contains(en)) continue;
+						try {
+							Entity newEn = (Entity) en.clone();
+							clipBoard.add(newEn);
+						} catch (Exception x) {
+						}
+					}
+				}
+			}
+			case 'V' -> {
+				if (isCtrlDown && !clipBoard.isEmpty()) {
+					Point copyPoint  = clipBoard.getFirst().getTile().getGridPoint();
+					Point pastePoint = gh.tileUnderMouse.getGridPoint();
+					int[] pivot 	 = Calc.toCubeCoordinate(pastePoint.x - copyPoint.x, pastePoint.y - copyPoint.y);
+					for(Entity en : clipBoard) {
+						int[] cp = Calc.toCubeCoordinate(en.getTile().getGridPoint().x, en.getTile().getGridPoint().y);
+						Point p = Calc.toPoint(new int[]{pivot[0] + cp[0], pivot[1] + cp[1], pivot[2] + cp[2]});
 
+						en.setTile(gh.hexlist.get(p.x,p.y));
+						try {
+							gh.entities.add(en.clone());
+						} catch (Exception x) {
+						}
+					}
+					gh.repaint();
+					e.consume();
+				}
 			}
 		}
 	}
@@ -386,10 +422,10 @@ public class IOHandler extends MouseAdapter {
 		if (hasSelectedEntity && !gh.selectedEntityTiles.isEmpty()) {
 			Entity selectedEntity = gh.selectEntity(gh.selectedEntityTiles.getFirst());
 			if (selectedEntity instanceof Character character) {
-				ArrayList<Hexagon> rangeTiles = AStar.range(character.getTile(), character.getSpeed(), gh);
+				ArrayList<Hexagon> rangeTiles = AStar.range(character.getTile(), character.getSpeed(), (Character) selectedEntity, gh);
 				for (Hexagon centerTile : rangeTiles) {
 					if (centerTile == null) continue;
-					if(character.getSize() > 0) {
+					if (character.getSize() > 0) {
 						ArrayList<Hexagon> wouldOccupyTiles = Character.getOccupiedTiles(centerTile, character.getSize(), gh);
 						boolean positionIsValid = true;
 						
@@ -429,7 +465,8 @@ public class IOHandler extends MouseAdapter {
 	}
 
 	public void selectTile() {
-
+		
+		gh.path.clear();
 		if (!gh.selectedTiles.isEmpty()) {
 			for(Hexagon h : gh.selectedTiles){
 				if (currentHexagon.getGridPoint().equals(

@@ -35,7 +35,8 @@ public class GameHandler implements Runnable {
 		}
 		return closest;
 	}
-    public void tick(){
+
+	public void tick() {
 		if(gh.io.isAltDown) 	   moveSpeed = 200;
 		else if(gh.io.isShiftDown) moveSpeed = 12;
 		else if (gh.io.isCtrlDown) moveSpeed = 6;
@@ -77,7 +78,7 @@ public class GameHandler implements Runnable {
 
 	public void moveCharacter(Hexagon h, entities.Character c) {
 		if (h == null || c == null) return;
-		AStar.run(c.getTile(), h, gh, false);
+		gh.path = AStar.run(c.getTile(), h, gh, false);
 		c.setTile(h);
 	}
 
