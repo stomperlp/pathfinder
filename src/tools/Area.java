@@ -20,15 +20,16 @@ public class Area {
     }
 
     public double getRadius() {
+        if(gh.tileUnderMouse == null) return radius;
         originPoint = gh.hexlist.get(origin.x, origin.y).getCenter();
-        radius = gh.io.isCtrlDown 
+        radius = gh.io.isCtrlDown && gh.io.isMouseActive()
             ? Calc.distance(gh.io.mousePos, originPoint)
             : Calc.distance(gh.tileUnderMouse.getCenter(), originPoint);
         
         return radius;
     }
     public double getRadiusInTiles() {
-        return (getRadius()/(gh.hexSize*Math.sqrt(3)));
+        return (getRadius()+1/(gh.hexSize*Math.sqrt(3)));
     }
     public Point getOrigin() {
         return origin;

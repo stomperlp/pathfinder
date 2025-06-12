@@ -57,13 +57,11 @@ public class Toolbox extends JPanel{
     //generate all tools
     public void initializeTools() throws IOException {
 
-        //drag tool
         tools.add(new Tool(
             ImageIO.read(new File("src/resources/images/toolIcons/move.png")),
             Tool.DRAG_MODE,
             0
         ));
-        //length tool
         tools.add(new Tool(
             ImageIO.read(new File("src/resources/images/toolIcons/length.png")),
             Tool.LENGTH_MODE,
@@ -75,13 +73,13 @@ public class Toolbox extends JPanel{
             2
         ));
         tools.add(new Tool(
-            ImageIO.read(new File("src/resources/images/toolIcons/line.png")),
-            Tool.LINE_MODE,
+            ImageIO.read(new File("src/resources/images/toolIcons/cone.png")),
+            Tool.CONE_MODE,
             3
         ));
         tools.add(new Tool(
-            ImageIO.read(new File("src/resources/images/toolIcons/cone.png")),
-            Tool.CONE_MODE,
+            ImageIO.read(new File("src/resources/images/toolIcons/line.png")),
+            Tool.LINE_MODE,
             4
         ));
     }

@@ -96,5 +96,8 @@ public class Calc {
             Math.pow(a.getX() - b.getX(), 2) + 
             Math.pow(a.getY() - b.getY(), 2)) ;
     }
+    public static Point toPoint(Point2D p) {
+        return new Point((int) p.getX(), (int) p.getY());
+    }
 }
 

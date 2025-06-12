@@ -23,7 +23,8 @@ public class Cone {
 
     public double getRadius() {
         originPoint = gh.hexlist.get(origin.x, origin.y).getCenter();
-        radius = gh.io.isCtrlDown 
+        if(gh.tileUnderMouse == null) return radius;
+        radius = gh.io.isCtrlDown && gh.io.isMouseActive()
             ? Calc.distance(gh.io.mousePos, originPoint)
             : Calc.distance(gh.tileUnderMouse.getCenter(), originPoint);
         return radius;
@@ -98,7 +99,8 @@ public class Cone {
     }
 
     public double getStartAngle() {
-        double mouseAngle = calculateAngle(originPoint, gh.io.isCtrlDown ? gh.io.mousePos : gh.tileUnderMouse.getCenter());
+        if(gh.tileUnderMouse == null) return startAngle;
+        double mouseAngle = calculateAngle(originPoint, gh.io.isCtrlDown && gh.io.isMouseActive() ? gh.io.mousePos : gh.tileUnderMouse.getCenter());
         startAngle = mouseAngle - angle/2;
         
         // Normalisierung

@@ -22,10 +22,12 @@ public class Line {
     }
 
     public Line2D getLine() {
+        
+        if(gh.tileUnderMouse == null) return line;
         try {
             line.setLine(
                 gh.hexlist.get(origin.x, origin.y).getCenter(),
-                gh.io.isCtrlDown ? gh.io.mousePos : gh.tileUnderMouse.getCenter()
+                gh.io.isCtrlDown && gh.io.isMouseActive() ? gh.io.mousePos : gh.tileUnderMouse.getCenter()
             );
         } catch (Exception e) {
             return null;
@@ -47,8 +49,8 @@ public class Line {
     public ArrayList<Hexagon> getAttackedCharacters() {
         ArrayList<Hexagon> attacked = new ArrayList<>();
         gh.attackTiles.clear();
-        for (Point2D p : getPointsAlongLineBySpacing(line, (double) gh.hexSize)) {
-            Hexagon h = gh.gm.findClosestHexagon(p);
+        for (Point2D p : getPointsAlongLineBySpacing(line, (double) gh.hexSize * Math.sqrt(3))) {
+            Hexagon h = gh.findClosestHexagon(p);
             if (h == null) continue;
             Entity e = (Character) gh.selectEntity(h);
             gh.attackTiles.add(h);

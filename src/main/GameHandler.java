@@ -5,7 +5,6 @@ import entities.Entity;
 import fx.*;
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,21 +22,9 @@ public class GameHandler implements Runnable {
 		this.gh = gh;
 	}
 
-	public Hexagon findClosestHexagon(Point2D point) {
-		Hexagon closest = null;
-		double minDist = gh.hexSize-1;
-		for (Hexagon hex : gh.hexlist.values()) {
-			double dist = point.distance(hex.getCenter());
-			if (dist < minDist) {
-				minDist = dist;
-				closest = hex;
-			}
-		}
-		return closest;
-	}
 
 	public void tick() {
-		if(gh.io.isAltDown) 	   moveSpeed = 200;
+		if(gh.io.isAltDown) 	   return;
 		else if(gh.io.isShiftDown) moveSpeed = 12;
 		else if (gh.io.isCtrlDown) moveSpeed = 6;
 		else 				 	   moveSpeed = 3;
