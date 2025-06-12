@@ -36,7 +36,7 @@ public final class GraphicsHandler extends JFrame {
     
     protected Image  backgroundImage;
     protected Toolbox toolbox;
-    protected ConsolPanel consol;
+    public ConsolPanel consol;
 
     public    int hexSize        = 40; // Initial size
     protected int thickness      = 2;  // Hexagon Line thickness
@@ -69,10 +69,10 @@ public final class GraphicsHandler extends JFrame {
     public Area    areaAttack;
     public Cone    coneAttack;
 
-    protected int zoomFactor = 1;
-    public boolean debugMode = false; // :d or debug to change
-    protected boolean darkMode = true; //Starts on Light :dm or darkmode to change
     public static boolean isFlat = true;
+    protected boolean darkMode = true; //Starts on Light :dm or darkmode to change
+    public boolean debugMode = false; // :d or debug to change
+    protected int zoomFactor = 1;
 
     private void inputListener()
     {
@@ -757,6 +757,7 @@ public final class GraphicsHandler extends JFrame {
     public TwoKeyMap<Integer,Integer,Hexagon> getHexlist() {
         return hexlist;
     }
+
     public void spawnCharacter(int size, int maxhealth, int AC, int speed, int initiative) {
         ArrayList<Hexagon> tiles = new ArrayList<>();
         // tile the character spawns on
