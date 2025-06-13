@@ -1,5 +1,7 @@
 package tools;
 
+import calc.AStar;
+import calc.Calc;
 import java.awt.Point;
 import java.awt.geom.Line2D;
 import main.GraphicsHandler;
@@ -39,8 +41,15 @@ public class Measure {
         return false;
     }
     public int length() {
-        int l = 0;
-        return l == 0 ? 0 : (l-1)*5;
+        if(finishedPoint == null) {
+            int l = AStar.run(
+                gh.hexlist.get(origin.x,origin.y),gh.tileUnderMouse,
+                gh,
+                true
+            ).size();
+            return l == 0 ? 0 : (l-1)*5;
+        }
+        else return 5 * (int) Calc.distance(origin, finishedPoint);
     }
     public Point getFinishedPoint() {
         return finishedPoint;

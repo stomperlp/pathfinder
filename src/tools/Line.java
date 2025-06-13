@@ -36,11 +36,13 @@ public class Line {
         return line;
     }
     public int length() {
-        int l = AStar.run(
+        ArrayList<Hexagon> aStarResult = AStar.run(
             gh.hexlist.get(origin.x,origin.y),gh.tileUnderMouse,
             gh,
             true
-        ).size();
+        );
+        int l = (aStarResult == null) ? 0 : aStarResult.size();
+
         return l == 0 ? 0 : (l-1)*5;
     }
     public Point getOrigin() {
@@ -49,28 +51,42 @@ public class Line {
     public ArrayList<Hexagon> getAttackedCharacters() {
         ArrayList<Hexagon> attacked = new ArrayList<>();
         gh.attackTiles.clear();
+        
         for (Point2D p : getPointsAlongLineBySpacing(line, (double) gh.hexSize * Math.sqrt(3))) {
-            Hexagon h = gh.findClosestHexagon(p);
-            if (h == null) continue;
-            Entity e = (Character) gh.selectEntity(h);
-            gh.attackTiles.add(h);
-            if (e instanceof Character c) {
-                if(c.getOccupiedTiles().contains(h)){
-                    attacked.add(h);
-                }
-            } else {
-                //TODO Implement collision effect for line attacks
-            }
-            gh.repaint();
+            Hexagon[] h = gh.findClosestHexagons(p);
+            
+            // Skip if no hexagons found
+            if (h[0] == null) continue;
+            if (h[1] != null) continue;
+
+            processHexagon(h[0], attacked);
         }
+        
+        gh.repaint();
         return attacked;
     }
 
-    public static List<Point2D> getPointsAlongLineBySpacing(Line2D line, double spacing) {
+    private void processHexagon(Hexagon hex, ArrayList<Hexagon> attacked) {
+        Entity e = gh.selectEntity(hex);
+        gh.attackTiles.add(hex);
+        
+        if (e instanceof Character c) {
+            if (c.getOccupiedTiles().contains(hex)) {
+                attacked.add(hex);
+            }
+        } else {
+            //TODO Implement collision effect for line attacks
+        }
+    }
+    public static int getNumPointsAlongLineBySpacing(Line2D line, double spacing) {
         double length = Math.sqrt(Math.pow(line.getX2() - line.getX1(), 2) + 
                                  Math.pow(line.getY2() - line.getY1(), 2));
         
-        int numPoints = (int) Math.ceil(length / spacing) + 1;
+        return (int) Math.ceil(length / spacing) + 1;
+    }
+    public static List<Point2D> getPointsAlongLineBySpacing(Line2D line, double spacing) {
+        int numPoints = getNumPointsAlongLineBySpacing(line, spacing);
+        
         return getPointsAlongLineByNumber(line, numPoints);
     }
     public static List<Point2D> getPointsAlongLineByNumber(Line2D line, int numPoints) {
