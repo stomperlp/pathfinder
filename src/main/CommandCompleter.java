@@ -16,11 +16,19 @@ public class CommandCompleter {
     }
 
     private void initializeCommands() {
-        commandArguments.put("theme",     Arrays.asList("purple", "red", "green", "yellow", "light", "dark", "black"));
+        commandArguments.put("quit",null);
+        commandArguments.put("background",null);
+        commandArguments.put("debug",null);
         commandArguments.put("character", Arrays.asList("delete", "size", "maxhealth", "armorclass", "speed", "initiative", "icon"));
         commandArguments.put("wall",      Arrays.asList("delete"));
-        commandArguments.put("init",      Arrays.asList("add", "remove", "clear", "show", "next"));
+        commandArguments.put("entity",    Arrays.asList("delete"));
         commandArguments.put("help",      Arrays.asList("quit", "background", "debug", "character", "wall", "entity", "help", "roll", "grid", "gamemaster", "init", "clear", "theme"));
+        commandArguments.put("roll",null);
+        commandArguments.put("grid",null);
+        commandArguments.put("gamemaster",null);
+        commandArguments.put("init",      Arrays.asList("add", "remove", "clear", "show", "next"));
+        commandArguments.put("clear",null);
+        commandArguments.put("theme",     Arrays.asList("purple", "red", "green", "yellow", "light", "dark", "black"));
     }
 
     public List<String> getSuggestions(String input) {
