@@ -403,7 +403,7 @@ public final class Consol extends JTextField {
             {
                 historyIndex--;
                 setText(commandHistory.get(historyIndex));
-                setCaretPosition(currentInput.length());
+                setCaretPosition(getText().length());
             }
         }
     }
@@ -417,7 +417,7 @@ public final class Consol extends JTextField {
             historyIndex = commandHistory.size();
             setText(currentInput);
         }
-        setCaretPosition(currentInput.length());
+        setCaretPosition(getText().length());
     }
 
     public void displayConfirmText(String s) {
