@@ -1,4 +1,4 @@
-<diagram program="umletino" version="15.1"><zoom_level>8</zoom_level><help_text>Area
+<diagram program="umletino" version="15.1"><zoom_level>2</zoom_level><help_text>Area
 --
 -gh: GraphicsHandler
 -origin: Point
@@ -9,7 +9,7 @@
 +getRadius(): double
 +getRadiusInTiles(): double
 +getOrigin(): Point
-+getAttackedCharacters(): ArrayList&lt;Hexagon&gt;</help_text><element><id>UMLClass</id><coordinates><x>624</x><y>400</y><w>296</w><h>928</h></coordinates><panel_attributes>GraphicsHandler
++getAttackedCharacters(): ArrayList&lt;Hexagon&gt;</help_text><element><id>UMLClass</id><coordinates><x>388</x><y>132</y><w>74</w><h>232</h></coordinates><panel_attributes>GraphicsHandler
 --
 +DARK_PRIMARY: Color
 +DARK_SECONDARY: Color  
@@ -85,7 +85,7 @@
 +summonWall(): void
 +summonEntity(): void
 +toggleGridOrientation(): void
-+addEntityPreviewTiles(IO: IOHandler): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1032</x><y>568</y><w>240</w><h>424</h></coordinates><panel_attributes>IOHandler
++addEntityPreviewTiles(IO: IOHandler): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>490</x><y>174</y><w>60</w><h>106</h></coordinates><panel_attributes>IOHandler
 --
 #currentHexagon: Hexagon
 #gh: GraphicsHandler
@@ -120,7 +120,7 @@
 +selectTile(): void
 #toggleGameMaster(): void
 +updateMouseTile(): void
-+updateTotalLength(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>848</x><y>1544</y><w>232</w><h>312</h></coordinates><panel_attributes>GameHandler
++updateTotalLength(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>444</x><y>418</y><w>58</w><h>78</h></coordinates><panel_attributes>GameHandler
 --
 #gh: GraphicsHandler
 -lock: Object
@@ -145,7 +145,7 @@
 +getInitiativeOrder(): ArrayList&lt;Entity&gt;
 +getCurrentTurn(): Entity
 +isInInitiative(entity: Entity): boolean
-+clearInitiative(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>592</x><y>1496</y><w>184</w><h>128</h></coordinates><panel_attributes>Toolbox
++clearInitiative(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>376</x><y>406</y><w>50</w><h>32</h></coordinates><panel_attributes>Toolbox
 --
 -scroll: int
 -tools: ArrayList&lt;Tool&gt;
@@ -155,7 +155,7 @@
 #paintComponent(g: Graphics): void
 +initializeTools(): void
 +getTools(): ArrayList&lt;Tool&gt;
-+setTools(tools: ArrayList&lt;Tool&gt;): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>240</x><y>392</y><w>352</w><h>296</h></coordinates><panel_attributes>/Entity/
++setTools(tools: ArrayList&lt;Tool&gt;): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>292</x><y>130</y><w>88</w><h>74</h></coordinates><panel_attributes>/Entity/
 --
 #image: Image
 #tile: Hexagon
@@ -179,7 +179,7 @@
 +setLocation(p: Point2D): void
 +getSize(): int
 +getSpeed(): int
-+getInitiative(): int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>216</x><y>760</y><w>384</w><h>400</h></coordinates><panel_attributes>Character
++getInitiative(): int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>286</x><y>222</y><w>96</w><h>100</h></coordinates><panel_attributes>Character
 --
 +TINY: int = -2
 +SMALL: int = -1
@@ -214,12 +214,12 @@
 +getSpeed(): int
 +setSpeed(speed: int): void
 +getInitiative(): int
-+setInitiative(initiative: int): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>760</y><w>200</w><h>72</h></coordinates><panel_attributes>Wall
++setInitiative(initiative: int): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>232</x><y>222</y><w>50</w><h>18</h></coordinates><panel_attributes>Wall
 --
 --
 +Wall(gh: GraphicsHandler, image:
   Image, tile: Hexagon, location: Point2D)
-+getOccupiedTiles(): ArrayList&lt;Hexagon&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1232</x><y>224</y><w>344</w><h>152</h></coordinates><panel_attributes>Hexagon
++getOccupiedTiles(): ArrayList&lt;Hexagon&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>540</x><y>88</y><w>88</w><h>38</h></coordinates><panel_attributes>Hexagon
 --
 -shape: Path2D
 -center: Point2D
@@ -231,7 +231,7 @@
 +getCenter(): Point2D
 +getGridPoint(): Point
 +setShape(shape: Path2D): void
-+setCenter(center: Point2D): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>672</x><y>1704</y><w>152</w><h>152</h></coordinates><panel_attributes>Measure
++setCenter(center: Point2D): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>400</x><y>458</y><w>40</w><h>38</h></coordinates><panel_attributes>Measure
 --
 -gh: GraphicsHandler
 -origin: Point
@@ -243,7 +243,7 @@
 +finish(): boolean
 +length(): int
 +getFinishedPoint(): Point
-+getOrigin(): Point</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1312</x><y>400</y><w>584</w><h>128</h></coordinates><panel_attributes>AStar
++getOrigin(): Point</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>560</x><y>132</y><w>148</w><h>32</h></coordinates><panel_attributes>AStar
 --
 --
 +run(start: Hexagon, end: Hexagon, gh: GraphicsHandler, ignoreObstacles: boolean): ArrayList&lt;Hexagon&gt;
@@ -253,7 +253,7 @@
 +heuristic(a: Hexagon, b: Hexagon): double
 -isOccupiedByEntity(hex: Hexagon, gh: GraphicsHandler): boolean
 -isOccupiedByEntity(hex: Hexagon, gh: GraphicsHandler, sourceHex: Hexagon): boolean
--reconstructPath(start: Hexagon, end: Hexagon, cameFrom: HashMap&lt;Point, Point&gt;, gh: GraphicsHandler): ArrayList&lt;Hexagon&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>168</x><y>0</y><w>96</w><h>104</h></coordinates><panel_attributes>Dice
+-reconstructPath(start: Hexagon, end: Hexagon, cameFrom: HashMap&lt;Point, Point&gt;, gh: GraphicsHandler): ArrayList&lt;Hexagon&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>274</x><y>32</y><w>24</w><h>26</h></coordinates><panel_attributes>Dice
 --
 -numDice: int
 -numSides: int
@@ -261,19 +261,19 @@
 --
 +Dice(dice: String)
 +roll(): int[]
-+getDice(): String</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1032</x><y>448</y><w>240</w><h>80</h></coordinates><panel_attributes>Calc
++getDice(): String</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>490</x><y>144</y><w>60</w><h>20</h></coordinates><panel_attributes>Calc
 --
 --
 +toBufferedImage(img: Image): BufferedImage
 +cutCirce(image: Image): Image
 +cutHex(image: Image): Image
-+toCubeCoordinate(x: int, y: int): int[]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>576</x><y>1392</y><w>200</w><h>80</h></coordinates><panel_attributes>AnswerWaiter
++toCubeCoordinate(x: int, y: int): int[]</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>376</x><y>380</y><w>50</w><h>20</h></coordinates><panel_attributes>AnswerWaiter
 --
 -answerReceived: boolean
 -answer: Object
 --
 +waitForAnswer(): Object
-+provideAnswer(answer: Object): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>912</x><y>712</y><w>136</w><h>24</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>150;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1072</x><y>776</y><w>360</w><h>824</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>250;10;420;10;430;1010;10;1010</additional_attributes></element><element><id>Relation</id><coordinates><x>120</x><y>680</y><w>168</w><h>104</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>190;10;190;60;10;60;10;102</additional_attributes></element><element><id>Relation</id><coordinates><x>912</x><y>368</y><w>336</w><h>72</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>400;11;400;70;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>912</x><y>1024</y><w>136</w><h>24</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>150;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>680</x><y>1320</y><w>24</w><h>88</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>400</x><y>680</y><w>24</w><h>96</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;100</additional_attributes></element><element><id>Relation</id><coordinates><x>768</x><y>1320</y><w>56</w><h>216</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;250;50;250;50;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>296</x><y>0</y><w>232</w><h>296</h></coordinates><panel_attributes>Consol
++provideAnswer(answer: Object): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>460</x><y>210</y><w>34</w><h>6</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>150;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>500</x><y>210</y><w>90</w><h>222</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>250;10;420;10;430;1090;10;1090</additional_attributes></element><element><id>Relation</id><coordinates><x>262</x><y>202</y><w>42</w><h>24</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>190;10;190;60;10;60;10;102</additional_attributes></element><element><id>Relation</id><coordinates><x>460</x><y>124</y><w>90</w><h>18</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>430;11;430;70;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>460</x><y>288</y><w>34</w><h>6</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>150;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>402</x><y>362</y><w>6</w><h>22</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>332</x><y>202</y><w>6</w><h>24</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;100</additional_attributes></element><element><id>Relation</id><coordinates><x>424</x><y>362</y><w>14</w><h>54</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;250;50;250;50;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>306</x><y>32</y><w>58</w><h>74</h></coordinates><panel_attributes>Consol
 --
 - Active: boolean = true
 - gh: GraphicsHandler
@@ -297,8 +297,7 @@
 + setFontSize(s: int): void
 + displayConfirmText(s: String): void
 - confirm(): void
-- deny(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>728</x><y>344</y><w>24</w><h>72</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>408</x><y>344</y><w>216</w><h>64</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;60;10;10;250;10</additional_attributes></element><element><id>Relation</id><coordinates><x>72</x><y>344</y><w>360</w><h>432</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;520;10;430;170;430;170;10;430;10</additional_attributes></element><element><id>Relation</id><coordinates><x>568</x><y>344</y><w>56</w><h>432</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;520;10;450;50;450;50;10</additional_attributes></element><element><id>Relation</id><coordinates><x>888</x><y>1320</y><w>88</w><h>240</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>90;280;90;180;10;110;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1400</x><y>520</y><w>24</w><h>280</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;10;330</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1008</x><y>152</y><w>200</w><h>216</h></coordinates><panel_attributes>
-TwoKeyMap&lt;K1, K2, V&gt;
+- deny(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>414</x><y>118</y><w>6</w><h>18</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>334</x><y>118</y><w>54</w><h>16</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;60;10;10;250;10</additional_attributes></element><element><id>Relation</id><coordinates><x>250</x><y>118</y><w>90</w><h>108</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;520;10;430;170;430;170;10;430;10</additional_attributes></element><element><id>Relation</id><coordinates><x>374</x><y>118</y><w>14</w><h>108</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;520;10;450;50;450;50;10</additional_attributes></element><element><id>Relation</id><coordinates><x>454</x><y>362</y><w>22</w><h>60</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>90;280;90;180;10;110;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>482</x><y>72</y><w>52</w><h>54</h></coordinates><panel_attributes>TwoKeyMap&lt;K1, K2, V&gt;
 --
 -map: Map&lt;CompositeKey&lt;K1, K2&gt;, V&gt;
 --
@@ -316,7 +315,7 @@ CompositeKey&lt;K1, K2&gt;
 --
 +CompositeKey(key1: K1, key2: K2)
 +equals(o: Object): boolean
-+hashCode(): int</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>256</x><y>16</y><w>56</w><h>24</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;50;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1032</x><y>1016</y><w>352</w><h>488</h></coordinates><panel_attributes>Marker
++hashCode(): int</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>296</x><y>36</y><w>14</w><h>6</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;50;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>490</x><y>286</y><w>90</w><h>122</h></coordinates><panel_attributes>Marker
 --
 +COORDINATES: int = 0
 +STAT: int = 1
@@ -356,7 +355,7 @@ CompositeKey&lt;K1, K2&gt;
 +update(): void
 +attachTo(e: Entity): void
 +getAttachedEntity(): Entity
-+setDebugValue(value: double): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>640</x><y>0</y><w>208</w><h>352</h></coordinates><panel_attributes>ConsolPanel
++setDebugValue(value: double): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>392</x><y>32</y><w>52</w><h>88</h></coordinates><panel_attributes>ConsolPanel
 --
 #consol: Consol
 -logLabels: ArrayList&lt;JLabel&gt;
@@ -384,7 +383,7 @@ CompositeKey&lt;K1, K2&gt;
 +changeBackground(c: Color): void
 +setLogBackground(c: Color): void
 +clearLogs(): void
-+changeBorder(b: LineBorder): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>872</x><y>0</y><w>264</w><h>128</h></coordinates><panel_attributes>Theme
++changeBorder(b: LineBorder): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>450</x><y>32</y><w>66</w><h>32</h></coordinates><panel_attributes>Theme
 --
 +name: String
 +primary: Color
@@ -394,7 +393,7 @@ CompositeKey&lt;K1, K2&gt;
 +toString(): String
 +getName(): String
 +getPrimary(): Color
-+getSecondary(): Color</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>432</x><y>1704</y><w>224</w><h>152</h></coordinates><panel_attributes>Area
++getSecondary(): Color</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>340</x><y>458</y><w>56</w><h>38</h></coordinates><panel_attributes>Area
 --
 -gh: GraphicsHandler
 -origin: Point
@@ -405,7 +404,7 @@ CompositeKey&lt;K1, K2&gt;
 +getRadius(): double
 +getRadiusInTiles(): double
 +getOrigin(): Point
-+getAttackedCharacters(): ArrayList&lt;Hexagon&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>144</x><y>1448</y><w>272</w><h>232</h></coordinates><panel_attributes>Cone
++getAttackedCharacters(): ArrayList&lt;Hexagon&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>266</x><y>394</y><w>70</w><h>58</h></coordinates><panel_attributes>Cone
 --
 -gh: GraphicsHandler
 -origin: Point
@@ -424,7 +423,7 @@ CompositeKey&lt;K1, K2&gt;
 +getAttackedCharacters(): ArrayList&lt;Hexagon&gt;
 +changeAngle(notches: int): void
 +getAngle(): double
-+getStartAngle(): double</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>64</x><y>1704</y><w>352</w><h>152</h></coordinates><panel_attributes>Line
++getStartAngle(): double</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>246</x><y>458</y><w>90</w><h>38</h></coordinates><panel_attributes>Line
 --
 -gh: GraphicsHandler
 -origin: Point
@@ -436,7 +435,7 @@ CompositeKey&lt;K1, K2&gt;
 +getOrigin(): Point
 +getAttackedCharacters(): ArrayList&lt;Hexagon&gt;
 +getPointsAlongLineBySpacing(line: Line2D, spacing: double): List&lt;Point2D&gt;
-+getPointsAlongLineByNumber(line: Line2D, numPoints: int): List&lt;Point2D&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>216</x><y>1192</y><w>200</w><h>232</h></coordinates><panel_attributes>Tool
++getPointsAlongLineByNumber(line: Line2D, numPoints: int): List&lt;Point2D&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>284</x><y>330</y><w>52</w><h>58</h></coordinates><panel_attributes>Tool
 --
 +DRAG_MODE: int = 0
 +LENGTH_MODE: int = 1
@@ -455,4 +454,10 @@ CompositeKey&lt;K1, K2&gt;
 +getToolMode(): int
 +setToolMode(toolMode: int): void
 +moveBy(x: int, y: int): void
-+getHitbox(): Rectangle</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>880</x><y>120</y><w>24</w><h>296</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;10;350</additional_attributes></element><element><id>Relation</id><coordinates><x>912</x><y>176</y><w>112</w><h>240</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>120;10;10;10;10;280</additional_attributes></element><element><id>Relation</id><coordinates><x>408</x><y>1312</y><w>232</w><h>24</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;270;10</additional_attributes></element><element><id>Relation</id><coordinates><x>408</x><y>1312</y><w>128</w><h>216</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;250;140;250;140;10</additional_attributes></element><element><id>Relation</id><coordinates><x>408</x><y>1504</y><w>128</w><h>216</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;250;60;190;140;190;140;10</additional_attributes></element><element><id>Relation</id><coordinates><x>512</x><y>1648</y><w>24</w><h>72</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>512</x><y>1648</y><w>248</w><h>72</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>290;70;290;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>408</x><y>288</y><w>24</w><h>80</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>520</x><y>24</y><w>136</w><h>24</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;150;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1264</x><y>472</y><w>64</w><h>24</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;60;10</additional_attributes></element><element><id>Relation</id><coordinates><x>912</x><y>472</y><w>136</w><h>24</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>150;10;10;10</additional_attributes></element></diagram>
++getHitbox(): Rectangle</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>452</x><y>62</y><w>6</w><h>74</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;10;350</additional_attributes></element><element><id>Relation</id><coordinates><x>460</x><y>78</y><w>26</w><h>58</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>110;10;10;10;10;270</additional_attributes></element><element><id>Relation</id><coordinates><x>334</x><y>360</y><w>58</w><h>6</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;270;10</additional_attributes></element><element><id>Relation</id><coordinates><x>334</x><y>360</y><w>32</w><h>54</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;250;140;250;140;10</additional_attributes></element><element><id>Relation</id><coordinates><x>334</x><y>408</y><w>32</w><h>54</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;250;60;190;140;190;140;10</additional_attributes></element><element><id>Relation</id><coordinates><x>360</x><y>444</y><w>6</w><h>18</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>360</x><y>444</y><w>62</w><h>18</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>290;70;290;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>334</x><y>104</y><w>6</w><h>20</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>362</x><y>38</y><w>34</w><h>6</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;150;10</additional_attributes></element><element><id>Relation</id><coordinates><x>548</x><y>150</y><w>16</w><h>6</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;60;10</additional_attributes></element><element><id>Relation</id><coordinates><x>460</x><y>150</y><w>34</w><h>6</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>150;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>306</x><y>0</y><w>58</w><h>20</h></coordinates><panel_attributes>CommandCompleter
+--
+-commandArguments: Map&lt;String, List&lt;String&gt;&gt;
+--
++CommandCompleter()
+-initializeCommands(): void
++getSuggestions(input: String): List&lt;String&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>334</x><y>18</y><w>6</w><h>18</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>500</x><y>162</y><w>100</w><h>280</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>480;10;480;1380;10;1380</additional_attributes></element></diagram>

@@ -129,6 +129,8 @@ Tool icons must be present as PNG files in the folder src/resources/images/toolI
 
 The program does not save data permanently—all changes are lost upon closing although this might change in futur versions.
 
+(Nearly) all comments were created by AI and do not claim to be correct.
+
 ## Chemie und STALINdustrie
 
 ⣿⡇⠄⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠙⣦⠐⠠⡥⣿⣿   ⣿⣿⣿⣿⣿⠟⠋⠄⠄⠄⠄⠄⠄⠄⢁⠈⢻⢿⣿⣿⣿⣿⣿⣿⣿
