@@ -58,20 +58,32 @@ Pathfinder/
 - **Debug & Gamemaster Modes:**  
   - Additional controls and overlays for game masters and developers.
 
-## ControlssetFontSize(getFont().getSize());
+## Controls
 
 ### Keyboard and Mouse Controls
 
-- **Left-click:**           Select fields/units
-- **Right-click:**          Tool actions (e.g., measure, draw a line)
+- **Left-click (OR Enter when using Arrow Keys)**           Select fields/units
+- **Right-click (OR RShift Enter when using Arrow Keys):**          Tool actions (e.g., measure, draw a line)
 - **Scroll Wheel:**         Zoom in/out on the grid.
 - **Ctrl + [+] / [-]:**     Change size of consol and toolbar
 
 - **WASD:**                 Move the map view (pan)
+- **Arrow Keys:**           Move the selection around like when using a mouse. Disables mouse movement until a Mouse Click.
 - **Enter:**                Confirm input in the console
 - **Ctrl + Enter:**         Toggle console
 - **Arrow up / down:**      cycle through console history
 - **Ctrl / Shift:**         Multi-select (where supported)
+- **Ctrl combinations:**
+  - Ctrl + C                Copy selected Entities
+  - Ctrl + V                Paste copied Entities
+  - Ctrl + A                Select all Entities
+
+- **Alt combinations:**     Select a tool
+  - Alt + X                 Drag
+  - Alt + S                 Measure
+  - Alt + A                 Area attack
+  - Alt + C                 Cone attack
+  - Alt + V                 Line attack
 
 ### Console Commands:
 
@@ -130,6 +142,15 @@ Tool icons must be present as PNG files in the folder src/resources/images/toolI
 The program does not save data permanently—all changes are lost upon closing although this might change in futur versions.
 
 (Nearly) all comments were created by AI and do not claim to be correct.
+
+## Known Issues
+
+- WASD dragging freezes the application in various instances. Most of the time a right or left click or a CTRL tap unfreeze it.
+- WASD dragging moves line attacks with it.
+- Attacked Hexes from line attack sometimes dont show correctly while zooming.
+- At very high grid coordiates (2000+ for each x and y value) the grid rendering bugs out.
+- Selecting lots of creatures with high speeds can lead to performance problems.
+
 
 ## Chemie und STALINdustrie
 

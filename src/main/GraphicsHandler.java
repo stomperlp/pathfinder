@@ -1060,4 +1060,31 @@ public final class GraphicsHandler extends JFrame {
         }
         return closest;
     }
+	public Hexagon[] findClosestHexagons(Point2D point) {
+        Hexagon[] closest = new Hexagon[2];
+        double minDist = Double.MAX_VALUE;
+        double tolerance = 1.0; // Adjust this threshold as needed
+        
+        for (Hexagon hex : hexlist.values()) {
+            double dist = point.distance(hex.getCenter());
+            
+            if (dist < minDist) {
+                // Check if previous closest is within tolerance of new distance
+                if (Math.abs(minDist - dist) <= tolerance && closest[0] != null) {
+                    closest[1] = closest[0]; // Keep previous as second closest
+                } else {
+                    closest[1] = null; // Clear second if distances aren't close
+                }
+                closest[0] = hex;
+                minDist = dist;
+            } else if (Math.abs(dist - minDist) <= tolerance) {
+                // This hexagon is approximately same distance as closest
+                if (closest[1] == null) {
+                    closest[1] = hex;
+                }
+            }
+        }
+        
+        return closest;
+    }
 }

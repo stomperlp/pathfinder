@@ -701,7 +701,7 @@ public class IOHandler extends MouseAdapter {
 		}
 		gh.totalLength.setStat(length);
 		gh.totalLength.moveTo(mousePos);
-		gh.totalLength.setVisible(length > 0);
+		gh.totalLength.setVisible(length > 0); // hides the length if 0;
 	}
 
 	// Get current mouse active state (mouse vs keyboard control)

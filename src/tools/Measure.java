@@ -1,6 +1,7 @@
 package tools;
 
 import calc.AStar;
+import calc.Calc;
 import java.awt.Point;
 import java.awt.geom.Line2D;
 import main.GraphicsHandler;
@@ -77,30 +78,29 @@ public class Measure {
        
        return false; // Normal completion, measurement remains active
    }
-   
+
    /**
-    * Calculate the measurement length using pathfinding
-    * Uses A* algorithm to find actual traversable distance between points
-    * 
-    * @return Length in game units (feet), where each tile step = 5 feet
+    * Calculates the length of the current path.
+    * @return Path length in pixels (waypoints * 5) or 0 for empty path
     */
-   public int length() {
-       // Determine target hex: use finished point if available, otherwise current mouse position
-       Point targetPoint = getFinishedPoint();
-       
-       // Use A* pathfinding to get actual traversable path length
-       int pathLength = AStar.run(
-           gh.hexlist.get(origin.x, origin.y),                    // Start hex
-           targetPoint == null                                    // End hex
-               ? gh.tileUnderMouse 
-               : gh.hexlist.get(finishedPoint.x, finishedPoint.y),
-           gh,                                                    // Graphics handler for map data
-           true                                                   // Allow diagonal movement
-       ).size();
-       
-       // Convert path steps to game distance (0 if no path found, otherwise (steps-1)*5 feet)
-       return pathLength == 0 ? 0 : (pathLength - 1) * 5;
-   }
+    public int length() {
+    // Check if the path is not yet finished
+    if(finishedPoint == null) {
+        // Calculate optimal path using A* algorithm from start point to current mouse position
+        int l = AStar.run(
+            gh.hexlist.get(origin.x,origin.y),  // Start point in hex grid
+            gh.tileUnderMouse,                  // Target point under mouse cursor
+            gh,                                 // Game handler for game field context
+            true                                // Enable A* optimization
+        ).size();
+        
+        // Convert waypoints to pixel length: (waypoints-1)*5, since first point doesn't count
+        return l == 0 ? 0 : (l-1)*5;
+    }
+    else 
+        // Path is finished: calculate direct distance between start and end point
+        return 5 * (int) Calc.distance(origin, finishedPoint);
+    }
    
    /**
     * Get the grid coordinates of the measurement's end point
