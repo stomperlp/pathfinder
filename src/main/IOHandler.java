@@ -618,7 +618,7 @@ public class IOHandler extends MouseAdapter {
 		}
 		gh.totalLength.setStat(length);
 		gh.totalLength.moveTo(mousePos);
-		gh.totalLength.setVisible(length > 0);
+		gh.totalLength.setVisible(length > 0); // hides the length if 0;
 	}
 	public boolean isMouseActive() {
 		return mouseActive;

@@ -65,12 +65,15 @@ public class Line {
         }
         return attacked;
     }
-
-    public static List<Point2D> getPointsAlongLineBySpacing(Line2D line, double spacing) {
+    public static int getNumPointsAlongLineBySpacing(Line2D line, double spacing) {
         double length = Math.sqrt(Math.pow(line.getX2() - line.getX1(), 2) + 
                                  Math.pow(line.getY2() - line.getY1(), 2));
         
-        int numPoints = (int) Math.ceil(length / spacing) + 1;
+        return (int) Math.ceil(length / spacing) + 1;
+    }
+    public static List<Point2D> getPointsAlongLineBySpacing(Line2D line, double spacing) {
+        int numPoints = getNumPointsAlongLineBySpacing(line, spacing);
+        
         return getPointsAlongLineByNumber(line, numPoints);
     }
     public static List<Point2D> getPointsAlongLineByNumber(Line2D line, int numPoints) {
