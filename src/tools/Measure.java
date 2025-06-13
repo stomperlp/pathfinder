@@ -39,7 +39,7 @@ public class Measure {
         return false;
     }
     public int length() {
-        int l = Line.getNumPointsAlongLineBySpacing(line, gh.hexSize*2);
+        int l = 0;
         return l == 0 ? 0 : (l-1)*5;
     }
     public Point getFinishedPoint() {

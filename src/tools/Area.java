@@ -29,7 +29,7 @@ public class Area {
         return radius;
     }
     public double getRadiusInTiles() {
-        return (getRadius()+1/(gh.hexSize*Math.sqrt(3)));
+        return ((getRadius()+1)/(gh.hexSize*Math.sqrt(3)));
     }
     public Point getOrigin() {
         return origin;
