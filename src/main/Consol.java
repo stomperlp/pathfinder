@@ -23,10 +23,10 @@ public final class Consol extends JTextField {
     private String currentInput = "";
     private Marker[] diceMarkers = {};
     private boolean confirm = false;
-    private final String[] commands = {
-        "character", "wall", "entity", "initiative", "quit", "background", 
-        "debug", "roll", "grid", "gamemaster", "help", "clear", "theme"
-    };
+    private final CommandCompleter completer = new CommandCompleter();
+    private String originalInput = "";
+    private List<String> currentSuggestions = new ArrayList<>();
+    private int suggestionIndex = -1;
 
     public Consol(GraphicsHandler gh) {
         super();
@@ -301,17 +301,93 @@ public final class Consol extends JTextField {
             }
         }
     }
-    public String getAutoComplete(String input) {
-        if (input == null || input.isEmpty()) {
-            return input;
-        }
-
-        for (String cmd : commands) {
-            if (cmd.startsWith(input.toLowerCase())) {
-                return cmd;
+    public void getAutoComplete() {
+        if (suggestionIndex == -1) {
+            originalInput = getText();
+            
+            // Spezialfall: Wenn die Eingabe mit einem Leerzeichen endet, zeige alle Argumente an
+            if (originalInput.endsWith(" ")) {
+                currentSuggestions = completer.getSuggestions(originalInput);
+                
+                if (currentSuggestions.isEmpty()) {
+                    return;
+                }
+                
+                if (currentSuggestions.size() > 1) {
+                    gh.consol.addLogMessage("Possible arguments:");
+                    for (String suggestion : currentSuggestions) {
+                        gh.consol.addLogMessage("- " + suggestion);
+                    }
+                }
+                
+                suggestionIndex = 0;
+                return; // Nur Vorschläge anzeigen, nicht einfügen
             }
+            
+            // Normaler Fall: Befehl oder teilweises Argument vervollständigen
+            currentSuggestions = completer.getSuggestions(originalInput);
+            
+            // Finde das letzte Wort für den Filterungsprozess
+            String lastWord;
+            int lastSpaceIndex = originalInput.lastIndexOf(' ');
+            if (lastSpaceIndex >= 0) {
+                lastWord = originalInput.substring(lastSpaceIndex + 1);
+            } else {
+                lastWord = originalInput;
+            }
+            
+            // Filtere exakte Übereinstimmungen aus den Vorschlägen
+            currentSuggestions.removeIf(suggestion -> suggestion.equals(lastWord));
+            
+            // Keine Vorschläge vorhanden
+            if (currentSuggestions.isEmpty()) {
+                return;
+            }
+            
+            // Zeige Vorschläge nur wenn es mehrere gibt
+            if (currentSuggestions.size() > 1) {
+                gh.consol.addLogMessage("Possible completions:");
+                for (String suggestion : currentSuggestions) {
+                    gh.consol.addLogMessage("- " + suggestion);
+                }
+            }
+            
+            suggestionIndex = 0;
+        } else {
+            // Bei weiteren Tab-Drücken zum nächsten Vorschlag
+            suggestionIndex = (suggestionIndex + 1) % currentSuggestions.size();
         }
-        return input;
+        
+        // Wenn keine Vorschläge übrig sind, nichts tun
+        if (currentSuggestions.isEmpty()) {
+            return;
+        }
+        
+        // Aktueller Vorschlag
+        String completion = currentSuggestions.get(suggestionIndex);
+        
+        // Bearbeite die Eingabe korrekt
+        String baseInput;
+        
+        // Finde die Basis für die Vervollständigung
+        int lastSpaceIndex = originalInput.lastIndexOf(' ');
+        if (lastSpaceIndex >= 0) {
+            // Es gibt ein Leerzeichen, also vervollständigen wir das letzte Wort
+            baseInput = originalInput.substring(0, lastSpaceIndex + 1);
+        } else {
+            // Kein Leerzeichen, also vervollständigen wir den gesamten Befehl
+            baseInput = "";
+        }
+        
+        // Setze den neuen Text zusammen
+        setText(baseInput + completion);
+        setCaretPosition(getText().length());
+    }
+    public void resetSuggestions() {
+        originalInput = "";
+        if (!currentSuggestions.isEmpty())
+            currentSuggestions = new ArrayList<>();
+        suggestionIndex = -1;
     }
     public void setGraphicsHandler(GraphicsHandler gh) {
         this.gh = gh;

@@ -70,7 +70,7 @@ public class ConsolPanel extends JPanel {
             scrollLog = 0;
         }
         if(scrollLog > logs.size() - logLabels.size()) {
-            scrollLog = logs.size() - logLabels.size();
+           scrollLog = logs.size() - logLabels.size();
         }
     }
 
